@@ -50,6 +50,33 @@ button:hover, select:hover { border-color: var(--accent); }
 .dim.missing { color: var(--muted); }
 .badge { font-size: 10px; padding: 0 4px; margin-left: 4px; border: 1px solid var(--muted); border-radius: 3px; color: var(--muted); }
 
+/* loading screen: fades out once data and photo are ready */
+#loader { position: fixed; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 14px; background: var(--bg); color: var(--muted); z-index: 10; transition: opacity 0.8s ease, visibility 0.8s; }
+#loader.done { opacity: 0; visibility: hidden; }
+.spinner { width: 38px; height: 38px; border: 3px solid var(--line); border-top-color: var(--accent);
+  border-radius: 50%; animation: spin 0.9s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* analog toggle, swatches, tooltips, links */
+.check { display: flex; align-items: center; gap: 6px; margin: 10px 0 0; color: var(--text); cursor: pointer; }
+.check input { accent-color: var(--accent); margin: 0 4px 0 0; }
+.swatch.mars { background: #ff7a45; margin-left: 6px; }
+.swatch.moon { background: #d9e2f2; margin-left: 6px; }
+.tip { max-width: 240px; padding: 6px 8px; background: rgba(10, 14, 22, 0.92); border: 1px solid var(--line);
+  border-radius: 6px; font: 12px/1.4 system-ui, sans-serif; color: var(--text); }
+.tip span { color: var(--muted); }
+#place-extra p { margin: 8px 0 0; }
+a { color: var(--accent); }
+.credit { margin-top: 10px; font-size: 11px; opacity: 0.75; }
+
+/* smoother feel */
+.dim .fill { transition: width 0.35s ease; }
+#place { animation: rise 0.3s ease; }
+@keyframes rise { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+#panel { transition: box-shadow 0.3s; box-shadow: 0 10px 40px rgba(0, 0, 0, 0.45); }
+@media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }
+
 @media (max-width: 600px) {
   #panel { top: auto; bottom: 0; left: 0; right: 0; width: auto; max-height: 45%; border-radius: 10px 10px 0 0; }
 }

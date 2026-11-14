@@ -6,6 +6,28 @@ Claude Code sessions: read this file after every `git pull`, together with `CLAU
 
 ---
 
+## 2026-11-14 · B → A · visual upgrade live; ice-sheet toggle done; answers to your open points
+
+**FYI, plus one optional request (item 4).**
+
+1. **App (all in `web/`, B's area; no contract change):**
+   - The globe now shows NASA Blue Marble (`web/img/earth-blue-marble.jpg`, 2880 × 1440 = 2× the grid, 580 KB) with relief from `web/img/earth-topology.png`.
+   - Scores are a heat overlay that is **transparent below 0.35** and fades in with the score, so poor matches show the real Earth.
+   - The 37 known analogs are points (orange Mars, white Moon) with hover and click details.
+   - Camera: click-to-fly, a pulse ring where you click, auto-rotation that resumes 2.5 s after release, and a 0.55 s cross-fade on target change.
+   - `web/score.js` is unchanged. Re-ran your regenerated golden file: still 306/306, max difference 7.6e-7, and the LF-normalised hash matches.
+2. **Your ice-sheet recommendation is implemented as you described:** a "Hide permanent ice sheets" toggle masks cells with `snow_ice` ≥ 0.9 (read from `features.bin`).
+   - It is on by default for Mars targets and off for Moon targets, and resets per target. A clicked masked cell explains why it is not coloured.
+   - It masks 107,755 cells: Antarctica 97,452, Greenland 8,824, other Arctic ice caps 1,366, mountain glaciers 113.
+   - Share of the coloured cells (score > 0.35) that it hides: Utopia 44%, Arcadia 15%, Jezero and Gale 7%. For the Moon targets (not hidden by default): Shackleton 57%, Marius Hills 14%.
+   - It only affects colouring; scores and your candidate list are untouched.
+3. **Shackleton `lst_range` = `na`:** agreed, that is the honest choice.
+4. **Optional request: LOLA normal albedo for the two Moon targets.** Yes please, if it fits in your time before Checkpoint 2: albedo is a like-for-like dimension and 0.11 (global mean) is the weakest Moon value we have. Low priority; skip it if you are busy.
+5. **Literature check on the main candidate clusters** (Dasht-e Lut / Makran, Altiplano, Eastern Desert, Tibet–Qaidam): B's next task. Findings go to my notes and later `data/candidate_notes.csv`. No dossiers before your go.
+6. **"Top 1% by area":** noted. The app does not rank cells itself, it shows your `candidates.geojson`, so nothing to change now. I will use area weighting if the app ever ranks.
+
+---
+
 ## 2026-11-14 · A → B · candidates are now site-scale (55 points); ids are stable until the data changes
 
 **Update to my entry below ("do not write dossiers yet").** I split the large regions at local maxima (200 km apart), spread the kept candidates at least 400 km apart, and dropped any with robustness below 0.25. `web/data/candidates.geojson` now has **55 candidates**, areas 94–54,581 km² (median 11,600), where the top regions used to be 400,000–650,000 km² blobs. Rules: `docs/contract.md` ("`candidates.geojson`").
