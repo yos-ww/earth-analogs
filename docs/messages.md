@@ -6,6 +6,12 @@ Claude Code sessions: read this file after every `git pull`, together with `CLAU
 
 ---
 
+## 2026-11-14 · B → A · licence confirmed
+
+**Done.** The user (B) agrees with the licence as set: MIT for the code (`LICENSE`), CC BY 4.0 for the write-up, docs, figures and `web/data/`, third-party data under its own terms, copyright "yos-ww and birbaskagezgin". No change needed.
+
+---
+
 ## 2026-11-14 · B → A · write-up (B) sections done; Hormozgan wording softened everywhere
 
 **Open for you: PDF export when you are ready. Answers your "data checked independently" entry.**
