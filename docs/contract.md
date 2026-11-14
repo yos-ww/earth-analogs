@@ -93,7 +93,24 @@ Little-endian `Uint32`, one value per land cell: the flat grid index. Length = `
 - Directional is **not stored**. Both sides derive it: a feature is directional when the transformed target value lies outside `[p1, p99]` from `meta.json`.
 - The numbers in the example are placeholders, not real values.
 
-The hand-edited source for this file is `data/targets_literature.csv` (owner: B), with columns `target_id, feature_id, value, unit, value_kind, source, source_url`. Terrain rows are placeholders until A replaces them with values computed from MOLA and LOLA.
+### Sources of `targets.json` (both hand-edited, owner: B)
+
+- `data/targets.csv`: one row per target. Columns: `target_id, name, body, lat, lon, source, source_url`. `lat`/`lon` is the one exact centre point (review decision 7).
+- `data/targets_literature.csv`: one row per target and value. Columns: `target_id, feature_id, value, unit, value_kind, source, source_url`. Special cases:
+  - `value` = `na` makes the feature `{ "na": true }` (for example `aod` for the Moon).
+  - `feature_id` = `limit:gravity_ms2`, `limit:pressure_pa` or `limit:radiation_msv_day` goes to `limits`.
+  - `feature_id` starting with `info:` (for example `info:thermal_inertia`) goes to `not_scored`.
+  - Every other `feature_id` must be a feature `id` from the table above.
+- Terrain rows are placeholders until A replaces them with values computed from MOLA and LOLA.
+- `weights` are all 1 unless a target row says otherwise; `n/a` features follow from the `na` rows.
+- **From hour 1, A's `export.py` also writes `web/data/targets.json` from these two CSVs** (literature values only). `pipeline/targets.py` later replaces the terrain values with computed ones. B can therefore replace the mock `targets.json` as soon as the CSVs exist.
+
+### Rules for cited values
+
+- **Ice (`snow_ice`):** the surface snow or frost cover fraction, matching what MOD10CM measures. Shallow subsurface ice (Arcadia) and permanently shadowed ice (Shackleton) are not surface cover: score the surface value (0 if none is seen) and say so in the mission card (review decision 3).
+- **Dust (`aod`):** give the value at 550 nm. If the source reports another wavelength (880 nm, 9 µm), put the original wavelength in `value_kind` and the conversion in `source`.
+- **Vegetation (`ndvi_max`):** the same fixed value for every target, `0`, status `fixed` (it is directional).
+- **Temperatures:** monthly means, with the local time of day in `value_kind` (Earth's MOD11C3 is about 10:30 local).
 
 ## Scoring (must give the same number in Python and in the browser)
 
@@ -128,3 +145,28 @@ A `FeatureCollection` of `Point`s at the region's best cell. Properties:
 | `nearest_known_km` | number | Distance to the nearest known analog |
 | `novelty` | string | `under-studied` or `unrecognized` (set by B after the literature check) |
 | `dossier` | string or null | Path to the site page, e.g. `sites/xyz.md` |
+
+`web/data/` is generated, so B does not edit this file. B's input is `data/candidate_notes.csv` (owner: B), with columns `id, name, novelty, dossier`, where `id` matches a candidate `id`. `export.py` merges it in. A candidate with no row gets `name` = "lat, lon", `novelty` = `under-studied` and `dossier` = null.
+
+## `validation.json` (optional)
+
+Written by `score.py --validate`. The app shows the "Does it work?" panel from it and must keep working if the file is missing. All numbers below are placeholders.
+
+```json
+{
+  "targets": {
+    "jezero": {
+      "known_percentile_median": 0.91,
+      "random_land_median": 0.50,
+      "random_barren_median": 0.72,
+      "per_dimension": { "terrain": { "known": 0.8, "barren": 0.6 } }
+    }
+  }
+}
+```
+
+Percentiles are area-weighted and use the review-notes baseline rule (best of the same target set for sites and baselines).
+
+## Changes to this contract
+
+Additions made after version 1 are additive (new optional files and CSV rules), so `contract_version` stays 1 and existing mock files remain valid.

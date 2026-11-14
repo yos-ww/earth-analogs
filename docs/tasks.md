@@ -15,12 +15,15 @@ Ordered by the timeline in `plan.md`. Tick a box in the same commit that finishe
 - [ ] Read `CLAUDE.md` and `docs/contract.md`; confirm or change the seven proposed defaults in `CLAUDE.md`
 - [x] Make the repo public, so GitHub Pages works and judges can open the code link
 - [ ] Download the three globe images (Earth Blue Marble, USGS Mars colour mosaic, LROC WAC Moon) into `web/img/`
+- [ ] Turn on GitHub Pages (Settings → Pages → `main`, root folder) and add an empty `.nojekyll`. Needs admin rights, so `yos-ww` (repo owner) does this unless B has been given admin. The app is then at `https://yos-ww.github.io/earth-analogs/web/`
+- [ ] Decide the four proposals in `docs/presentation-plan.md` ("Changes to the existing plan"): `validation.json` (added to the contract as optional), tour mode, flat-map fallback moved to stretch, one-dimension view. A's recommendation: accept all four
 
 ## Person A: data and science
 
 Hours 1–3
 - [ ] `pipeline/features.py`: land mask, `cells.bin`, and two features (`roughness`, `ndvi_max`)
 - [ ] `pipeline/export.py`: write `web/data/cells.bin`, `features.bin`, `meta.json` in the contract format
+- [ ] `pipeline/export.py`: also write a literature-only `web/data/targets.json` from `data/targets.csv` and `data/targets_literature.csv` (see contract), so B can swap the mock targets for real ones
 - [ ] **Checkpoint 0 (hour 3):** these two features render on B's globe
 
 Hours 3–4: science spike (no app)
@@ -36,7 +39,7 @@ Hours 4–7
 Hours 7–11
 - [ ] `pipeline/targets.py`: MOLA and LOLA terrain, Diviner values; merge with `data/targets_literature.csv` into `web/data/targets.json`
 - [ ] Export `known_analogs.geojson` from `data/known_analogs.csv`
-- [ ] Validation: known analogs vs. random land and random barren land (`score.py --validate`)
+- [ ] Validation: known analogs vs. random land and random barren land (`score.py --validate`), also writing `web/data/validation.json`. Map the `mineralogy` tag to `geology`; tags with no matching dimension (`biology`, `operations`, `subsurface`) are reported as "not visible to the score"
 - [ ] **Science check (hour 11):** do known analogs beat random barren land?
 
 Hours 11–14
@@ -51,7 +54,8 @@ Hours 17–21
 ## Person B: app and story
 
 Hours 1–3
-- [ ] `web/mock/`: `cells.bin`, `features.bin`, `meta.json`, `targets.json` in the contract format
+- [ ] `web/mock/`: `cells.bin`, `features.bin`, `meta.json`, `targets.json` in the contract format (no Python env on B's machine: generate the mock with the standard library or in JS)
+- [ ] `data/targets.csv` (one row per target, one exact centre point each) next to `data/targets_literature.csv`; formats in `docs/contract.md`
 - [ ] `web/index.html` + `web/app.js`: globe with the score texture and one slider per dimension, on the mock data
 - [ ] **By hour 3, for the spike:** literature values for Jezero, Arcadia and Marius Hills in `data/targets_literature.csv` (roughness placeholder, coldest-month night temperature, 8.55 µm emissivity), each with a source
 - [ ] The rest of `data/targets_literature.csv`: the 36 values in `docs/target-values-needed.md`, plus placeholder terrain values and the Earth-limits values, each with a source
@@ -71,7 +75,7 @@ Hours 7–11
 - [ ] Known-analog layer, candidate list panel, Earth-limits card, About/method panel
 
 Hours 14–17
-- [ ] Literature check on the top candidates; set `novelty`
+- [ ] Literature check on the top candidates; set `novelty`, `name` and `dossier` in `data/candidate_notes.csv` (never in `web/data/`)
 - [ ] Deep dives on the top 2–3 sites → `docs/sites/*.md` (match / breaks down / exploration use)
 
 Hours 17–21
