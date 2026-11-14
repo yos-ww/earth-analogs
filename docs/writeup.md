@@ -4,7 +4,23 @@
 
 ## Summary (B)
 
-*To be written by B from the tour captions.*
+**The problem.** Before astronauts land on Mars or the Moon, teams test rovers, drills, instruments and procedures in places on Earth that resemble the landing site. Those analog sites are usually chosen because they look the part, and the same few (Atacama, Iceland, Hawaii, Antarctica) are used again and again.
+
+**What we built.** Analog Atlas compares **every place on Earth's land, 344,354 patches about 28 km across**, with six real Mars and Moon sites: the Jezero, Gale and Zhurong rover landing sites, a human-landing candidate in Arcadia Planitia, the Artemis region at Shackleton crater, and a lava-tube skylight in the Marius Hills. It uses **twelve measurements in eight dimensions**: terrain, temperature, plants, rainfall, ground brightness, ice, dust and rock type, from NASA MODIS, GPM, USGS, MGS, LRO and the Mars Climate Database. For each place it says how similar it is, **what matches, and where the analogy breaks down**. Everything runs in an interactive 3D globe with a guided tour: **https://yos-ww.github.io/earth-analogs/web/**
+
+**What we found.** 55 candidate sites, all at least 200 km from any analog on our list. The biggest surprise is a belt across **south-east Iran and south-west Pakistan** (the Makran coast, the Chagai–Registan deserts and the Hormozgan salt domes). It holds the top candidate for four of the six targets. The best match for Curiosity's Gale crater is **about 355 km from Doha**, among the Hormozgan salt domes.
+- Salt glaciers like these have been compared with Mars in conference work, but our first-pass literature search found no field analog study at this site.
+- For the Makran and Chagai parts of the belt, that search found no analog study at all.
+- A deeper search is still needed before calling any of it unrecognised.
+
+**Does it work?** We tested the method on 37 places scientists already use. Known Mars analogs rank above plain desert: better than 89% of Earth's land, against 76% for random barren land. The evidence is **modest** (p ≈ 0.02–0.03) and depends on how "plain desert" is defined. For the Moon there are too few independent sites to conclude, and we make no claim.
+
+**Where it breaks down.**
+- The score cannot see life, caves, buried ice or practical access.
+- Satellite rainfall is too coarse to tell dry from extremely dry deserts.
+- No place on Earth copies the gravity (38% of Earth's on Mars, 17% on the Moon), the thin or missing air (under 1% of Earth's pressure on Mars) or the radiation (about 100 times Earth's surface dose on Mars, 200 times on the Moon).
+
+The atlas is a shortlist for the rest: a way for analog-programme planners, and for countries without an analog site of their own, to find where to test next.
 
 ## The problem and our idea (B)
 

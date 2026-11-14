@@ -16,7 +16,8 @@ export const VERDICT_TEXT = {
 export const REGIONS = [
   { name: "Makran coast (Iran–Pakistan)", verdict: "none", box: [24.5, 27.2, 57.5, 66.5] },
   { name: "Chagai and Registan deserts (Pakistan–Afghanistan)", verdict: "none", box: [28, 30.5, 62, 66.5] },
-  { name: "Southern Iran, Zagros salt domes", verdict: "none", box: [25.5, 28, 53.5, 57.5] },
+  { name: "Southern Iran, Zagros salt domes", verdict: "under", box: [25.5, 28, 53.5, 57.5],
+    note: "Iranian salt structures have been compared with Martian salt sheets in conference work (Aftabi, EGU 2006), but our first-pass search found no field analog study at this site." },
   { name: "Lut Desert and central Iran", verdict: "under", box: [29.5, 34, 52.5, 60] },
   { name: "Eastern Desert of Egypt, Red Sea Hills and Sinai", verdict: "none", box: [21, 29.5, 32.5, 35.5] },
   { name: "Tibesti and southern Libya", verdict: "under", box: [19, 27.5, 15, 19] },

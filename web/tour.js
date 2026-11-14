@@ -37,7 +37,7 @@ function steps(api) {
     },
     gale && {
       title: "Closer than you think",
-      text: `For Curiosity's Gale crater, the best match is in southern Iran, about ${galeKm} km from Doha. (First-pass literature search: no analog study found.)`,
+      text: `For Curiosity's Gale crater, the best match is among the salt domes of southern Iran, about ${galeKm} km from Doha. Salt glaciers have been compared with Mars before, but we found no field study here yet.`,
       run() {
         api.closePlace(); api.selectTarget("gale");
         api.labels([{ ...DOHA, text: "Doha" }]);

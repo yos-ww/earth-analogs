@@ -468,7 +468,7 @@ function showPlace(lat, lng, { quiet = false, point = null } = {}) {
     const v = VERDICT_TEXT[reg.verdict], st = point.style;
     simple += `<h3>${esc(reg.name || "Candidate place")}</h3>
       <p class="badge-line"><span class="tag" style="background:${st.colour}">${st.heading}</span></p>`;
-    more += `<div class="newness ${v.tone}"><b>Is it new? ${v.label}.</b> ${v.text}</div>
+    more += `<div class="newness ${v.tone}"><b>Is it new? ${v.label}.</b> ${esc(reg.note || v.text)}</div>
       <p class="note">${fmtLatLon(lat, lng)} · #${point.rank} for ${tn} · area about ${Math.round(point.area_km2).toLocaleString("en-US")} km² ·
         ${Math.round(point.nearest_known_km)} km from the nearest place scientists already use ·
         stays in the top list in ${Math.round(point.robustness * 100)}% of tests with changed weights.</p>`;
