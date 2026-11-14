@@ -22,41 +22,48 @@
   <aside id="panel">
     <header>
       <div class="title-row">
-        <div>
-          <h1>Analog Atlas</h1>
-          <p class="kicker">Earth ↔ Mars · Moon</p>
-        </div>
+        <h1>Analog Atlas</h1>
         <button id="tour-btn" type="button" title="A 50-second guided tour">
           <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M5 3.5v9l7-4.5z"/></svg> Tour</button>
       </div>
-      <p class="tagline">Find the places on Earth most like Mars or the Moon.</p>
+      <p class="tagline">We compared <b id="scope-cells">344,354</b> places on Earth with six landing sites on Mars and the Moon, using NASA satellite data.</p>
     </header>
 
     <section class="main">
-      <p class="sec-label"><span>01</span> Target</p>
-      <select id="target" aria-label="Mars or Moon site"></select>
+      <h2 class="sec-title">Search Earth for places like…</h2>
+      <div id="sites" class="sites" role="radiogroup" aria-label="Mars or Moon site"></div>
       <p id="target-blurb" class="blurb"></p>
-      <p class="key"><span class="ramp-mini"></span> similar &nbsp; <span class="dot new"></span> new find &nbsp; <span class="dot under"></span> little studied</p>
+    </section>
+
+    <section id="top-finds" class="top-finds" hidden>
+      <h2 class="sec-title">Top finds for <span id="top-finds-site"></span></h2>
+      <ol id="top-finds-list"></ol>
+    </section>
+
+    <section id="place" hidden aria-live="polite">
+      <div class="sec-row">
+        <h2 class="sec-title" id="place-label">Result</h2>
+        <button id="place-close" type="button" class="icon-btn" aria-label="Close result">
+          <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M4 4l8 8M12 4l-8 8"/></svg></button>
+      </div>
+      <div id="place-body"></div>
     </section>
 
     <section class="ask">
-      <p class="sec-label"><span>02</span> Your place</p>
+      <h2 class="sec-title"><label for="ask-input">How Mars-like is your place?</label></h2>
       <form id="ask-form" class="ask-row" autocomplete="off">
-        <input id="ask-input" list="ask-list" placeholder="How Mars-like is… e.g. Qatar, Cairo" aria-label="Country or city">
+        <input id="ask-input" list="ask-list" placeholder="Country or city, e.g. Qatar" aria-describedby="ask-error">
         <datalist id="ask-list"></datalist>
-        <button type="submit" aria-label="Show">→</button>
+        <button type="submit" aria-label="Show">
+          <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h9M8.5 4.5L12 8l-3.5 3.5"/></svg></button>
       </form>
+      <p id="ask-error" class="ask-error" role="alert" hidden></p>
       <p class="ask-quick"><button type="button" class="chip-btn" data-ask="Qatar">Qatar</button>
         <button type="button" class="chip-btn" data-ask="Egypt">Egypt</button>
         <button type="button" class="chip-btn" data-ask="Saudi Arabia">Saudi Arabia</button></p>
     </section>
 
-    <section id="place" hidden>
-      <p class="sec-label"><span>03</span> <span id="place-label">Place</span></p>
-      <div id="place-body"></div>
-    </section>
-
-    <p id="hint" class="hint">Click a green point or any land.</p>
+    <p id="hint" class="hint">Click a find or any land to see how it compares.</p>
 
     <details id="site-more" class="fold">
       <summary id="site-more-title">About this site</summary>
@@ -81,7 +88,6 @@
       <label class="check" title="Antarctica, inner Greenland and ice caps. On by default for Mars sites, which have no ice on the surface."><input id="hide-ice" type="checkbox">
         Hide ice sheets</label>
       <label class="check"><input id="day-night" type="checkbox" checked> Day and night</label>
-      <div class="legend"><span>less</span><div class="ramp"></div><span>more similar</span></div>
       <p class="opt-title">What matters most?</p>
       <p class="note">0 = ignore, 2 = count double.</p>
       <div id="sliders"></div>
@@ -90,11 +96,38 @@
 
     <footer>
       <p id="status" class="note credit"></p>
-      <p class="note credit">Imagery: NASA Blue Marble and Black Marble. Data: NASA MODIS, GPM IMERG, USGS GMTED2010, MGS MOLA/TES, LRO LOLA/Diviner, Mars Climate Database.</p>
+      <p class="note credit">Imagery: NASA Blue Marble and Black Marble; Milky Way: ESO/S. Brunier (CC BY 4.0). Data: NASA MODIS, GPM IMERG, USGS GMTED2010, MGS MOLA/TES, LRO LOLA/Diviner, Mars Climate Database.</p>
     </footer>
   </aside>
 
+  <div id="map-key" class="map-key">
+    <p class="mk-title">Glows where Earth is like <span id="map-key-site">…</span></p>
+    <div class="ramp" aria-hidden="true"></div>
+    <p class="mk-scale"><span>Top 20% of land <b id="map-key-lo">–</b></span><span>Top 1% <b id="map-key-hi">–</b>+</span></p>
+    <ul class="mk-dots">
+      <li><span class="dot new"></span>New find</li>
+      <li><span class="dot under"></span>Little studied</li>
+      <li><span class="dot confirm"></span>Known area</li>
+    </ul>
+    <details id="mk-help" class="mk-help">
+      <summary>What does the glow mean?</summary>
+      <div id="mk-help-body"></div>
+    </details>
+  </div>
+
   <div id="hud" class="hud" aria-hidden="true"></div>
+
+  <div id="welcome" class="welcome" hidden role="dialog" aria-modal="false" aria-labelledby="welcome-title">
+    <div class="welcome-card">
+      <h2 id="welcome-title">Where on Earth is most like Mars?</h2>
+      <p>Pick a Mars or Moon landing site and Earth glows where it matches: landscape, temperature, rock, dust and more. Green dots are places no one has studied as an analog yet.</p>
+      <div class="welcome-btns">
+        <button id="welcome-tour" type="button" class="btn-primary">
+          <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M5 3.5v9l7-4.5z"/></svg> Watch the 50-second tour</button>
+        <button id="welcome-explore" type="button">Explore myself</button>
+      </div>
+    </div>
+  </div>
 
   <div id="tour" hidden role="dialog" aria-label="Guided tour">
     <div class="tour-card">
@@ -104,10 +137,10 @@
       <div class="tour-foot">
         <div id="tour-dots" class="tour-dots"></div>
         <div class="tour-btns">
-          <button id="tour-back" type="button" title="Back">◀</button>
-          <button id="tour-play" type="button" title="Pause">⏸</button>
+          <button id="tour-back" type="button" title="Back" aria-label="Previous step">◀</button>
+          <button id="tour-play" type="button" title="Pause" aria-label="Pause">⏸</button>
           <button id="tour-next" type="button">Next ▶</button>
-          <button id="tour-exit" type="button" title="Close tour (Esc)">✕</button>
+          <button id="tour-exit" type="button" title="Close tour (Esc)" aria-label="Close tour">✕</button>
         </div>
       </div>
     </div>

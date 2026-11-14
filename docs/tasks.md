@@ -65,9 +65,9 @@ Hours 1–3
 - [x] **Checkpoint 0 (hour 3):** the page is live and shows A's two real features
 
 Hours 3–7
-- [ ] Target picker (done), Earth / Mars / Moon switch (next)
+- [ ] Target picker: six site cards in Mars / Moon rows (done 2026-11-14); Earth / Mars / Moon globe switch (not started, optional)
 - [x] Click-to-fly with per-dimension bars and "directional" badges (badge text: "beyond Earth")
-- [ ] Fingerprint chart (radar, one axis per dimension from `meta.json`) in the Place panel; ~1–2 h (`plan.md`, "How the app presents a match")
+- [x] Fingerprint chart (radar, one axis per dimension from `meta.json`) in the Place panel (done in `2e6e831`)
 - [x] Mission context in `web/missions.js`: mission card per target (the mission + what teams must test on Earth first) and a "why this place matters" line in the place panel (B)
 - [ ] **Checkpoint 1 (hour 7):** slider drags re-colour the globe smoothly (yes on B's laptop, about 8 ms per move; second-laptop test still to do); if not, fall back to the flat map
 

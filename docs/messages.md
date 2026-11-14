@@ -6,9 +6,53 @@ Claude Code sessions: read this file after every `git pull`, together with `CLAU
 
 ---
 
+## 2026-11-14 · B → A · UI pass for the judges: glow, 8K Earth, site cards, Top finds, welcome
+
+**Open for you: items 5 and 6 only. Everything else is FYI. `web/` only; no `web/data/`, scoring or contract change. Golden check still 306/306; the tour runs start to finish with `?tour=1`.**
+
+This answers your "UI feedback for the judges" entry below: items 1–4 are built. Before building, B ran a design critique of the live app (Impeccable `critique`). It scored 24/40. Its top problem was one your list did not have: the glow itself barely read (beige speckle on tan desert; Moon sites looked unchanged).
+
+1. **The glow is now readable** (display only; `score.js` untouched):
+   - The Earth photo is dimmed and partly desaturated under it, on land only; oceans keep their colour.
+   - New ramp from ember red to white-hot, and the cell edges are smoothed.
+   - **The glow is scaled per site:** it starts at the site's top 20% of land (area-weighted) and is white-hot from its top 1%. This is why Moon sites now visibly light up. Thresholds: Jezero 41/58, Gale 35/55, Utopia 42/57, Arcadia 40/60, Shackleton 37/50, Marius Hills 47/63. Contours stay at the absolute 50/60/70.
+   - The glow now sits on its own shell above the Earth, so the Earth photo can be 8K while a repaint uploads only the glow layer.
+2. **Map key over the globe** (bottom left; at the top on phones): "Glows where Earth is like <site>", the ramp with those two scores, and the dot colours. It replaces the key in the panel, which wrapped badly.
+   - It has a **"What does the glow mean?"** fold-out in plain words: 344,354 places, the 8 properties, score 0–100, what dark red and white-hot mean with the site's own numbers, "compare scores, not colours, between sites", and that Earth can't copy gravity, air or radiation.
+   - Tour step 3 now says "The brighter, the closer: white-hot is the top 1% of Earth's land".
+3. **Higher-quality globe:**
+   - **Earth:** NASA Blue Marble NG with topography and bathymetry, December 2004, scaled down from 21,600 px to 8192 × 4096 (`web/img/earth-8k.jpg`, 3.7 MB). There is a 4K fallback (`earth-4k.jpg`, 1.1 MB) for phones and GPUs without 8K textures.
+   - **City lights:** NASA Black Marble 2016 at 8K (`earth-night-8k.jpg`).
+   - **Ocean shine:** from a water mask made from the same Blue Marble image (`earth-water.jpg`).
+   - **Sphere:** a finer one (240 × 160 segments), plus anisotropic filtering.
+   - **Sky:** ESO/S. Brunier Milky Way panorama (`milky-way.jpg`, CC BY 4.0), wrapped as a real sky sphere that turns with the camera.
+   - Old `earth-blue-marble.jpg` and `night-sky.jpg` removed. A desktop's first visit loads about 9.4 MB of images.
+4. **Your items 1–4:**
+   - Percentile under the big score ("Top 1% of Earth's land").
+   - Six site cards (Mars row, Moon row, mission line, number of new finds) instead of the dropdown, under "Search Earth for places like…". They are a keyboard radio group.
+   - "Top finds for <site>": the top 5 non-known candidates by `rank`, scored live; a click flies there and opens the result.
+   - First-visit welcome ("▶ Watch the 50-second tour" / "Explore myself"), remembered in `localStorage` inside try/catch, never shown with `?tour=1`, closed with Esc.
+   - The tour API's `selectTarget` no longer touches a `<select>`. `initTour` now returns `{ start }`.
+5. **Quick fixes from the critique:**
+   - The tagline now carries the scope ("We compared 344,354 places on Earth with six landing sites…").
+   - Plain section titles replace "01/02/03" and the kicker. The result section is called "Result" and has a ✕.
+   - An unknown place keeps the typed text and shows an inline `role="alert"` message.
+   - Readability: `--faint` raised to 5:1, no text under 11 px (the radar labels were 7.5 px), larger chips, an accent focus ring, and `aria-live` on the result.
+   - Tour: named buttons, focus moves into the tour, and the arrow keys no longer hijack sliders and the search box.
+   - The Impeccable detector now reports 0 findings (before: low contrast, undersized text, stragglers).
+
+**For you (A):**
+
+5. **README licence section (shared file):** please add the sky credit, "Milky Way panorama: ESO/S. Brunier, CC BY 4.0". Also note that the Earth and night images are now NASA Blue Marble NG (Dec 2004, topo + bathy) and Black Marble 2016. The app footer already credits ESO.
+6. **Write-up / slides:** screenshots taken before this commit show the old pale glow. If a figure or slide uses an app screenshot, please retake it. The per-site scaling sentence in item 1 is the one to quote if the write-up describes the map.
+
+Still open on B's side: the second-laptop test (frame rate with the 8K textures and day/night), slides, the Scholar/ADS pass, the Makran–Chagai deep dive, the About/method panel, and the two "TODO" references in `known_analogs.csv`.
+
+---
+
 ## 2026-11-14 · A → B · UI feedback for the judges (Claude's recommendations, your call)
 
-**Open for you: read, then build what you think is worth it. Your decision; nothing here is agreed.** No `web/data/`, scoring or contract change in any item.
+**Done:** items 1–4 built by B (entry above); 5–7 not yet (the inset globe was not started; the projector pass folds into the second-laptop test). ~~Open for you: read, then build what you think is worth it.~~ No `web/data/`, scoring or contract change in any item.
 
 Yosif asked Claude how to make the live app easier to understand and more memorable for the judges. Claude read `web/` (after your UI-upgrade commit `2e6e831`) against the judging rubric and recommended the items below. The radar chart, the arcs to the nearest known site and "How Mars-like is…" are already in your upgrade, so they are not repeated here.
 

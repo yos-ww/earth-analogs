@@ -27,7 +27,7 @@ function steps(api) {
     },
     {
       title: "Earth lights up",
-      text: "The glow shows where Earth is most like Jezero: landscape, temperature, rock type, dust and more. The redder, the closer.",
+      text: "The glow shows where Earth is most like Jezero: landscape, temperature, rock type, dust and more. The brighter, the closer: white-hot is the top 1% of Earth's land.",
       run() { api.flyTo(25, 52, 1.5, 2000); },
     },
     jez && {
@@ -80,6 +80,7 @@ export function initTour(api) {
     $("tour-next").textContent = idx === list.length - 1 ? "Finish" : "Next ▶";
     $("tour-play").textContent = playing ? "⏸" : "▶";
     $("tour-play").title = playing ? "Pause" : "Play";
+    $("tour-play").setAttribute("aria-label", playing ? "Pause" : "Play");
     box.classList.remove("fade"); void box.offsetWidth; box.classList.add("fade"); // re-trigger the text fade
   }
   function schedule() {
@@ -96,6 +97,7 @@ export function initTour(api) {
   function start() {
     list = steps(api);
     box.hidden = false;
+    $("tour-next").focus({ preventScroll: true });
     document.body.classList.add("touring");
     playing = true;
     go(0);
@@ -116,6 +118,7 @@ export function initTour(api) {
   $("tour-play").addEventListener("click", () => { playing = !playing; render(); schedule(); });
   document.addEventListener("keydown", (e) => {
     if (box.hidden) return;
+    if (e.target.closest?.("input, select, textarea")) return; // sliders and the search box keep their keys
     if (e.key === "ArrowRight") go(idx + 1);
     else if (e.key === "ArrowLeft") go(idx - 1);
     else if (e.key === "Escape") stop();
@@ -123,4 +126,5 @@ export function initTour(api) {
   });
 
   if (new URLSearchParams(location.search).get("tour") === "1") setTimeout(start, 800);
+  return { start };
 }

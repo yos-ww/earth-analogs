@@ -7,16 +7,26 @@ import { initTour } from "./tour.js";
 import { COUNTRIES, CITIES } from "./places.js";
 
 const DATA_DIR = "data"; // "mock" to test against web/mock/*
+// Earth: NASA Blue Marble Next Generation (topography and bathymetry, December 2004), 8192 or 4096 px wide.
+// Sky: ESO/S. Brunier Milky Way panorama (CC BY 4.0), wrapped around the scene as a real sky sphere.
 const IMG = {
-  earth: "img/earth-blue-marble.jpg", bump: "img/earth-topology.png",
-  night: "img/earth-night.jpg", sky: "img/night-sky.jpg",
+  earth8k: "img/earth-8k.jpg", earth4k: "img/earth-4k.jpg", bump: "img/earth-topology.png",
+  night: "img/earth-night.jpg", night8k: "img/earth-night-8k.jpg", water: "img/earth-water.jpg",
+  sky: "img/milky-way.jpg",
 };
 
-// Look: weak matches stay transparent (real Earth shows), strong matches glow warm, with thin
-// contour lines at 50 / 60 / 70 so the map reads like a scientific chart rather than a blob.
-const RAMP_STOPS = ["#ffe66d", "#ffb02e", "#ff6a1a", "#e8202a", "#a3004f"]; // low -> high match
-const SHOW_FROM = 0.35;         // scores below this are fully transparent
-const MAX_ALPHA = 205;          // 0-255 opacity of a perfect match
+// Look: the Earth photo is dimmed and desaturated so sand does not compete with the glow; the
+// best-matching land burns from ember red to white-hot, with thin contour lines at 50 / 60 / 70.
+// The glow is scaled to each site: it starts at the site's top SHOW_TOP of Earth's land (by area)
+// and is white-hot from its top FULL_TOP, so Moon sites light up too. Display only: scores and
+// percentiles elsewhere are unchanged, and the map key states the scores behind the scale.
+const RAMP_STOPS = ["#6e1a0e", "#b5320c", "#e8612a", "#ffa14d", "#ffdc9e", "#fff8ea"]; // low -> high match
+const SHOW_TOP = 0.20;          // glow starts at the top 20% of land for this site
+const FULL_TOP = 0.01;          // ... and is white-hot from the top 1%
+const SHOW_FLOOR = 0.2;         // never glow below this score, whatever the site
+const MIN_ALPHA = 70, MAX_ALPHA = 240; // 0-255 opacity at the start and the top of the scale
+const EARTH_DIM = { grey: 0.4, light: 0.85 }; // photo under the glow: share desaturated, brightness kept
+const SKY_INTENSITY = 0.6;      // star sky brightness, so the Milky Way does not compete with Earth
 const CONTOURS = [0.5, 0.6, 0.7];
 // Sun direction in camera space: light from the upper left and slightly in front, so the side you
 // look at is always lit and the night side (with city lights) shows on the right-hand limb.
@@ -88,9 +98,7 @@ const LUT = (() => {
   }
   return lut;
 })();
-document.querySelector(".ramp").style.background =
-  `linear-gradient(90deg, rgba(255,230,109,0) 0%, ${RAMP_STOPS.map((c, i) => `${c} ${20 + (i * 80) / (RAMP_STOPS.length - 1)}%`).join(", ")})`;
-document.querySelector(".ramp-mini").style.background = `linear-gradient(90deg, ${RAMP_STOPS.join(", ")})`;
+for (const el of document.querySelectorAll(".ramp")) el.style.background = `linear-gradient(90deg, ${RAMP_STOPS.join(", ")})`;
 
 // ---------- canvases: score layer (grid size) composited over the photo (2x) ----------
 const scoreCanvas = document.createElement("canvas");
@@ -99,7 +107,7 @@ const texCanvas = document.createElement("canvas");
 const texCtx = texCanvas.getContext("2d");
 const contourCanvas = document.createElement("canvas");
 const contourCtx = contourCanvas.getContext("2d");
-let scoreImage = null, earthPhoto = null;
+let scoreImage = null;
 
 function loadImage(src) {
   return new Promise((ok, fail) => {
@@ -124,8 +132,7 @@ function findIceSheets(grid) {
 const globe = new Globe($("globe"))
   .width($("globe").clientWidth).height($("globe").clientHeight)
   .backgroundColor("#03050a")
-  .backgroundImageUrl(IMG.sky)       // star field
-  .globeImageUrl(IMG.earth)          // the photo first; replaced by the composite once loaded
+  .backgroundImageUrl(IMG.sky)       // star field (wrapped as a sky sphere below)
   .bumpImageUrl(IMG.bump)
   .showAtmosphere(true)
   .atmosphereColor("#7fb2ff")
@@ -151,6 +158,64 @@ const globe = new Globe($("globe"))
   .arcColor(() => ["rgba(61,220,132,0.95)", "rgba(226,104,60,0.95)"])
   .arcStroke(0.45).arcAltitudeAutoScale(0.35)
   .arcDashLength(0.35).arcDashGap(0.12).arcDashInitialGap(1).arcDashAnimateTime(2200);
+
+// Sharpest Earth the GPU and screen can use: 8K on desktop GPUs that allow it, 4K otherwise.
+const renderer = globe.renderer();
+const HI_RES = renderer.capabilities.maxTextureSize >= 8192 && Math.min(screen.width, screen.height) >= 700;
+const EARTH_URL = HI_RES ? IMG.earth8k : IMG.earth4k;
+const NIGHT_URL = HI_RES ? IMG.night8k : IMG.night;
+const GLOW_SCALE = HI_RES ? 3 : TEX_SCALE;   // glow texture: 4320 x 2160 on desktop
+globe.globeImageUrl(EARTH_URL);
+renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+
+// Oceans reflect the sun: a water mask made from the same Blue Marble image drives the shine.
+function setupOceanShine(mat) {
+  loadImage(IMG.water).then((im) => {
+    const t = mat.map.clone();
+    t.source = new mat.map.source.constructor(im);
+    t.colorSpace = "";                     // a mask, not a colour image
+    t.needsUpdate = true;
+    mat.specularMap = t;
+    mat.specular.setRGB(0.32, 0.36, 0.42);
+    mat.shininess = 22;
+    mat.needsUpdate = true;
+  }).catch(() => {});                      // optional effect
+}
+
+// A rounder Earth: the default sphere has 75 segments, which shows as corners on the outline
+// when zoomed in. Swap in a finer sphere of the same radius.
+function smoothSphere(mat) {
+  let earth = null;
+  globe.scene().traverse((o) => { if (!earth && o.material === mat) earth = o; });
+  const g = earth?.geometry, p = g?.parameters;
+  if (!p || !p.radius) return;
+  earth.geometry = new g.constructor(p.radius, 240, 160, p.phiStart, p.phiLength, p.thetaStart, p.thetaLength);
+  g.dispose();
+}
+
+// Once three.js has loaded the textures: crisp filtering at grazing angles, and the star panorama
+// mapped onto a sphere around the scene (so the sky turns with the camera like real space).
+let earthReady = false, skyReady = false;
+function finishTextures() {
+  const map = globe.globeMaterial().map, sky = globe.scene().background;
+  if (!earthReady && map && map.image) {
+    earthReady = true;
+    map.anisotropy = renderer.capabilities.getMaxAnisotropy();
+    map.needsUpdate = true;
+    smoothSphere(globe.globeMaterial());
+    setupGlobeShader(map);
+    setupOceanShine(globe.globeMaterial());
+    if (state.shown) paintScores(state.shown);   // overlay waits for the globe mesh
+  }
+  if (!skyReady && sky && sky.isTexture && sky.image) {
+    skyReady = true;
+    sky.mapping = 303;                 // THREE.EquirectangularReflectionMapping
+    sky.needsUpdate = true;
+    globe.scene().backgroundIntensity = SKY_INTENSITY;
+  }
+  if (!earthReady || !skyReady) requestAnimationFrame(finishTextures);
+}
+requestAnimationFrame(finishTextures); // after this module has finished evaluating
 
 const controls = globe.controls();
 controls.autoRotate = true;
@@ -214,6 +279,50 @@ function updateLayers() {
 }
 
 // ---------- painting ----------
+// Where the glow starts and where it is white-hot for the scores on screen: area-weighted quantiles
+// over the land being shown (one histogram pass, ~2 ms), never below SHOW_FLOOR.
+function displayRange(values) {
+  const BINS = 1000, hist = new Float64Array(BINS), w = state.cellWeight;
+  let total = 0;
+  for (let i = 0; i < values.length; i++) {
+    const s = values[i];
+    if (Number.isNaN(s) || (state.hideIce && state.iceSheet[i])) continue;
+    hist[Math.min(BINS - 1, Math.max(0, Math.floor(s * BINS)))] += w[i];
+    total += w[i];
+  }
+  const quantile = (q) => {
+    let acc = 0;
+    for (let b = 0; b < BINS; b++) { acc += hist[b]; if (acc >= q * total) return (b + 0.5) / BINS; }
+    return 1;
+  };
+  const lo = Math.max(SHOW_FLOOR, quantile(1 - SHOW_TOP));
+  return { lo, hi: Math.max(lo + 0.02, quantile(1 - FULL_TOP)) };
+}
+function updateMapKey(lo, hi) {
+  if (!state.target) return;
+  $("map-key-site").textContent = shortName(state.target);
+  $("map-key-lo").textContent = Math.round(lo * 100);
+  $("map-key-hi").textContent = Math.round(hi * 100);
+  // Plain-words explanation of the glow, with this site's own numbers (rebuilt only when they change).
+  const t = state.target, tn = esc(shortName(t)), body = t.body === "moon" ? "the Moon" : "Mars";
+  const L = Math.round(lo * 100), H = Math.round(hi * 100), key = `${t.id}|${L}|${H}`;
+  const box = $("mk-help-body");
+  if (box.dataset.key === key) return;
+  box.dataset.key = key;
+  box.innerHTML = `
+    <p>We split Earth's land into <b>${state.grid.n.toLocaleString("en-US")} places</b>, each about 28 km across, and compared
+      every one with ${tn} on ${body} using NASA satellite data: landscape shape, temperature, plants, rainfall, ground
+      brightness, ice and snow, dust in the air and rock type.</p>
+    <p>Each place gets a <b>similarity score from 0 to 100</b>. 100 would be a perfect twin on all of them.</p>
+    <ul>
+      <li><b>No glow:</b> not in the top 20% of land for ${tn}.</li>
+      <li><b>Dark red:</b> among the 20% of land most like ${tn} (score ${L} or more).</li>
+      <li><b>White-hot:</b> the top 1% (score ${H} or more): the best places on Earth to practise for ${tn}.</li>
+    </ul>
+    <p>The scale is set for each site, so compare <b>scores</b>, not colours, between sites. No place on Earth can copy
+      gravity, air or radiation: see “About ${tn}”. Click any land for its score, or change what counts in “Map options”.</p>`;
+}
+
 let raster = null;       // displayed score per grid pixel (NaN = not shown), for the contours
 let contourImage = null; // contour lines at grid resolution, drawn 2x with smoothing
 function paintScores(values) {
@@ -222,16 +331,20 @@ function paintScores(values) {
   const ncols = grid.meta.grid.ncols, nrows = grid.meta.grid.nrows;
   px.fill(0);
   raster.fill(NaN);
+  const { lo, hi } = displayRange(values);
   for (let i = 0; i < grid.n; i++) {
     const s = values[i];
-    if (Number.isNaN(s) || s <= SHOW_FROM) continue;          // weak match: real Earth shows
+    if (Number.isNaN(s)) continue;
     if (state.hideIce && state.iceSheet[i]) continue;         // ice sheet hidden for this target
-    const v = (Math.min(s, 1) - SHOW_FROM) / (1 - SHOW_FROM);
-    const cell = grid.cells[i], p = cell * 4, k = Math.round(v * 255) * 3;
-    px[p] = LUT[k]; px[p + 1] = LUT[k + 1]; px[p + 2] = LUT[k + 2];
-    px[p + 3] = Math.round(MAX_ALPHA * Math.pow(v, 0.8));
+    const cell = grid.cells[i];
     raster[cell] = s;
+    if (s < lo) continue;                                     // weaker match: the (dimmed) Earth shows
+    const v = Math.min(1, (s - lo) / (hi - lo));
+    const p = cell * 4, k = Math.round(v * 255) * 3;
+    px[p] = LUT[k]; px[p + 1] = LUT[k + 1]; px[p + 2] = LUT[k + 2];
+    px[p + 3] = Math.round(MIN_ALPHA + (MAX_ALPHA - MIN_ALPHA) * Math.pow(v, 0.7));
   }
+  updateMapKey(lo, hi);
   scoreCtx.putImageData(scoreImage, 0, 0);
 
   // Contours: a pixel is on a line where its band (below 50 / 50-60 / 60-70 / 70+) differs from
@@ -252,46 +365,98 @@ function paintScores(values) {
   }
   contourCtx.putImageData(contourImage, 0, 0);
 
-  texCtx.drawImage(earthPhoto, 0, 0, texCanvas.width, texCanvas.height);
+  // The glow lives on its own transparent texture on a shell just above the Earth photo, so the
+  // photo can be 8K while a repaint only uploads the small score layer.
+  const W = texCanvas.width, H = texCanvas.height;
+  texCtx.clearRect(0, 0, W, H);
   texCtx.imageSmoothingEnabled = true;
   texCtx.imageSmoothingQuality = "high";
-  texCtx.drawImage(scoreCanvas, 0, 0, texCanvas.width, texCanvas.height);
-  texCtx.drawImage(contourCanvas, 0, 0, texCanvas.width, texCanvas.height);
-  const map = globe.globeMaterial().map;
-  if (map) { map.image = texCanvas; map.needsUpdate = true; setupDayNight(map); }
-  else requestAnimationFrame(() => paintScores(values)); // photo texture not created yet
+  texCtx.filter = `blur(${1.1 * GLOW_SCALE}px)`;   // soften the 0.25° cell edges into a field (ignored where unsupported)
+  texCtx.drawImage(scoreCanvas, 0, 0, W, H);
+  texCtx.filter = "none";
+  texCtx.drawImage(contourCanvas, 0, 0, W, H);
+  const tex = ensureOverlay();
+  if (tex) tex.needsUpdate = true;
 }
 
-// Day and night: extend the globe's own material with a few lines of GPU code. The night side is
-// dimmed and shows NASA's Black Marble city lights. The sun is fixed relative to the camera, so the
-// side you look at is always lit (no per-frame work in JavaScript).
-let nightPhoto = null, dayNightShader = null, dayNightReady = false;
-function setupDayNight(map) {
-  if (dayNightReady || !nightPhoto) return;
-  dayNightReady = true;
-  const nightTex = map.clone();                              // same Texture class, no separate three.js needed
-  nightTex.source = new map.source.constructor(nightPhoto);  // its own image (clone shares the source)
-  nightTex.needsUpdate = true;
+// GPU code shared by the Earth and the glow shell. The sun is fixed relative to the camera, so the
+// side you look at is always lit and the night side shows on the limb (no per-frame JavaScript).
+const DAY_MIX_GLSL = `float sunDot = dot(normalize(vNormal), normalize(sunView));
+        float dayMix = mix(1.0, smoothstep(-0.20, 0.25, sunDot), dayNight);`;
+const shared = { sunView: { value: SUN_VIEW }, dayNight: { value: 1 } };
+
+// Earth: the photo is dimmed and partly desaturated so tan deserts do not read as a weak glow, and
+// the night side shows NASA's Black Marble city lights.
+let nightPhoto = null, nightTex = null, globeShader = null;
+function setupGlobeShader(map) {
+  shared.dayNight.value = $("day-night").checked ? 1 : 0;
+  nightTex = { value: map };                                   // city lights replace this once loaded
   const mat = globe.globeMaterial();
   mat.onBeforeCompile = (shader) => {
-    shader.uniforms.nightMap = { value: nightTex };
-    shader.uniforms.sunView = { value: SUN_VIEW };
-    shader.uniforms.dayNight = { value: $("day-night").checked ? 1 : 0 };
+    Object.assign(shader.uniforms, shared, { nightMap: nightTex,
+      dimGrey: { value: EARTH_DIM.grey }, dimLight: { value: EARTH_DIM.light } });
     shader.fragmentShader = shader.fragmentShader
-      .replace("#include <common>", "#include <common>\nuniform sampler2D nightMap;\nuniform vec3 sunView;\nuniform float dayNight;")
+      .replace("#include <common>", `#include <common>
+        uniform sampler2D nightMap; uniform vec3 sunView; uniform float dayNight, dimGrey, dimLight, nightPhotoOn;`)
       .replace("#include <dithering_fragment>", `#include <dithering_fragment>
-        float sunDot = dot(normalize(vNormal), normalize(sunView));
-        float dayMix = mix(1.0, smoothstep(-0.20, 0.25, sunDot), dayNight);
-        vec3 lights = texture2D(nightMap, vMapUv).rgb;
+        float lum = dot(gl_FragColor.rgb, vec3(0.299, 0.587, 0.114));
+        vec3 photo = gl_FragColor.rgb;
+        float ocean = clamp((photo.b - photo.r) * 5.0, 0.0, 1.0);   // blue-dominant pixels keep their colour
+        gl_FragColor.rgb = mix(mix(photo, vec3(lum), dimGrey) * dimLight, photo, ocean);
+        ${DAY_MIX_GLSL}
+        vec3 lights = nightPhotoOn > 0.5 ? texture2D(nightMap, vMapUv).rgb : vec3(0.0);
         vec3 nightCol = gl_FragColor.rgb * 0.40 + lights * vec3(1.0, 0.82, 0.55) * 1.15;
-        gl_FragColor.rgb = mix(nightCol, gl_FragColor.rgb, dayMix);`);
-    dayNightShader = shader;
+        gl_FragColor.rgb = mix(nightCol, gl_FragColor.rgb, dayMix);`)
+    shader.uniforms.nightPhotoOn = nightOn;
+    globeShader = shader;
   };
   mat.needsUpdate = true;
+  attachNight();
 }
-$("day-night").addEventListener("change", (e) => {
-  if (dayNightShader) dayNightShader.uniforms.dayNight.value = e.target.checked ? 1 : 0;
-});
+const nightOn = { value: 0 };
+function attachNight() {
+  const map = globe.globeMaterial().map;
+  if (!nightPhoto || !map || !nightTex) return;
+  const t = map.clone();                                    // same Texture class, no separate three.js needed
+  t.source = new map.source.constructor(nightPhoto);        // its own image (a clone shares the source)
+  t.needsUpdate = true;
+  nightTex.value = t;
+  nightOn.value = 1;
+}
+
+// The glow shell: a second sphere just above the Earth, built from the globe's own three.js classes.
+// Black diffuse + emissive map = the glow shines by itself; alpha comes from the texture.
+let overlay = null;
+function ensureOverlay() {
+  if (overlay) return overlay.material.map;
+  if (!earthReady) return null;
+  const mat = globe.globeMaterial();
+  let earth = null;
+  globe.scene().traverse((o) => { if (!earth && o.material === mat) earth = o; });
+  if (!earth) return null;
+  const tex = mat.map.clone();
+  tex.source = new mat.map.source.constructor(texCanvas);
+  tex.anisotropy = renderer.capabilities.getMaxAnisotropy();
+  tex.needsUpdate = true;
+  const glowMat = new mat.constructor({ map: tex, emissiveMap: tex, transparent: true, depthWrite: false, shininess: 0 });
+  glowMat.color.setRGB(0, 0, 0);
+  glowMat.emissive.setRGB(1, 1, 1);
+  glowMat.onBeforeCompile = (shader) => {
+    Object.assign(shader.uniforms, shared);
+    shader.fragmentShader = shader.fragmentShader
+      .replace("#include <common>", "#include <common>\nuniform vec3 sunView; uniform float dayNight;")
+      .replace("#include <dithering_fragment>", `#include <dithering_fragment>
+        ${DAY_MIX_GLSL}
+        gl_FragColor.rgb *= mix(0.45, 1.0, dayMix);`);
+  };
+  overlay = new earth.constructor(earth.geometry, glowMat);
+  overlay.scale.setScalar(1.002);
+  overlay.renderOrder = 1;
+  overlay.raycast = () => {};       // clicks go to the Earth underneath
+  earth.add(overlay);
+  return tex;
+}
+$("day-night").addEventListener("change", (e) => { shared.dayNight.value = e.target.checked ? 1 : 0; });
 
 function startFade(from, to) {
   if (!from) { state.shown = to; paintScores(to); return; }
@@ -322,6 +487,7 @@ function rescore({ fade = false } = {}) {
     if (fade) startFade(previous, state.overall);
     else { state.fade = null; state.shown = state.overall; paintScores(state.overall); }
     refreshPanel();
+    renderTopFinds();
   });
 }
 
@@ -348,6 +514,11 @@ function buildSliders() {
 function selectTarget(id) {
   const t = state.targets.find((x) => x.id === id);
   state.target = t;
+  for (const b of document.querySelectorAll(".site-card")) {
+    const on = b.dataset.id === id;
+    b.setAttribute("aria-checked", on ? "true" : "false");
+    b.tabIndex = on ? 0 : -1;
+  }
   state.weights = state.grid.meta.dimensions.map((d) => t.weights?.[d] ?? 1);
   state.dims = dimensionScores(state.grid, t);
   state.hideIce = t.body === "mars";
@@ -604,8 +775,7 @@ function showPlace(lat, lng, { quiet = false, point = null } = {}) {
   const t = state.target, i = cellIndex(state.grid, lat, lng), tn = esc(shortName(t));
   const reg = regionOf(lat, lng);
   let simple = "", more = "";
-  $("place-label").textContent = point?.kind === "candidate" ? point.style.heading
-    : point?.kind === "analog" ? "Already used" : point?.kind === "ask" ? "Your place" : "Place";
+  $("place-label").textContent = "Result";
 
   // --- name and one badge ---
   if (point?.kind === "ask") {
@@ -644,8 +814,10 @@ function showPlace(lat, lng, { quiet = false, point = null } = {}) {
     let bad = scored.filter((x) => x.s < 0.4).reverse();
     if (!bad.length && scored.length) bad = [scored[scored.length - 1]]; // always name the weakest one
 
+    const topShare = Math.max(1, Math.round((1 - pct) * 100));
     simple += `<div class="place-top"><div class="score-big"><strong>${Math.round(s * 100)}<small>/100</small></strong>
-      <span>similar to ${tn}</span></div><div>${fingerprintSVG(i)}<p class="fp-note">dashed ring = ${tn}</p></div></div>`;
+      <span>similar to ${tn}</span>
+      <em class="pct">${pct >= 0.5 ? `Top ${topShare}% of Earth's land` : `More similar than ${Math.round(pct * 100)}% of land`}</em></div><div>${fingerprintSVG(i)}<p class="fp-note">dashed ring = ${tn}</p></div></div>`;
     const uses = good.filter((x) => USE[x.d]).slice(0, 2).map((x) => USE[x.d]);
     if (s >= 0.5 && uses.length) simple += `<p class="line good">${ICON.good}<span><b>Good for practising</b> ${andList(uses)}</span></p>`;
     else if (s < 0.5) simple += `<p class="line muted">Too different from ${tn} to be a useful practice site.</p>`;
@@ -738,7 +910,16 @@ function askPlace(query, { fly = true } = {}) {
   const body = state.target.body === "moon" ? "Moon" : "Mars";
   const name = Object.keys(COUNTRIES).find((k) => k.toLowerCase() === q) || Object.keys(CITIES).find((k) => k.toLowerCase() === q)
     || Object.keys(COUNTRIES).find((k) => k.toLowerCase().startsWith(q)) || Object.keys(CITIES).find((k) => k.toLowerCase().startsWith(q));
-  if (!name) { $("ask-input").value = ""; $("ask-input").placeholder = "Not in our list. Try a country or big city"; return; }
+  const err = $("ask-error");
+  if (!name) {
+    const hints = [...Object.keys(COUNTRIES), ...Object.keys(CITIES)].filter((k) => q && k.toLowerCase().includes(q.slice(0, 3))).slice(0, 3);
+    err.textContent = `"${query.trim()}" is not in our list of countries and big cities.${hints.length ? ` Try ${hints.join(", ")}.` : " Try Qatar, Cairo or Chile."}`;
+    err.hidden = false;
+    $("ask-input").setAttribute("aria-invalid", "true");
+    return;
+  }
+  err.hidden = true;
+  $("ask-input").removeAttribute("aria-invalid");
   $("ask-input").value = name;
   const tn = shortName(state.target);
   if (COUNTRIES[name]) {
@@ -774,6 +955,102 @@ function setupAsk() {
   document.querySelectorAll("[data-ask]").forEach((b) => b.addEventListener("click", () => askPlace(b.dataset.ask)));
 }
 
+// ---------- site cards, top finds, welcome ----------
+const SITE_LINE = {
+  jezero: "Perseverance · 2021", gale: "Curiosity · 2012", utopia: "Zhurong · 2021",
+  arcadia: "First crews?", shackleton: "Artemis south pole", marius_hills: "Lava tubes",
+};
+function buildSites(meta) {
+  const box = $("sites");
+  box.innerHTML = "";
+  for (const body of ["mars", "moon"]) {
+    const row = document.createElement("div");
+    row.className = "site-row";
+    row.innerHTML = `<p class="site-body">${body === "mars" ? "Mars" : "Moon"}</p>`;
+    const grid = document.createElement("div");
+    grid.className = "site-grid";
+    for (const t of state.targets.filter((x) => x.body === body)) {
+      const ok = targetCoverage(meta, t).have >= MIN_DIMENSIONS;
+      const finds = state.candidates.filter((c) => c.target_id === t.id && c.verdict === "none").length;
+      const b = document.createElement("button");
+      b.type = "button";
+      b.className = `site-card ${body}`;
+      b.dataset.id = t.id;
+      b.setAttribute("role", "radio");
+      b.setAttribute("aria-checked", "false");
+      b.disabled = !ok;
+      b.innerHTML = `<span class="site-name">${esc(shortName(t))}</span>
+        <span class="site-line">${esc(SITE_LINE[t.id] || "")}</span>
+        <span class="site-finds">${ok ? (finds ? `<i class="dot new"></i>${finds} new find${finds === 1 ? "" : "s"}` : "no new finds") : "values pending"}</span>`;
+      b.addEventListener("click", () => { if (state.target?.id !== t.id) selectTarget(t.id); });
+      grid.appendChild(b);
+    }
+    row.appendChild(grid);
+    box.appendChild(row);
+  }
+  // arrow keys move between the six cards, as in any radio group
+  box.addEventListener("keydown", (e) => {
+    const keys = { ArrowRight: 1, ArrowDown: 1, ArrowLeft: -1, ArrowUp: -1 };
+    if (!(e.key in keys)) return;
+    const cards = [...box.querySelectorAll(".site-card:not(:disabled)")];
+    const k = cards.indexOf(document.activeElement);
+    if (k < 0) return;
+    e.preventDefault();
+    const next = cards[(k + keys[e.key] + cards.length) % cards.length];
+    next.focus();
+    next.click();
+  });
+}
+
+// The five best finds for the chosen site (known areas left out), scored live with the sliders.
+function renderTopFinds() {
+  const t = state.target;
+  if (!t || !state.overall) return;
+  const list = targetCandidates().filter((c) => c.verdict !== "known").sort((a, b) => a.rank - b.rank).slice(0, 5);
+  $("top-finds").hidden = !list.length;
+  $("top-finds-site").textContent = shortName(t);
+  $("top-finds-list").innerHTML = list.map((c, k) => {
+    const i = cellIndex(state.grid, c.lat, c.lng), s = i >= 0 ? state.overall[i] : NaN;
+    const dot = c.verdict === "none" ? "new" : c.verdict === "under" ? "under" : "unchecked";
+    return `<li><button type="button" class="find-row" data-k="${k}">
+      <span class="dot ${dot}"></span>
+      <span class="find-name">${esc(c.title)}<small>${esc(VERDICT_TEXT[c.verdict].label)}${list.filter((x) => x.title === c.title).length > 1 ? ` · ${fmtLatLon(c.lat, c.lng)}` : ""}</small></span>
+      <b>${Number.isNaN(s) ? "–" : Math.round(s * 100)}</b></button></li>`;
+  }).join("");
+  $("top-finds-list").querySelectorAll(".find-row").forEach((b) => b.addEventListener("click", () => {
+    const c = list[+b.dataset.k];
+    holdRotation();
+    flyTo(c.lat, c.lng, 1.1);
+    showPlace(c.lat, c.lng, { point: c });
+  }));
+}
+
+function closePlace() {
+  state.clicked = null; state.arc = null;
+  $("place").hidden = true; $("hint").hidden = false;
+  updateLayers();
+}
+
+// First visit: one sentence and two choices. Never in tour mode; remembered per browser.
+function setupWelcome(tour) {
+  const KEY = "analog-atlas-welcomed";
+  let seen = false;
+  try { seen = localStorage.getItem(KEY) === "1"; } catch { /* storage blocked: show it */ }
+  if (seen || new URLSearchParams(location.search).get("tour") === "1") return;
+  const box = $("welcome");
+  const close = () => {
+    box.hidden = true;
+    document.body.classList.remove("welcoming");
+    try { localStorage.setItem(KEY, "1"); } catch { /* fine */ }
+  };
+  box.hidden = false;
+  document.body.classList.add("welcoming");
+  $("welcome-tour").focus({ preventScroll: true });
+  $("welcome-tour").addEventListener("click", () => { close(); tour.start(); });
+  $("welcome-explore").addEventListener("click", () => { close(); $("sites").querySelector('[aria-checked="true"]')?.focus(); });
+  document.addEventListener("keydown", (e) => { if (e.key === "Escape" && !box.hidden) close(); });
+}
+
 // ---------- load ----------
 async function fetchOk(path, kind) {
   const r = await fetch(`${DATA_DIR}/${path}`);
@@ -787,7 +1064,7 @@ async function main() {
     fetchOk("known_analogs.geojson", "json").catch(() => ({ features: [] })),
     fetchOk("candidates.geojson", "json").catch(() => ({ features: [] })),
     fetchOk("validation.json", "json").catch(() => null), // optional: "Does it work?" stays hidden without it
-    loadImage(IMG.earth),
+    loadImage(EARTH_URL),
   ]);
   state.validation = validation;
   state.grid = decodeGrid(meta, cellsBuf, featBuf);
@@ -798,15 +1075,14 @@ async function main() {
     const row = Math.floor(state.grid.cells[i] / meta.grid.ncols);
     state.cellWeight[i] = Math.cos(((90 - (row + 0.5) * meta.grid.res_deg) * Math.PI) / 180);
   }
-  earthPhoto = photo;
-  loadImage(IMG.night).then((im) => { nightPhoto = im; const m = globe.globeMaterial().map; if (m) setupDayNight(m); })
+  loadImage(NIGHT_URL).then((im) => { nightPhoto = im; attachNight(); })
     .catch(() => { $("day-night").closest("label").hidden = true; }); // optional effect
   scoreCanvas.width = meta.grid.ncols; scoreCanvas.height = meta.grid.nrows;
   scoreImage = scoreCtx.createImageData(scoreCanvas.width, scoreCanvas.height);
   contourCanvas.width = meta.grid.ncols; contourCanvas.height = meta.grid.nrows;
   contourImage = contourCtx.createImageData(contourCanvas.width, contourCanvas.height);
   raster = new Float32Array(meta.grid.ncols * meta.grid.nrows);
-  texCanvas.width = meta.grid.ncols * TEX_SCALE; texCanvas.height = meta.grid.nrows * TEX_SCALE;
+  texCanvas.width = meta.grid.ncols * GLOW_SCALE; texCanvas.height = meta.grid.nrows * GLOW_SCALE;
 
   state.analogs = analogs.features.map((f) => {
     const p = f.properties, bodies = p.body.map((b) => (b === "moon" ? "the Moon" : "Mars")).join(" and ");
@@ -828,36 +1104,25 @@ async function main() {
     };
   });
 
-  const sel = $("target");
-  for (const body of ["mars", "moon"]) {
-    const group = document.createElement("optgroup");
-    group.label = body === "mars" ? "Mars" : "Moon";
-    for (const t of state.targets.filter((x) => x.body === body)) {
-      const ok = targetCoverage(meta, t).have >= MIN_DIMENSIONS;
-      group.appendChild(new Option(ok ? t.name : `${t.name} (values pending)`, t.id));
-    }
-    sel.appendChild(group);
-  }
-  sel.addEventListener("change", () => selectTarget(sel.value));
+  buildSites(meta);
   const first = state.targets.find((t) => targetCoverage(meta, t).have >= MIN_DIMENSIONS) || state.targets[0];
-  sel.value = first.id;
   selectTarget(first.id);
-  status(`${meta.n_cells.toLocaleString("en-US")} places on Earth compared, each about 28 km across.`);
+  $("scope-cells").textContent = meta.n_cells.toLocaleString("en-US");
+  status("Each place is a land cell about 28 km across.");
+  $("place-close").addEventListener("click", closePlace);
   $("loader").classList.add("done");
 
   setupHud();
   setupAsk();
 
   // A small "remote control" for the guided tour (web/tour.js): it can only steer the app, not change data.
-  initTour({
-    selectTarget(id) { $("target").value = id; selectTarget(id); },
+  const tour = initTour({
+    selectTarget(id) { selectTarget(id); },
     flyTo(lat, lng, altitude = 1.6, ms = 1800) { flyTo(lat, lng, altitude, ms); clearTimeout(resumeTimer); },
     rotate(on) { clearTimeout(resumeTimer); controls.autoRotate = on; },
     candidate: (targetId, rank) => state.candidates.find((c) => c.target_id === targetId && c.rank === rank),
     showCandidate(c) { if (c) showPlace(c.lat, c.lng, { point: c, quiet: false }); },
-    closePlace() {
-      state.clicked = null; state.arc = null; $("place").hidden = true; $("hint").hidden = false; updateLayers();
-    },
+    closePlace,
     openFold(id, open = true) {
       const el = $(id);
       if (!el) return;
@@ -872,6 +1137,7 @@ async function main() {
     distanceKm,
     shortName,
   });
+  setupWelcome(tour);
 }
 
 main().catch((e) => {
