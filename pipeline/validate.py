@@ -24,7 +24,7 @@ from .common import NCOLS, NROWS, ROOT, WEB_DATA, cell_weights
 from .score import cell_index, load_grid, score_target
 
 BARREN_NDVI = 0.15
-N_PERM = 2000
+N_PERM = 20000
 SEARCH_RADIUS = 3  # cells (0.75 deg) to look for the nearest land cell around a site
 TAG_TO_DIM = {"mineralogy": "geology"}
 

@@ -122,22 +122,22 @@ The known analog sites (`data/known_analogs.csv`, 37 published sites) are the te
 - **Own body only.** A site is scored only against targets of the body it is an analog for (Mars sites against the four Mars targets, Moon sites against the two Moon targets). In the per-target rows of the table a site's score is its score for that one target. In the per-body rows it is the best over the body's targets, and the random baselines also take the best over the same set, so taking the best does not inflate the comparison.
 - **Baseline: random barren land.** Cells with maximum NDVI below 0.15 (36,189 cells), the "just pick a desert" strategy.
 - **Which sites count.** Sites tagged with at least one scored dimension (`mineralogy` counts as geology) are tested. Sites tagged only biology, operations or subsurface (Lava Beds, Mauna Loa HI-SEAS, Pavilion Lake) are not visible to the score and are reported separately.
-- **Significance.** p is the share of 2,000 random barren sets of the same size (cells drawn with probability proportional to area) whose median percentile is at least the observed one.
+- **Significance.** p is the share of 20,000 random barren sets of the same size (cells drawn with probability proportional to area) whose median percentile is at least the observed one. It is a Monte Carlo estimate with an error of about ±0.003.
 
 ### Results
 
 | | Sites | Known sites (median percentile) | Random barren land | p |
 |---|---|---|---|---|
-| **Mars**, best of 4 targets | 26 | **0.89** | 0.76 | **0.021** |
-| **Moon**, best of 2 targets | 12 | **0.70** | 0.57 | 0.205 |
+| **Mars**, best of 4 targets | 26 | **0.89** | 0.76 | **0.024** |
+| **Moon**, best of 2 targets | 12 | **0.70** | 0.57 | 0.210 |
 | Jezero alone | 26 | 0.87 | 0.56 | 0.002 |
-| Arcadia alone | 26 | 0.89 | 0.79 | 0.050 |
+| Arcadia alone | 26 | 0.89 | 0.79 | 0.063 |
 | Gale alone | 26 | 0.86 | 0.77 | 0.097 |
-| Utopia alone | 26 | 0.87 | 0.79 | 0.082 |
-| Marius Hills alone | 12 | 0.73 | 0.60 | 0.200 |
-| Shackleton alone | 12 | 0.67 | 0.57 | 0.191 |
+| Utopia alone | 26 | 0.87 | 0.79 | 0.080 |
+| Marius Hills alone | 12 | 0.73 | 0.60 | 0.199 |
+| Shackleton alone | 12 | 0.67 | 0.57 | 0.194 |
 
-Reading: **known Mars analogs rank clearly above random barren land** (the median known site is better than 89% of Earth's land, against 76% for the typical barren cell; p = 0.02). For Jezero the evidence is strong, for Arcadia borderline, and for Gale and Utopia on their own it is not significant. For the Moon the sites are in the right direction but there are only 12 and the difference could be chance. Counting every site of the body, including those the score cannot see, gives similar figures (for example Jezero 0.86 with 29 sites).
+Reading: **known Mars analogs rank above random barren land** (the median known site is better than 89% of Earth's land, against 76% for the typical barren cell; p ≈ 0.02 to 0.03). For Jezero on its own the evidence is strong (p = 0.002). For Arcadia, Gale and Utopia on their own the difference is in the same direction but not significant (p between 0.06 and 0.10). For the Moon the sites are in the right direction but there are only 12 and the difference could be chance. Counting every site of the body, including those the score cannot see, gives similar figures (for example Jezero 0.86 with 29 sites).
 
 ### What the dimensions show
 
@@ -159,10 +159,31 @@ Median percentile of the dimension score, for sites tagged with that dimension a
 
 ### How far to trust this
 
-- **The evidence is modest.** One p-value of 0.02 for Mars, with 26 sites. Several sites are not independent (11 of the 37 are in the USA, four are in the Atacama region, and there are pairs in Hawaii and Iceland), and the p-values are not corrected for testing several targets and dimensions.
+- **The evidence is modest and not robust to every choice.** p ≈ 0.02 to 0.03 for Mars with 26 sites; the sensitivity table below shows it ranges from 0.002 to 0.09 under reasonable changes. Several sites are not independent (11 of the 37 are in the USA, four are in the Atacama region, and there are pairs in Hawaii and Iceland), and the p-values are not corrected for testing several targets and dimensions.
 - **The site list was compiled by us** from published analog sites, before any scoring, and the tags (which dimension a site is known for) are our reading of the literature.
 - **The Moon test is weak.** The Moon's analog sites are mostly Apollo-training sites chosen for crater shape or logistics (Ries, Sudbury, Lonar, Cinder Lake), many on vegetated or inhabited land. An environment score cannot be expected to rank them high.
 - **Early versions looked better and were wrong.** With five features and no target values for albedo or snow, the score rewarded ice sheets (percentile among barren land: McMurdo Dry Valleys 1.00, Holuhraun 0.99) and the tagged known sites scored a median of 0.75. Completing the features made the result more modest and more honest (McMurdo 0.42, Holuhraun 0.56, same measure).
+
+### Sensitivity of the Mars result
+
+`python -m pipeline.sensitivity` re-runs the Mars test with one choice changed at a time. It reports sensitivity; the design numbers above are not replaced by any variant. Known sites' median percentile vs random barren land's, and p:
+
+| Change | Known vs barren | p |
+|---|---|---|
+| None (design) | 0.89 vs 0.76 | 0.03 |
+| Barren = NDVI < 0.10 / 0.20 / 0.30 (design 0.15) | 0.89 vs 0.77 / 0.80 / 0.82 | 0.03 / 0.06 / 0.09 |
+| Leave out any one site (26 runs) | 0.89 to 0.90 vs 0.76 | at most 0.04 |
+| Leave out the 4 Atacama sites | 0.87 vs 0.76 | 0.08 |
+| Leave out the 4 USA sites that are visible to the score | 0.89 vs 0.76 | 0.05 |
+| Leave out the 4 polar sites | 0.90 vs 0.76 | 0.02 |
+| Drop terrain (weight 0) | 0.86 vs 0.80 | 0.09 |
+| Drop albedo | 0.85 vs 0.81 | 0.09 |
+| Drop ice / geology / dust / aridity | 0.84 to 0.95 | 0.02 to 0.05 |
+| Drop temperature | 0.90 vs 0.71 | 0.004 |
+| Drop vegetation | 0.76 vs 0.35 | 0.002 |
+| All σ × 0.7 / × 1.4 | 0.88 / 0.89 vs 0.76 / 0.74 | 0.07 / 0.01 |
+
+The direction (known sites above barren land) holds in every variant. Whether p crosses 0.05 depends on choices: it passes 0.05 when the barren baseline is loosened to include semi-arid land, when the Atacama sites are removed, when all σ are narrowed, or when terrain or albedo is dropped, which are the two dimensions carrying most of the separation. It does not depend on any single site. Dropping vegetation makes the result much stronger because barren land matches the vegetation target (no plants) by construction, so comparing against barren land is a conservative test in that respect. For the Moon the result cannot be interpreted: with 6 of the 12 sites in the USA, removing them gives 0.42 vs 0.57 (p = 0.83), and the sign reverses when albedo or geology is dropped.
 
 ## Results: new candidates (A)
 
@@ -226,6 +247,7 @@ python -m pipeline.targets             # terrain and basalt emissivity for the t
 python -m pipeline.export              # web/data/* and tests/golden_scores.json
 python -m pipeline.score --validate    # web/data/validation.json
 python -m pipeline.candidates          # web/data/candidates.geojson
+python -m pipeline.sensitivity         # how the validation changes under other choices
 python -m pipeline.spike               # early science check, prints to the terminal
 ```
 

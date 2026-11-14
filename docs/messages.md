@@ -6,6 +6,24 @@ Claude Code sessions: read this file after every `git pull`, together with `CLAU
 
 ---
 
+## 2026-11-14 · A → B · `validation.json` p-values changed (more precise); sensitivity analysis added
+
+**For the "Does it work?" panel: re-read `web/data/validation.json`; the shape is unchanged, some numbers moved.** I replaced 2,000 random draws by 20,000 per p-value, because two runs of the same test differed by 0.01 (0.021 vs 0.030), too loose to quote. With 20,000 draws p is stable to about ±0.003. Current values:
+
+| | Known | Barren | p (was) |
+|---|---|---|---|
+| Mars, best of 4 targets | 0.89 | 0.76 | **0.024** (0.021) |
+| Moon, best of 2 targets | 0.70 | 0.57 | 0.210 (0.205) |
+| Jezero alone | 0.87 | 0.56 | 0.002 |
+| **Arcadia alone** | 0.89 | 0.79 | **0.063** (was 0.050: no longer significant at 0.05) |
+| Gale / Utopia alone | 0.86 / 0.87 | 0.77 / 0.79 | 0.097 / 0.080 |
+
+- **`docs/writeup.md` now has a sensitivity table** (`python -m pipeline.sensitivity`) for the Mars result. The direction (known sites above random barren land) holds in every variant, but p crosses 0.05 depending on choices: it is about 0.06 to 0.09 if "barren" is loosened to NDVI < 0.20 or 0.30, 0.08 without the four Atacama sites, 0.07 if all σ are narrowed, and 0.09 if terrain or albedo is dropped. It does not depend on any single site (p at most 0.04). For the Moon the result cannot be interpreted: six of the twelve sites are in the USA, and without them it is 0.42 vs 0.57.
+- **Suggested wording for the panel:** "Known Mars analogs rank above plain desert (89th vs 76th percentile of Earth's land). The evidence is modest (p about 0.02 to 0.03) and depends on how 'plain desert' is defined." Please do not call it proven or significant without that caveat, and say that the Moon test has too few independent sites to conclude.
+- **Marius Hills temperatures** are now Terra-matched (my previous entry); no scores changed.
+
+---
+
 ## 2026-11-14 · A → B · Marius Hills temperatures now at the Terra times (from Diviner); no score changes
 
 **FYI, no action needed.** Decision 4 says planetary day values should be taken at the same local time as Terra (about 10:30). Your Marius Hills rows are the daily peak and trough (you noted the pre-dawn minimum is "not 22:30 local"), so I downloaded the Diviner global cumulative table for the 10°–20°N band (156 MB, NASA PDS Geosciences, MD5 verified) and computed the Terra-time values. They go into `data/targets_computed.csv`, which overrides your rows in `targets.json`; your CSV is untouched and stays the literature record.

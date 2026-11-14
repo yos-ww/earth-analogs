@@ -1,13 +1,13 @@
 {
   "barren_ndvi_below": 0.15,
-  "n_permutations": 2000,
+  "n_permutations": 20000,
   "targets": {
     "jezero": {
       "n_sites": 26,
       "known_percentile_median": 0.869,
       "random_land_median": 0.5,
       "random_barren_median": 0.557,
-      "p_vs_barren": 0.002,
+      "p_vs_barren": 0.0015,
       "sites": {
         "Atacama Yungay": 0.97,
         "McMurdo Dry Valleys (Wright Valley)": 0.696,
@@ -41,7 +41,7 @@
         "known_percentile_median": 0.856,
         "random_land_median": 0.5,
         "random_barren_median": 0.557,
-        "p_vs_barren": 0.002,
+        "p_vs_barren": 0.0019,
         "sites": {
           "Atacama Yungay": 0.97,
           "McMurdo Dry Valleys (Wright Valley)": 0.696,
@@ -135,7 +135,7 @@
       "known_percentile_median": 0.862,
       "random_land_median": 0.5,
       "random_barren_median": 0.767,
-      "p_vs_barren": 0.0965,
+      "p_vs_barren": 0.0973,
       "sites": {
         "Atacama Yungay": 0.986,
         "McMurdo Dry Valleys (Wright Valley)": 0.897,
@@ -169,7 +169,7 @@
         "known_percentile_median": 0.857,
         "random_land_median": 0.5,
         "random_barren_median": 0.767,
-        "p_vs_barren": 0.1005,
+        "p_vs_barren": 0.1038,
         "sites": {
           "Atacama Yungay": 0.986,
           "McMurdo Dry Valleys (Wright Valley)": 0.897,
@@ -265,7 +265,7 @@
       "known_percentile_median": 0.873,
       "random_land_median": 0.5,
       "random_barren_median": 0.794,
-      "p_vs_barren": 0.082,
+      "p_vs_barren": 0.0795,
       "sites": {
         "Atacama Yungay": 0.974,
         "McMurdo Dry Valleys (Wright Valley)": 0.293,
@@ -299,7 +299,7 @@
         "known_percentile_median": 0.809,
         "random_land_median": 0.5,
         "random_barren_median": 0.794,
-        "p_vs_barren": 0.419,
+        "p_vs_barren": 0.4097,
         "sites": {
           "Atacama Yungay": 0.974,
           "McMurdo Dry Valleys (Wright Valley)": 0.293,
@@ -393,7 +393,7 @@
       "known_percentile_median": 0.889,
       "random_land_median": 0.5,
       "random_barren_median": 0.791,
-      "p_vs_barren": 0.05,
+      "p_vs_barren": 0.0628,
       "sites": {
         "Atacama Yungay": 0.992,
         "McMurdo Dry Valleys (Wright Valley)": 0.687,
@@ -427,7 +427,7 @@
         "known_percentile_median": 0.86,
         "random_land_median": 0.5,
         "random_barren_median": 0.791,
-        "p_vs_barren": 0.1335,
+        "p_vs_barren": 0.1497,
         "sites": {
           "Atacama Yungay": 0.992,
           "McMurdo Dry Valleys (Wright Valley)": 0.687,
@@ -521,7 +521,7 @@
       "known_percentile_median": 0.67,
       "random_land_median": 0.5,
       "random_barren_median": 0.571,
-      "p_vs_barren": 0.1905,
+      "p_vs_barren": 0.1936,
       "sites": {
         "Haughton Crater (Devon Island)": 0.118,
         "Mauna Kea": 0.979,
@@ -541,7 +541,7 @@
         "known_percentile_median": 0.593,
         "random_land_median": 0.5,
         "random_barren_median": 0.571,
-        "p_vs_barren": 0.371,
+        "p_vs_barren": 0.372,
         "sites": {
           "Haughton Crater (Devon Island)": 0.118,
           "Mauna Kea": 0.979,
@@ -597,7 +597,7 @@
       "known_percentile_median": 0.727,
       "random_land_median": 0.5,
       "random_barren_median": 0.604,
-      "p_vs_barren": 0.1995,
+      "p_vs_barren": 0.1991,
       "sites": {
         "Haughton Crater (Devon Island)": 0.161,
         "Mauna Kea": 0.729,
@@ -617,7 +617,7 @@
         "known_percentile_median": 0.726,
         "random_land_median": 0.5,
         "random_barren_median": 0.604,
-        "p_vs_barren": 0.2045,
+        "p_vs_barren": 0.2067,
         "sites": {
           "Haughton Crater (Devon Island)": 0.161,
           "Mauna Kea": 0.729,
@@ -686,7 +686,7 @@
       "known_percentile_median": 0.894,
       "random_land_median": 0.5,
       "random_barren_median": 0.76,
-      "p_vs_barren": 0.0205,
+      "p_vs_barren": 0.024,
       "sites": {
         "Atacama Yungay": 0.989,
         "McMurdo Dry Valleys (Wright Valley)": 0.636,
@@ -725,7 +725,7 @@
       "known_percentile_median": 0.704,
       "random_land_median": 0.5,
       "random_barren_median": 0.571,
-      "p_vs_barren": 0.205,
+      "p_vs_barren": 0.2098,
       "sites": {
         "Haughton Crater (Devon Island)": 0.142,
         "Mauna Kea": 0.831,

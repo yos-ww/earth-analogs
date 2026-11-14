@@ -158,7 +158,7 @@ Written by `pipeline/validate.py` (`python -m pipeline.score --validate`). The a
 
 ```json
 {
-  "barren_ndvi_below": 0.15, "n_permutations": 2000,
+  "barren_ndvi_below": 0.15, "n_permutations": 20000,
   "targets": {
     "jezero": {
       "n_sites": 26,

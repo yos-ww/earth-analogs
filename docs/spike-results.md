@@ -29,16 +29,16 @@ Percentiles are area-weighted positions among all scored land; a random land cel
 
 | | Known sites | Random barren land | p |
 |---|---|---|---|
-| **Mars**, best of 4 targets (26 sites) | 0.89 | 0.76 | 0.021 |
-| **Moon**, best of 2 targets (12 sites) | 0.70 | 0.57 | 0.205 |
+| **Mars**, best of 4 targets (26 sites) | **0.89** | 0.76 | **0.024** |
+| **Moon**, best of 2 targets (12 sites) | **0.70** | 0.57 | 0.210 |
 | Jezero alone | 0.87 | 0.56 | 0.002 |
-| Arcadia alone | 0.89 | 0.79 | 0.050 |
+| Arcadia alone | 0.89 | 0.79 | 0.063 |
 | Gale alone | 0.86 | 0.77 | 0.097 |
-| Utopia alone | 0.87 | 0.79 | 0.082 |
-| Marius Hills alone | 0.73 | 0.60 | 0.200 |
-| Shackleton alone | 0.67 | 0.57 | 0.191 |
+| Utopia alone | 0.87 | 0.79 | 0.080 |
+| Marius Hills alone | 0.73 | 0.60 | 0.199 |
+| Shackleton alone | 0.67 | 0.57 | 0.194 |
 
-Reading: the evidence for Mars is real but modest (clear for Jezero, borderline for Arcadia, not significant for Gale and Utopia alone). For the Moon the sites are in the right direction but there are only 12, so it is not significant. The p-values assume the sites are independent (several are not: 11 of the 37 are in the USA and four are in the Atacama region) and are not corrected for testing several targets.
+Reading: the evidence for Mars is real but modest (p ≈ 0.02 to 0.03; strong for Jezero alone, in the same direction but not significant for Arcadia, Gale and Utopia alone). For the Moon the sites are in the right direction but there are only 12, so it is not significant. The p-values assume the sites are independent (several are not: 11 of the 37 are in the USA and four are in the Atacama region), are not corrected for testing several targets, and are Monte Carlo estimates (20,000 draws, error about ±0.003). `docs/writeup.md` has a sensitivity table: across reasonable changes the Mars p ranges from 0.002 to 0.09.
 
 The early check with best-of-body scoring over the three spike targets gives 0.67 (p = 0.041) and, without Antarctica, 0.69 (p = 0.022). It was 0.73–0.75 with five features, when ice sheets were rewarded (McMurdo Dry Valleys 1.00 → 0.42, Holuhraun 0.99 → 0.56). The drop is the score getting honest, not a regression.
 

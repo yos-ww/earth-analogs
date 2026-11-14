@@ -45,4 +45,5 @@ python -m pipeline.candidates               # -> web/data/candidates.geojson
 
 Checks: `python -m pipeline.test_score`, `python -m pipeline.test_terrain`, `python -m pipeline.test_candidates`.
 `python -m pipeline.spike` prints the early science check described in `docs/spike-results.md`.
+`python -m pipeline.sensitivity` re-runs the validation under changed choices (barren threshold, left-out sites, dropped dimensions, σ scale); results are in `docs/writeup.md`.
 Rebuilding all features from the raw data gives bit-identical arrays (checked 2026-11-14).
