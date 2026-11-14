@@ -97,7 +97,42 @@ table.cmp td:first-child { color: var(--muted); }
 section h2 { color: var(--text); font-size: 12px; }
 .blurb { margin: 8px 0 0; font-size: 13px; }
 .dot { display: inline-block; width: 9px; height: 9px; border-radius: 50%; }
-.dot.cand { background: #3ef0ff; box-shadow: 0 0 6px #3ef0ff; }
+.dot.new { background: #39ff88; box-shadow: 0 0 6px #39ff88; }
+.dot.under { background: #ffd23f; box-shadow: 0 0 6px #ffd23f; margin-left: -3px; }
+.dot.confirm { background: #9aa4b8; }
+.legend-note { margin: 2px 0 4px 26px; font-size: 11.5px; color: var(--muted); }
+.legend-note .dot { width: 7px; height: 7px; margin: 0; }
+.tag { color: #111; }
+
+/* mission card and "why this place matters" */
+.mission { margin-top: 10px; font-size: 12.5px; }
+.mission p { margin: 4px 0; }
+.mission ul { margin: 2px 0 0; padding-left: 18px; color: var(--muted); }
+.mission li { margin: 2px 0; }
+.matters { margin: 10px 0; padding: 8px 10px; border-radius: 8px; font-size: 12.5px; line-height: 1.45;
+  background: rgba(57, 255, 136, 0.07); border: 1px solid rgba(57, 255, 136, 0.35); }
+.matters.dim-matters { background: rgba(160, 170, 190, 0.07); border-color: rgba(160, 170, 190, 0.3); color: var(--muted); }
+
+/* "What Earth can never copy" card */
+.limits { margin-top: 10px; padding: 8px 10px; border: 1px solid var(--line); border-radius: 8px; background: rgba(127, 178, 255, 0.05); }
+.limits-title { margin: 0 0 6px; font-size: 11px; text-transform: uppercase; letter-spacing: 0.07em; color: var(--muted); }
+.limits-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+.limits-row div { display: flex; flex-direction: column; font-size: 12px; cursor: help; }
+.limits-row b { font-size: 11px; color: var(--muted); font-weight: 600; }
+.limits-row span { color: var(--text); }
+.limits-row small { color: var(--muted); font-size: 10.5px; }
+
+/* "Does it work?" */
+#trust { padding: 12px 0; border-top: 1px solid var(--line); }
+#trust summary { margin: 0; }
+#trust-body p { font-size: 12.5px; margin: 8px 0; }
+#trust-body h4 { margin: 12px 0 6px; font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); }
+.tbar { display: grid; grid-template-columns: 120px 1fr 28px; align-items: center; gap: 8px; margin: 3px 0; font-size: 12px; }
+.tbar .track { height: 9px; background: #1b2232; border-radius: 4px; overflow: hidden; }
+.tbar.known .fill { height: 100%; background: #ff7a45; }
+.tbar.barren .fill { height: 100%; background: #c9a36b; }
+.tbar.land .fill { height: 100%; background: #5b6478; }
+.tbar b { text-align: right; font-variant-numeric: tabular-nums; }
 .dot.mars { background: #ff7a45; }
 .dot.moon { background: #f2f5fa; margin-left: -3px; }
 .tag.cand { background: #3ef0ff; }

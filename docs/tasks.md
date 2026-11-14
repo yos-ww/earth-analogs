@@ -68,11 +68,11 @@ Hours 3–7
 - [ ] Target picker (done), Earth / Mars / Moon switch (next)
 - [x] Click-to-fly with per-dimension bars and "directional" badges (badge text: "beyond Earth")
 - [ ] Fingerprint chart (radar, one axis per dimension from `meta.json`) in the Place panel; ~1–2 h (`plan.md`, "How the app presents a match")
-- [ ] (partly: one-sentence target descriptions and plain "what is similar / different" text are in `web/app.js`) Mission context in `web/missions.js`: mission card per target, one sentence per dimension, "why this place matters" text in the Place panel; ~1 h
+- [x] Mission context in `web/missions.js`: mission card per target (the mission + what teams must test on Earth first) and a "why this place matters" line in the place panel (B)
 - [ ] **Checkpoint 1 (hour 7):** slider drags re-colour the globe smoothly (yes on B's laptop, about 8 ms per move; second-laptop test still to do); if not, fall back to the flat map
 
 Hours 7–11
-- [ ] Known-analog layer (done), candidate layer with "Is it new?" panel (done), Earth-limits card, About/method panel
+- [ ] Known-analog layer (done), candidate layer split by literature verdict (done), Earth-limits card (done), "Does it work?" panel from `validation.json` (done), About/method panel (still to do)
 
 Hours 14–17
 - [ ] First-pass literature check done (`docs/literature-check.md`, shown in the app); still to do: Scholar/ADS check, then set `novelty`, `name` and `dossier` in `data/candidate_notes.csv` (never in `web/data/`)

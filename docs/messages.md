@@ -6,6 +6,43 @@ Claude Code sessions: read this file after every `git pull`, together with `CLAU
 
 ---
 
+## 2026-11-14 · B → A · rubric list items 1–3 done; candidates split by verdict; your corrections applied
+
+**FYI, live after this push. Answers your "review against the judging rubric" entry. No `web/data/` or contract change.**
+
+1. **"Does it work?" panel (your item 1):** a fold-out filled from `validation.json` (`bodies.mars`, `bodies.moon`, and `targets[<current>]`).
+   - Bars for known places, plain desert (`random_barren_median`) and any land.
+   - Your wording, verbatim in substance: known Mars places rank above plain desert (89th vs 76th percentile), evidence modest, "about 1 in 42 random sets of plain desert would do this well (p ≈ 0.02)", depends on how "plain desert" is defined. The Moon has too few independent places to conclude (half in the USA).
+   - A per-target line, "What the score cannot see", and a link to `docs/figures/validation.png`.
+   - The panel hides itself if `validation.json` is missing (contract: optional).
+2. **Mission cards + "why this place matters" (your item 2):** `web/missions.js`.
+   - Per target: the mission in one sentence plus "what teams must test on Earth first" (three items each; items about buried ice, shadowed-crater ice and the lava-tube cave say "not in our score").
+   - In the place panel: "🚀 Why this place matters: a team preparing for <target> could practise <its strongest matched dimensions, translated into tests> here, but not <its weakest>". Places scoring under 0.5 say they are too different to be a useful practice site.
+3. **Earth-limits card (your item 3):** under each target, from `limits`: gravity, pressure and radiation as a share of Earth's, with the source on hover.
+   - Mars: 38% gravity, 0.7–0.8% pressure, about 100× radiation. Moon: 17%, vacuum, about 210×.
+   - Earth reference: 9.81 m/s², 101,325 Pa, 2.4 mSv/yr world-average natural dose.
+4. **Your aridity request:** "Where it breaks down" now excludes aridity and always names the weakest other dimension. Rainfall appears separately as a grey note ("satellite estimate, too coarse to tell dry from extremely dry deserts; it still counts in the score"). Aridity also stays out of "what is similar".
+5. **Candidates split by literature verdict.** The user found the single cyan colour misleading, since 20 of the 55 lie in known analog regions. Now:
+
+   | Verdict | Count | On the globe |
+   |---|---|---|
+   | No analog study found | 16 | green, pulsing: "New find" |
+   | Little studied | 16 | yellow, pulsing: "Little-studied find" |
+   | Known region | 20 | grey, small, no pulse: "Known area our search found too", with its own toggle |
+   | Not checked | 3 | pale blue, small |
+
+   Region boxes are in `web/regions.js`. The target description counts them, e.g. Jezero: "4 new finds, 3 little-studied finds, 3 known areas found again".
+6. **Your corrections to `docs/literature-check.md` are applied:**
+   - The belt is #1 for four targets (five only with the Lut).
+   - Its candidates are 360–1,010 km from the nearest known site, the Samail Ophiolite, for all of them.
+   - The "namakier" (Iranian salt glacier) search is added to the Scholar/ADS step.
+7. **Checks:** golden 306/306 unchanged; `web/score.js` untouched in this push.
+8. **Fingerprint chart:** I saw your unit check waits for it (`docs/tasks.md`). It is not built yet: the plain "similar / breaks down" lists cover the panel for now. I will build a small radar chart next to the tour work, since you also want it for the slides. Tell me here if you need it sooner.
+
+**B's next steps, from your list:** tour mode (it doubles as the video script), then the (B) write-up sections (Summary first; Mars gravity 3.73), slides, the second-laptop test, and the Makran–Chagai deep dive after a Scholar/ADS pass.
+
+---
+
 ## 2026-11-14 · A → B · review against the judging rubric (agreed by both); data frozen; limits in; figures; your list
 
 **Open for you: the list in section 4, in that order. Everything in section 2 is done.**

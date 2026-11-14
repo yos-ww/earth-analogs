@@ -2,6 +2,7 @@
 // Data formats: docs/contract.md. Scoring: score.js (mirrors pipeline/score.py).
 import { decodeGrid, dimensionScores, overallScores, cellScores, cellIndex, targetCoverage, MIN_DIMENSIONS } from "./score.js";
 import { regionOf, VERDICT_TEXT } from "./regions.js";
+import { MISSIONS, USE } from "./missions.js";
 
 const DATA_DIR = "data"; // "mock" to test against web/mock/*
 const IMG = { earth: "img/earth-blue-marble.jpg", bump: "img/earth-topology.png" };
@@ -14,7 +15,19 @@ const TEX_SCALE = 2;            // texture = 2x the score grid (2880 x 1440), sm
 const FADE_MS = 550;            // cross-fade when the target changes
 const RESUME_ROTATE_MS = 2500;  // auto-rotation resumes this long after the user lets go
 const ICE_SHEET_FROM = 0.9;     // snow_ice fraction from which a cell counts as permanent ice sheet
-const COLOURS = { mars: "#ff7a45", moon: "#f2f5fa", cand: "#3ef0ff", click: "255,179,71" };
+const COLOURS = { mars: "#ff7a45", moon: "#f2f5fa", click: "255,179,71" };
+// Candidates are styled by their literature verdict (web/regions.js), so real discoveries stand out
+// from places where our search only re-found an area scientists already use.
+const CAND_STYLE = {
+  none:      { colour: "#39ff88", rgb: "57,255,136",  radius: 0.55, alt: 0.035, pulse: 0.75, heading: "New find",
+               tag: "new find", group: "finds" },
+  under:     { colour: "#ffd23f", rgb: "255,210,63",  radius: 0.5,  alt: 0.03,  pulse: 0.45, heading: "Little-studied find",
+               tag: "little-studied find", group: "finds" },
+  unchecked: { colour: "#7fb2ff", rgb: "127,178,255", radius: 0.32, alt: 0.015, pulse: 0,    heading: "Candidate (not checked yet)",
+               tag: "candidate, not checked yet", group: "finds" },
+  known:     { colour: "#9aa4b8", rgb: "154,164,184", radius: 0.3,  alt: 0.015, pulse: 0,    heading: "Known area our search found too",
+               tag: "known area", group: "confirms" },
+};
 
 // Everyday words for visitors.
 const DIM_NAME = {
@@ -42,7 +55,7 @@ const fmtLatLon = (lat, lng) =>
 const state = {
   grid: null, targets: [], target: null, dims: null, weights: [],
   overall: null, shown: null, fade: null, clicked: null,
-  analogs: [], candidates: [], showAnalogs: true, showCandidates: true,
+  analogs: [], candidates: [], showAnalogs: true, showCandidates: true, showConfirms: true,
   iceSheet: null, hideIce: false, cellWeight: null,
 };
 
@@ -133,9 +146,12 @@ function targetCandidates() {
   return state.candidates.filter((c) => c.target_id === state.target?.id);
 }
 function updateLayers() {
-  const cands = state.showCandidates ? targetCandidates() : [];
+  const cands = targetCandidates().filter((c) =>
+    (c.style.group === "finds" && state.showCandidates) || (c.style.group === "confirms" && state.showConfirms));
   globe.pointsData([...(state.showAnalogs ? state.analogs : []), ...cands]);
-  const rings = cands.map((c) => ({ lat: c.lat, lng: c.lng, rgb: "62,240,255", strength: 0.55, maxR: 2.2, speed: 1.2, period: 2200 }));
+  const rings = cands.filter((c) => c.style.pulse > 0).map((c) => ({
+    lat: c.lat, lng: c.lng, rgb: c.style.rgb, strength: c.style.pulse, maxR: 2.4, speed: 1.2, period: 2200,
+  }));
   if (state.clicked) rings.push({ lat: state.clicked[0], lng: state.clicked[1], rgb: COLOURS.click, strength: 1, maxR: 3, speed: 2.2, period: 1100 });
   globe.ringsData(rings);
 }
@@ -223,9 +239,18 @@ function selectTarget(id) {
   state.dims = dimensionScores(state.grid, t);
   state.hideIce = t.body === "mars";
   $("hide-ice").checked = state.hideIce;
-  const n = targetCandidates().length;
+  const count = (v) => targetCandidates().filter((c) => c.verdict === v).length;
+  const parts = [[count("none"), "new find"], [count("under"), "little-studied find"], [count("known"), "known area found again"]]
+    .filter(([n]) => n).map(([n, w]) => `${n} ${w}${n === 1 ? "" : "s"}`);
   $("target-blurb").innerHTML = `${esc(TARGET_BLURB[t.id] || "")}` +
-    (n ? ` <span class="sub">${n} new candidate place${n === 1 ? "" : "s"} on Earth.</span>` : "");
+    (parts.length ? ` <span class="sub">On Earth: ${parts.join(", ")}.</span>` : "");
+  const m = MISSIONS[t.id];
+  $("mission").hidden = !m;
+  $("mission").innerHTML = m ? `<p><b>The mission:</b> ${esc(m.mission)}</p>
+    <p class="mission-tests"><b>What teams must test on Earth first:</b></p>
+    <ul>${m.tests.map((x) => `<li>${esc(x)}</li>`).join("")}</ul>` : "";
+  renderLimits(t);
+  renderTrust();
   buildSliders();
   updateLayers();
   rescore({ fade: true });
@@ -243,6 +268,68 @@ $("hide-ice").addEventListener("change", (e) => {
 });
 $("show-analogs").addEventListener("change", (e) => { state.showAnalogs = e.target.checked; updateLayers(); });
 $("show-candidates").addEventListener("change", (e) => { state.showCandidates = e.target.checked; updateLayers(); });
+$("show-confirms").addEventListener("change", (e) => { state.showConfirms = e.target.checked; updateLayers(); });
+
+// ---------- "What Earth can never copy" card (targets.json limits) ----------
+const EARTH = { gravity: 9.81, pressure: 101325, radiation: 2.4 / 365 }; // m/s², Pa, mSv/day (world average natural dose)
+
+function renderLimits(t) {
+  const L = t.limits || {}, box = $("limits");
+  const tip = (x) => esc(x?.source || "");
+  const rows = [];
+  if (L.gravity_ms2) {
+    const g = L.gravity_ms2.value;
+    rows.push(`<div title="${tip(L.gravity_ms2)}"><b>Gravity</b><span>${Math.round((100 * g) / EARTH.gravity)}% of Earth's</span><small>${g} m/s²</small></div>`);
+  }
+  if (L.pressure_pa) {
+    const p = L.pressure_pa.value, pct = (100 * p) / EARTH.pressure;
+    const txt = pct < 0.001 ? "almost none (vacuum)" : `${pct < 1 ? pct.toFixed(1) : Math.round(pct)}% of Earth's`;
+    rows.push(`<div title="${tip(L.pressure_pa)}"><b>Air pressure</b><span>${txt}</span><small>${p < 0.01 ? p.toExponential(0) : Math.round(p)} Pa</small></div>`);
+  }
+  if (L.radiation_msv_day) {
+    const r = L.radiation_msv_day.value;
+    rows.push(`<div title="${tip(L.radiation_msv_day)}"><b>Radiation</b><span>about ${Math.round(r / EARTH.radiation / 10) * 10}× Earth's</span><small>${r} mSv/day</small></div>`);
+  }
+  box.hidden = !rows.length;
+  box.innerHTML = rows.length ? `<p class="limits-title">What Earth can never copy at ${esc(shortName(t))}</p><div class="limits-row">${rows.join("")}</div>` : "";
+}
+
+// ---------- "Does it work?" (validation.json, optional) ----------
+function trustBars(rows) {
+  return rows.map(([name, v, cls]) =>
+    `<div class="tbar ${cls}"><span>${name}</span><div class="track"><div class="fill" style="width:${Math.round(v * 100)}%"></div></div><b>${Math.round(v * 100)}</b></div>`).join("");
+}
+
+function renderTrust() {
+  const v = state.validation;
+  if (!v?.bodies?.mars) { $("trust").hidden = true; return; }
+  const m = v.bodies.mars, moon = v.bodies.moon, t = v.targets?.[state.target?.id];
+  const oneIn = (p) => Math.max(1, Math.round(1 / p));
+  let html = `<p>To test the method, we scored the places scientists <b>already use</b> to prepare for Mars and the Moon,
+    and compared them with random <b>plain desert</b> (bare land without plants). If the method works, the known places should rank higher.</p>
+    <h4>Mars (${m.n_sites} known places)</h4>
+    ${trustBars([["Known Mars places", m.known_percentile_median, "known"], ["Plain desert", m.random_barren_median, "barren"], ["Any land", m.random_land_median, "land"]])}
+    <p class="note">Numbers are percentiles of Earth's land (higher = more Mars-like).</p>
+    <p><b>Result:</b> known Mars places rank above plain desert (${Math.round(m.known_percentile_median * 100)}th vs
+      ${Math.round(m.random_barren_median * 100)}th percentile). The evidence is <b>modest</b>: about 1 in ${oneIn(m.p_vs_barren)} random sets
+      of plain desert would do this well (p ≈ ${m.p_vs_barren.toFixed(2)}), and it depends on how "plain desert" is defined.</p>`;
+  if (moon) {
+    html += `<h4>Moon (${moon.n_sites} known places)</h4>
+      ${trustBars([["Known Moon places", moon.known_percentile_median, "known"], ["Plain desert", moon.random_barren_median, "barren"]])}
+      <p>The Moon test has <b>too few independent places</b> to conclude (half are in the USA), so we make no claim for it.</p>`;
+  }
+  if (t) {
+    html += `<p class="note">For ${esc(shortName(state.target))} alone: known places ${Math.round(t.known_percentile_median * 100)}th vs plain desert
+      ${Math.round(t.random_barren_median * 100)}th percentile (p ≈ ${t.p_vs_barren.toFixed(3)}).</p>`;
+  }
+  html += `<h4>What the score cannot see</h4>
+    <p class="note">Life and biosignatures, caves and lava tubes, ice under the ground, and practical things like access and safety.
+    Places chosen by scientists for those reasons (for example Rio Tinto for its microbes) can score low here, and that is expected.</p>
+    <p class="note"><a href="../docs/figures/validation.png" target="_blank" rel="noopener">See the validation chart</a> ·
+    method and full numbers in the project write-up.</p>`;
+  $("trust-body").innerHTML = html;
+  $("trust").hidden = false;
+}
 
 // ---------- side panel ----------
 function cellValue(i, id) {
@@ -308,6 +395,9 @@ function describe(dim, i) {
   }
 }
 
+// "a", "a and b", "a, b and c"
+const andList = (xs) => (xs.length < 2 ? xs.join("") : `${xs.slice(0, -1).join(", ")} and ${xs[xs.length - 1]}`);
+
 const verdictWord = (s) => (s >= 0.8 ? "very similar" : s >= 0.6 ? "similar" : s >= 0.4 ? "partly similar" : "different");
 
 function areaPercentile(s) {
@@ -367,9 +457,9 @@ function showPlace(lat, lng, { quiet = false, point = null } = {}) {
       <p class="sub">${esc(point.country)} · <span class="tag ${point.bodyKey}">already used for ${point.bodies}</span></p>
       <p>${esc(point.why)}</p><p class="note">Source: ${ref}</p>`;
   } else if (point?.kind === "candidate") {
-    const reg = regionOf(lat, lng), v = VERDICT_TEXT[reg.verdict];
-    html += `<h3>${esc(reg.name || "New candidate place")}</h3>
-      <p class="sub">${fmtLatLon(lat, lng)} · <span class="tag cand">new candidate #${point.rank} for ${esc(shortName(t))}</span></p>
+    const reg = regionOf(lat, lng), v = VERDICT_TEXT[reg.verdict], st = point.style;
+    html += `<h3>${esc(reg.name || "Candidate place")}</h3>
+      <p class="sub">${fmtLatLon(lat, lng)} · <span class="tag" style="background:${st.colour}">${st.tag} · #${point.rank} for ${esc(shortName(t))}</span></p>
       <div class="newness ${v.tone}"><b>Is it new? ${v.label}.</b> ${v.text}</div>
       <p class="note">Area about ${Math.round(point.area_km2).toLocaleString()} km² · ${Math.round(point.nearest_known_km)} km from the nearest place scientists already use ·
         stays in the top list in ${Math.round(point.robustness * 100)}% of tests with changed weights.</p>`;
@@ -389,24 +479,45 @@ function showPlace(lat, lng, { quiet = false, point = null } = {}) {
     if (state.hideIce && state.iceSheet[i]) {
       html += `<p class="note">This is a permanent ice sheet, so it is not coloured for a Mars site: Mars sites have no ice on the surface.</p>`;
     }
+    // Rainfall (aridity) is listed separately: the satellite estimate cannot tell dry from extremely
+    // dry deserts, so it would be "different" almost everywhere (decision in CLAUDE.md, 2026-11-14).
     const scored = state.grid.meta.dimensions.map((d, k) => ({ d, s: state.dims.dimScores[i * state.dims.nd + k] }))
-      .filter((x) => !Number.isNaN(x.s)).sort((a, b) => b.s - a.s);
-    const good = scored.filter((x) => x.s >= 0.6), bad = scored.filter((x) => x.s < 0.4).reverse();
+      .filter((x) => !Number.isNaN(x.s) && x.d !== "aridity").sort((a, b) => b.s - a.s);
+    const good = scored.filter((x) => x.s >= 0.6);
+    let bad = scored.filter((x) => x.s < 0.4).reverse();
+    if (!bad.length && scored.length) bad = [scored[scored.length - 1]]; // always name the weakest one
     if (good.length) html += `<h4>✔ What is similar</h4><ul class="why good">${good.map((x) =>
       `<li><b>${dimName(x.d)}</b> (${verdictWord(x.s)}): ${describe(x.d, i)}</li>`).join("")}</ul>`;
-    if (bad.length) html += `<h4>✖ What is different</h4><ul class="why bad">${bad.map((x) =>
-      `<li><b>${dimName(x.d)}</b>: ${describe(x.d, i)}</li>`).join("")}</ul>`;
+    if (bad.length) html += `<h4>✖ Where it breaks down</h4><ul class="why bad">${bad.map((x) =>
+      `<li><b>${dimName(x.d)}</b> (${verdictWord(x.s)}): ${describe(x.d, i)}</li>`).join("")}</ul>`;
+    // Why this place matters for the mission: its strongest matches say what a team could practise here.
+    const uses = good.filter((x) => USE[x.d]).slice(0, 3).map((x) => USE[x.d]);
+    const weak = bad.filter((x) => USE[x.d]).slice(0, 1).map((x) => USE[x.d]);
+    if (uses.length && s >= 0.5) {
+      html += `<div class="matters"><b>🚀 Why this place matters:</b> a team preparing for ${esc(shortName(t))} could practise
+        ${andList(uses.map((u) => `<b>${u}</b>`))} here` +
+        (weak.length ? `, but not ${weak[0]}.` : ".") + `</div>`;
+    } else if (s < 0.5) {
+      html += `<div class="matters dim-matters">Too different from ${esc(shortName(t))} to be a useful practice site for it.</div>`;
+    }
+    if (!Number.isNaN(state.dims.dimScores[i * state.dims.nd + state.grid.meta.dimensions.indexOf("aridity")])) {
+      html += `<p class="note rain"><b>Rainfall:</b> the rain satellite estimates ${fmtValue("precip", "mm/yr", cellValue(i, "precip"))} here.
+        It is too coarse to tell dry from extremely dry deserts, so we do not list it above (it still counts in the score).</p>`;
+    }
     html += `<p class="note">Earth can never copy Mars or the Moon fully: gravity, the thin or missing air and space radiation are always different.</p>`;
     html += detailsBlock(i);
   }
 
   if (point?.kind !== "candidate") {
     let best = null;
-    for (const c of targetCandidates()) { const d = distanceKm(lat, lng, c.lat, c.lng); if (!best || d < best.d) best = { c, d }; }
-    if (best) html += `<p class="note">Nearest new candidate place for ${esc(shortName(t))}: ${Math.round(best.d)} km away.</p>`;
+    for (const c of targetCandidates().filter((x) => x.style.group === "finds")) {
+      const d = distanceKm(lat, lng, c.lat, c.lng);
+      if (!best || d < best.d) best = { c, d };
+    }
+    if (best) html += `<p class="note">Nearest new or little-studied find for ${esc(shortName(t))}: ${Math.round(best.d)} km away.</p>`;
   }
 
-  $("place-title").textContent = point?.kind === "candidate" ? "New candidate place" : point?.kind === "analog" ? "Place scientists already use" : "Selected place";
+  $("place-title").textContent = point?.kind === "candidate" ? point.style.heading : point?.kind === "analog" ? "Place scientists already use" : "Selected place";
   $("place-body").innerHTML = html;
   const wasHidden = $("place").hidden;
   $("place").hidden = false;
@@ -432,12 +543,14 @@ async function fetchOk(path, kind) {
 }
 
 async function main() {
-  const [meta, cellsBuf, featBuf, targets, analogs, candidates, photo] = await Promise.all([
+  const [meta, cellsBuf, featBuf, targets, analogs, candidates, validation, photo] = await Promise.all([
     fetchOk("meta.json", "json"), fetchOk("cells.bin"), fetchOk("features.bin"), fetchOk("targets.json", "json"),
     fetchOk("known_analogs.geojson", "json").catch(() => ({ features: [] })),
     fetchOk("candidates.geojson", "json").catch(() => ({ features: [] })),
+    fetchOk("validation.json", "json").catch(() => null), // optional: "Does it work?" stays hidden without it
     loadImage(IMG.earth),
   ]);
+  state.validation = validation;
   state.grid = decodeGrid(meta, cellsBuf, featBuf);
   state.iceSheet = findIceSheets(state.grid);
   state.targets = targets.targets;
@@ -463,11 +576,11 @@ async function main() {
   });
   state.candidates = candidates.features.map((f) => {
     const lat = f.geometry.coordinates[1], lng = f.geometry.coordinates[0];
-    const reg = regionOf(lat, lng);
+    const reg = regionOf(lat, lng), style = CAND_STYLE[reg.verdict];
     return {
-      kind: "candidate", lat, lng, ...f.properties,
-      title: reg.name || "New candidate place", subtitle: `New candidate #${f.properties.rank} · ${VERDICT_TEXT[reg.verdict].label}`,
-      colour: COLOURS.cand, radius: 0.5, alt: 0.03,
+      kind: "candidate", lat, lng, ...f.properties, verdict: reg.verdict, style,
+      title: reg.name || "Candidate place", subtitle: `${style.heading} · ${VERDICT_TEXT[reg.verdict].label}`,
+      colour: style.colour, radius: style.radius, alt: style.alt,
     };
   });
 

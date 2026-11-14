@@ -35,7 +35,10 @@ Question for each candidate region in `web/data/candidates.geojson` (55 candidat
 
 ## What this means for the story
 
-- **Strongest "surprise" claim:** the **Makran–Chagai–Hormozgan belt (south-east Iran and south-west Pakistan)**. It is the top region for five of the six targets, it is 800–1500 km from every site in our known list, and this pass found no analog study for Makran, Chagai or the Zagros salt domes. It is the best candidate for the first dossier, after a Scholar/ADS check.
+- **Strongest "surprise" claim:** the **Makran–Chagai–Hormozgan belt (south-east Iran and south-west Pakistan)**.
+  - It holds the #1 candidate of **four** of the six targets (Jezero, Gale, Utopia, Arcadia). It is five of six only if the Lut Desert just north of it is counted (Marius Hills #1).
+  - Its candidates are **360–1,010 km** from the nearest site in our known list, which is the Samail Ophiolite, Oman, for all of them (`nearest_known_km` in `candidates.geojson`; e.g. Arcadia #2 361 km, Jezero #2 397 km, Utopia #1 424 km, Gale #1 570 km). *Corrected 2026-11-14 after A's check; the first version said 800–1500 km.*
+  - This pass found no analog study for Makran, Chagai or the Zagros salt domes. It is the best candidate for the first dossier, after a Scholar/ADS check.
 - **Also promising, with partial literature:**
   - the **Eastern Desert of Egypt**, distinct from the well-known Western Desert;
   - **Damaraland**, flood basalt as a lunar-mare analog for Marius Hills;
@@ -45,7 +48,7 @@ Question for each candidate region in `web/data/candidates.geojson` (55 candidat
 
 ## Next steps
 
-1. Scholar/ADS check for Makran, Chagai, Hormozgan/Zagros salt domes, Egypt's Eastern Desert and Richtersveld (in English, plus Persian/Arabic/Urdu keywords where possible).
+1. Scholar/ADS check for Makran, Chagai, Hormozgan/Zagros salt domes, Egypt's Eastern Desert and Richtersveld (in English, plus Persian/Arabic/Urdu keywords where possible). For the Zagros, search specifically for Iranian salt glaciers ("namakier") compared with Mars (A's suggestion).
 2. Check Eritrea.
 3. After A's data freeze (Checkpoint 2): write `data/candidate_notes.csv` (`id,name,novelty,dossier`) from this table, using A's candidate ids.
 

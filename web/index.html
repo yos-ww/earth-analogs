@@ -25,13 +25,18 @@
       <h2><span class="step">1</span> Pick a place on Mars or the Moon</h2>
       <select id="target" aria-label="Mars or Moon site"></select>
       <p id="target-blurb" class="blurb"></p>
+      <div id="mission" class="mission" hidden></div>
+      <div id="limits" class="limits" hidden></div>
     </section>
 
     <section>
       <h2><span class="step">2</span> See where Earth is similar</h2>
       <div class="legend"><span>less</span><div class="ramp"></div><span>more similar</span></div>
       <label class="check"><input id="show-candidates" type="checkbox" checked>
-        <span class="dot cand"></span> New candidate places <span class="sub">(our finds)</span></label>
+        <span class="dot new"></span><span class="dot under"></span> Our finds</label>
+      <p class="legend-note"><span class="dot new"></span> new: no study found yet &nbsp; <span class="dot under"></span> little studied</p>
+      <label class="check"><input id="show-confirms" type="checkbox" checked>
+        <span class="dot confirm"></span> Known areas our search found too</label>
       <label class="check"><input id="show-analogs" type="checkbox" checked>
         <span class="dot mars"></span><span class="dot moon"></span> Places scientists already use</label>
       <label class="check" title="Antarctica, inner Greenland and ice caps. On by default for Mars sites, which have no ice on the surface."><input id="hide-ice" type="checkbox">
@@ -47,6 +52,11 @@
       <h2><span class="step">3</span> Click a glowing point or anywhere on land</h2>
       <p class="note">You will see how similar it is, what matches and what is different.</p>
     </section>
+
+    <details id="trust" hidden>
+      <summary>Does it work? How far to trust this</summary>
+      <div id="trust-body"></div>
+    </details>
 
     <details id="advanced">
       <summary>Advanced: what matters most?</summary>
