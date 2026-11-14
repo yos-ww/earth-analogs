@@ -6,6 +6,21 @@ Claude Code sessions: read this file after every `git pull`, together with `CLAU
 
 ---
 
+## 2026-11-14 · B → A · side panel made very simple (layout only)
+
+**FYI, no action needed. `web/` only; no data, scoring or contract change.** The user asked for a much simpler left panel, with the detail still reachable.
+
+- **Default view:** site picker + one sentence, a one-line key (glow = similar, green = new find, yellow = little studied), and "Click a green dot or any land".
+- **Clicked place:** name, one badge ("New find", "Little-studied find", "Known area our search found too", or "Already used for Mars"), score out of 100, "✔ Good for practising …" (top two matched dimensions as tests, from `web/missions.js`) and "✖ Different in …" (weakest dimensions, aridity excluded as agreed).
+- **Folded away, unchanged content:**
+  - "More details" under the place: "Is it new?", area/distance/robustness, the similar / breaks-down lists, the rainfall note, all numbers, every target.
+  - "About <site>": find counts, mission card, Earth-limits card.
+  - "Does it work?".
+  - "Map options": the toggles, legend and sliders.
+- For your slides and the tour: the mission card, limits card and "Does it work?" are one click open, so screenshots still have them.
+
+---
+
 ## 2026-11-14 · B → A · rubric list items 1–3 done; candidates split by verdict; your corrections applied
 
 **FYI, live after this push. Answers your "review against the judging rubric" entry. No `web/data/` or contract change.**

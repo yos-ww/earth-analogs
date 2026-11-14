@@ -104,6 +104,33 @@ section h2 { color: var(--text); font-size: 12px; }
 .legend-note .dot { width: 7px; height: 7px; margin: 0; }
 .tag { color: #111; }
 
+/* very simple main view; everything else folds away */
+#panel { width: 300px; }
+header + section { margin-top: 10px; }
+section.main { padding-top: 10px; }
+.tagline { font-size: 13px; margin-top: 4px; }
+.blurb { margin: 8px 0 0; font-size: 12.5px; color: var(--muted); }
+.key { margin: 10px 0 0; font-size: 12px; color: var(--muted); display: flex; align-items: center; gap: 4px; flex-wrap: wrap; }
+.ramp-mini { display: inline-block; width: 34px; height: 8px; border-radius: 3px; }
+.hint { margin: 12px 0; font-size: 13px; color: var(--text); }
+#place { padding-top: 12px; }
+#place-body h3 { font-size: 18px; margin: 0; }
+.badge-line { margin: 4px 0 0 !important; }
+.badge-line .tag { font-size: 11.5px; padding: 1px 8px; }
+.line { margin: 6px 0 !important; font-size: 13px; }
+.line.good b { color: #5ed39a; }
+.line.bad b { color: #ff8a8a; }
+.line.muted { color: var(--muted); }
+details.more-top { margin-top: 8px; }
+details.more-top > summary { font-size: 12.5px; }
+.fold { padding: 10px 0; border-top: 1px solid var(--line); }
+.fold > summary { margin: 0; font-size: 13px; color: var(--text); list-style: none; }
+.fold > summary::before { content: "▸ "; color: var(--accent); }
+.fold[open] > summary::before { content: "▾ "; }
+.fold[open] > summary { margin-bottom: 6px; }
+.opt-title { margin: 12px 0 0; font-size: 12px; color: var(--muted); }
+#options .legend { margin-top: 10px; }
+
 /* mission card and "why this place matters" */
 .mission { margin-top: 10px; font-size: 12.5px; }
 .mission p { margin: 4px 0; }

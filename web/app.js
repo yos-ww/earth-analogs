@@ -71,6 +71,7 @@ const LUT = (() => {
 })();
 document.querySelector(".ramp").style.background =
   `linear-gradient(90deg, rgba(255,230,109,0) 0%, ${RAMP_STOPS.map((c, i) => `${c} ${20 + (i * 80) / (RAMP_STOPS.length - 1)}%`).join(", ")})`;
+document.querySelector(".ramp-mini").style.background = `linear-gradient(90deg, ${RAMP_STOPS.join(", ")})`;
 
 // ---------- canvases: score layer (grid size) composited over the photo (2x) ----------
 const scoreCanvas = document.createElement("canvas");
@@ -242,8 +243,9 @@ function selectTarget(id) {
   const count = (v) => targetCandidates().filter((c) => c.verdict === v).length;
   const parts = [[count("none"), "new find"], [count("under"), "little-studied find"], [count("known"), "known area found again"]]
     .filter(([n]) => n).map(([n, w]) => `${n} ${w}${n === 1 ? "" : "s"}`);
-  $("target-blurb").innerHTML = `${esc(TARGET_BLURB[t.id] || "")}` +
-    (parts.length ? ` <span class="sub">On Earth: ${parts.join(", ")}.</span>` : "");
+  $("target-blurb").textContent = TARGET_BLURB[t.id] || "";
+  $("site-more-title").textContent = `About ${shortName(t)} (${t.body === "moon" ? "Moon" : "Mars"})`;
+  $("site-counts").textContent = parts.length ? `Our search on Earth: ${parts.join(", ")}.` : "";
   const m = MISSIONS[t.id];
   $("mission").hidden = !m;
   $("mission").innerHTML = m ? `<p><b>The mission:</b> ${esc(m.mission)}</p>
@@ -445,67 +447,65 @@ function detailsBlock(i) {
 }
 
 // Fill the panel for a clicked place, known analog or candidate (`point`).
+// Simple view first (name, badge, score, good for, different in); everything else under "More details".
 function showPlace(lat, lng, { quiet = false, point = null } = {}) {
   state.clicked = [lat, lng, point];
   if (!quiet) updateLayers(); // moves the click pulse
-  const t = state.target, i = cellIndex(state.grid, lat, lng);
-  let html = "";
+  const t = state.target, i = cellIndex(state.grid, lat, lng), tn = esc(shortName(t));
+  const reg = regionOf(lat, lng);
+  let simple = "", more = "";
 
+  // --- name and one badge ---
   if (point?.kind === "analog") {
+    simple += `<h3>${esc(point.name)}</h3><p class="badge-line"><span class="tag ${point.bodyKey}">Already used for ${point.bodies}</span></p>`;
     const ref = point.url ? `<a href="${esc(point.url)}" target="_blank" rel="noopener">${esc(point.reference)}</a>` : esc(point.reference);
-    html += `<h3>${esc(point.name)}</h3>
-      <p class="sub">${esc(point.country)} · <span class="tag ${point.bodyKey}">already used for ${point.bodies}</span></p>
-      <p>${esc(point.why)}</p><p class="note">Source: ${ref}</p>`;
+    more += `<p>${esc(point.why)}</p><p class="note">${esc(point.country)} · ${fmtLatLon(lat, lng)} · Source: ${ref}</p>`;
   } else if (point?.kind === "candidate") {
-    const reg = regionOf(lat, lng), v = VERDICT_TEXT[reg.verdict], st = point.style;
-    html += `<h3>${esc(reg.name || "Candidate place")}</h3>
-      <p class="sub">${fmtLatLon(lat, lng)} · <span class="tag" style="background:${st.colour}">${st.tag} · #${point.rank} for ${esc(shortName(t))}</span></p>
-      <div class="newness ${v.tone}"><b>Is it new? ${v.label}.</b> ${v.text}</div>
-      <p class="note">Area about ${Math.round(point.area_km2).toLocaleString()} km² · ${Math.round(point.nearest_known_km)} km from the nearest place scientists already use ·
+    const v = VERDICT_TEXT[reg.verdict], st = point.style;
+    simple += `<h3>${esc(reg.name || "Candidate place")}</h3>
+      <p class="badge-line"><span class="tag" style="background:${st.colour}">${st.heading}</span></p>`;
+    more += `<div class="newness ${v.tone}"><b>Is it new? ${v.label}.</b> ${v.text}</div>
+      <p class="note">${fmtLatLon(lat, lng)} · #${point.rank} for ${tn} · area about ${Math.round(point.area_km2).toLocaleString()} km² ·
+        ${Math.round(point.nearest_known_km)} km from the nearest place scientists already use ·
         stays in the top list in ${Math.round(point.robustness * 100)}% of tests with changed weights.</p>`;
   } else {
-    const reg = regionOf(lat, lng);
-    html += `<h3>${reg.name ? esc(reg.name) : fmtLatLon(lat, lng)}</h3>${reg.name ? `<p class="sub">${fmtLatLon(lat, lng)}</p>` : ""}`;
+    simple += `<h3>${reg.name ? esc(reg.name) : fmtLatLon(lat, lng)}</h3>`;
+    more += `<p class="note">${fmtLatLon(lat, lng)}</p>`;
   }
 
+  // --- score, good for, different in ---
   if (i < 0) {
-    html += `<p class="note">This is sea, or outside our land map, so it has no score.</p>`;
+    simple += `<p class="note">Sea, or outside our land map: no score.</p>`;
   } else if (Number.isNaN(state.overall[i])) {
-    html += `<p class="note">Not enough satellite data here to compare it with ${esc(shortName(t))}.</p>`;
+    simple += `<p class="note">Not enough satellite data here to compare with ${tn}.</p>`;
   } else {
     const s = state.overall[i], pct = areaPercentile(s);
-    html += `<div class="score-big"><strong>${Math.round(s * 100)}<small>/100</small></strong>
-      <span>similar to ${esc(shortName(t))} on ${bodyName(t.body)}<br>more similar than ${Math.round(pct * 100)}% of Earth's land</span></div>`;
-    if (state.hideIce && state.iceSheet[i]) {
-      html += `<p class="note">This is a permanent ice sheet, so it is not coloured for a Mars site: Mars sites have no ice on the surface.</p>`;
-    }
-    // Rainfall (aridity) is listed separately: the satellite estimate cannot tell dry from extremely
+    // Rainfall (aridity) is kept out of the lists: the satellite estimate cannot tell dry from extremely
     // dry deserts, so it would be "different" almost everywhere (decision in CLAUDE.md, 2026-11-14).
     const scored = state.grid.meta.dimensions.map((d, k) => ({ d, s: state.dims.dimScores[i * state.dims.nd + k] }))
       .filter((x) => !Number.isNaN(x.s) && x.d !== "aridity").sort((a, b) => b.s - a.s);
     const good = scored.filter((x) => x.s >= 0.6);
     let bad = scored.filter((x) => x.s < 0.4).reverse();
     if (!bad.length && scored.length) bad = [scored[scored.length - 1]]; // always name the weakest one
-    if (good.length) html += `<h4>✔ What is similar</h4><ul class="why good">${good.map((x) =>
+
+    simple += `<div class="score-big"><strong>${Math.round(s * 100)}<small>/100</small></strong><span>similar to ${tn}</span></div>`;
+    const uses = good.filter((x) => USE[x.d]).slice(0, 2).map((x) => USE[x.d]);
+    if (s >= 0.5 && uses.length) simple += `<p class="line good">✔ <b>Good for practising:</b> ${andList(uses)}</p>`;
+    else if (s < 0.5) simple += `<p class="line muted">Too different from ${tn} to be a useful practice site.</p>`;
+    if (bad.length) simple += `<p class="line bad">✖ <b>Different in:</b> ${andList(bad.slice(0, 2).map((x) => dimName(x.d).toLowerCase()))}</p>`;
+    if (state.hideIce && state.iceSheet[i]) simple += `<p class="note">Ice sheet: not coloured for a Mars site.</p>`;
+
+    more += `<p class="note">More similar to ${tn} than ${Math.round(pct * 100)}% of Earth's land.</p>`;
+    if (good.length) more += `<h4>✔ What is similar</h4><ul class="why good">${good.map((x) =>
       `<li><b>${dimName(x.d)}</b> (${verdictWord(x.s)}): ${describe(x.d, i)}</li>`).join("")}</ul>`;
-    if (bad.length) html += `<h4>✖ Where it breaks down</h4><ul class="why bad">${bad.map((x) =>
+    if (bad.length) more += `<h4>✖ Where it breaks down</h4><ul class="why bad">${bad.map((x) =>
       `<li><b>${dimName(x.d)}</b> (${verdictWord(x.s)}): ${describe(x.d, i)}</li>`).join("")}</ul>`;
-    // Why this place matters for the mission: its strongest matches say what a team could practise here.
-    const uses = good.filter((x) => USE[x.d]).slice(0, 3).map((x) => USE[x.d]);
-    const weak = bad.filter((x) => USE[x.d]).slice(0, 1).map((x) => USE[x.d]);
-    if (uses.length && s >= 0.5) {
-      html += `<div class="matters"><b>🚀 Why this place matters:</b> a team preparing for ${esc(shortName(t))} could practise
-        ${andList(uses.map((u) => `<b>${u}</b>`))} here` +
-        (weak.length ? `, but not ${weak[0]}.` : ".") + `</div>`;
-    } else if (s < 0.5) {
-      html += `<div class="matters dim-matters">Too different from ${esc(shortName(t))} to be a useful practice site for it.</div>`;
-    }
     if (!Number.isNaN(state.dims.dimScores[i * state.dims.nd + state.grid.meta.dimensions.indexOf("aridity")])) {
-      html += `<p class="note rain"><b>Rainfall:</b> the rain satellite estimates ${fmtValue("precip", "mm/yr", cellValue(i, "precip"))} here.
-        It is too coarse to tell dry from extremely dry deserts, so we do not list it above (it still counts in the score).</p>`;
+      more += `<p class="note"><b>Rainfall:</b> the rain satellite estimates ${fmtValue("precip", "mm/yr", cellValue(i, "precip"))} here.
+        It is too coarse to tell dry from extremely dry deserts, so it is not listed above (it still counts in the score).</p>`;
     }
-    html += `<p class="note">Earth can never copy Mars or the Moon fully: gravity, the thin or missing air and space radiation are always different.</p>`;
-    html += detailsBlock(i);
+    more += `<p class="note">Earth can never copy gravity, the thin or missing air and space radiation: see "About ${tn}".</p>`;
+    more += detailsBlock(i);
   }
 
   if (point?.kind !== "candidate") {
@@ -514,11 +514,13 @@ function showPlace(lat, lng, { quiet = false, point = null } = {}) {
       const d = distanceKm(lat, lng, c.lat, c.lng);
       if (!best || d < best.d) best = { c, d };
     }
-    if (best) html += `<p class="note">Nearest new or little-studied find for ${esc(shortName(t))}: ${Math.round(best.d)} km away.</p>`;
+    if (best) more += `<p class="note">Nearest new or little-studied find for ${tn}: ${Math.round(best.d)} km away.</p>`;
   }
 
-  $("place-title").textContent = point?.kind === "candidate" ? point.style.heading : point?.kind === "analog" ? "Place scientists already use" : "Selected place";
-  $("place-body").innerHTML = html;
+  // keep "More details" open if the visitor had opened it
+  const wasOpen = document.querySelector("#place-body details.more-top")?.open;
+  $("place-body").innerHTML = simple +
+    `<details class="more-top"${wasOpen ? " open" : ""}><summary>More details</summary>${more}</details>`;
   const wasHidden = $("place").hidden;
   $("place").hidden = false;
   $("hint").hidden = true;

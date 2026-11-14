@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Analog Atlas</title>
-  <meta name="description" content="Where on Earth is most like the Moon or Mars? Every land cell scored against real landing sites, one dimension at a time.">
+  <meta name="description" content="Find the places on Earth that are most like Mars or the Moon.">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -18,54 +18,53 @@
   <aside id="panel">
     <header>
       <h1>Analog Atlas</h1>
-      <p class="tagline">Before we land on Mars or the Moon, we practise on Earth. This map finds the places on Earth that are most like a real landing site.</p>
+      <p class="tagline">Find the places on Earth most like Mars or the Moon.</p>
     </header>
 
-    <section>
-      <h2><span class="step">1</span> Pick a place on Mars or the Moon</h2>
+    <!-- The simple view: pick a site, read the map, click a place. -->
+    <section class="main">
       <select id="target" aria-label="Mars or Moon site"></select>
       <p id="target-blurb" class="blurb"></p>
-      <div id="mission" class="mission" hidden></div>
-      <div id="limits" class="limits" hidden></div>
+      <p class="key"><span class="ramp-mini"></span> similar &nbsp; <span class="dot new"></span> new find &nbsp; <span class="dot under"></span> little studied</p>
     </section>
 
-    <section>
-      <h2><span class="step">2</span> See where Earth is similar</h2>
-      <div class="legend"><span>less</span><div class="ramp"></div><span>more similar</span></div>
+    <section id="place" hidden>
+      <div id="place-body"></div>
+    </section>
+
+    <p id="hint" class="hint">👆 Click a green dot or any land.</p>
+
+    <!-- Everything else, one click away. -->
+    <details id="site-more" class="fold">
+      <summary id="site-more-title">About this site</summary>
+      <div id="site-counts" class="note"></div>
+      <div id="mission" class="mission" hidden></div>
+      <div id="limits" class="limits" hidden></div>
+    </details>
+
+    <details id="trust" class="fold" hidden>
+      <summary>Does it work?</summary>
+      <div id="trust-body"></div>
+    </details>
+
+    <details id="options" class="fold">
+      <summary>Map options</summary>
       <label class="check"><input id="show-candidates" type="checkbox" checked>
         <span class="dot new"></span><span class="dot under"></span> Our finds</label>
-      <p class="legend-note"><span class="dot new"></span> new: no study found yet &nbsp; <span class="dot under"></span> little studied</p>
       <label class="check"><input id="show-confirms" type="checkbox" checked>
         <span class="dot confirm"></span> Known areas our search found too</label>
       <label class="check"><input id="show-analogs" type="checkbox" checked>
         <span class="dot mars"></span><span class="dot moon"></span> Places scientists already use</label>
       <label class="check" title="Antarctica, inner Greenland and ice caps. On by default for Mars sites, which have no ice on the surface."><input id="hide-ice" type="checkbox">
         Hide ice sheets</label>
-    </section>
-
-    <section id="place" hidden>
-      <h2><span class="step">3</span> <span id="place-title">Selected place</span></h2>
-      <div id="place-body"></div>
-    </section>
-
-    <section id="hint">
-      <h2><span class="step">3</span> Click a glowing point or anywhere on land</h2>
-      <p class="note">You will see how similar it is, what matches and what is different.</p>
-    </section>
-
-    <details id="trust" hidden>
-      <summary>Does it work? How far to trust this</summary>
-      <div id="trust-body"></div>
-    </details>
-
-    <details id="advanced">
-      <summary>Advanced: what matters most?</summary>
-      <p class="note">Each slider sets how much one property counts. 0 = ignore it, 2 = count it double.</p>
+      <div class="legend"><span>less</span><div class="ramp"></div><span>more similar</span></div>
+      <h3 class="opt-title">What matters most?</h3>
+      <p class="note">0 = ignore, 2 = count double.</p>
       <div id="sliders"></div>
-      <button id="reset" type="button">Reset to equal</button>
+      <button id="reset" type="button">Reset</button>
     </details>
 
-    <p id="status" class="note"></p>
+    <p id="status" class="note credit"></p>
     <p class="note credit">Earth imagery: NASA Blue Marble. Data: NASA MODIS, GPM IMERG, USGS GMTED2010, MGS MOLA/TES, LRO LOLA/Diviner, Mars Climate Database.</p>
   </aside>
 
