@@ -33,10 +33,10 @@
           "source_url": "https://www-mars.lmd.jussieu.fr/mcd_python/"
         },
         "emis_b29": {
-          "value": 0.96,
-          "value_kind": "PLACEHOLDER: basalt proxy; to be replaced by MOD11C3 Emis_29 median at an Earth basalt reference site (e.g. Holuhraun) so Earth and target use the same sensor",
-          "status": "literature",
-          "source": "Surface is basaltic/olivine-bearing (Mars 2020 crater floor); value from basalt range in docs/target-values-needed.md"
+          "value": 0.952,
+          "value_kind": "basaltic surface as MODIS band 29 (8.55 um) sees Earth basalt: mean of two barren reference flows",
+          "status": "computed",
+          "source": "Computed by pipeline/targets.py from MOD11C3 Emis_29 median 2021-2023 at Holuhraun 0.955; Black Point lava flow 0.950; target surface is basaltic per B's source note"
         }
       },
       "weights": {
@@ -139,10 +139,10 @@
           "source_url": "https://www-mars.lmd.jussieu.fr/mcd_python/"
         },
         "emis_b29": {
-          "value": 0.96,
-          "value_kind": "PLACEHOLDER: basalt proxy; to be replaced by MOD11C3 Emis_29 median at an Earth basalt reference site (e.g. Holuhraun) so Earth and target use the same sensor",
-          "status": "literature",
-          "source": "Northern-plains surface is basaltic (TES surface types) with a dust mantle; value from basalt range in docs/target-values-needed.md"
+          "value": 0.952,
+          "value_kind": "basaltic surface as MODIS band 29 (8.55 um) sees Earth basalt: mean of two barren reference flows",
+          "status": "computed",
+          "source": "Computed by pipeline/targets.py from MOD11C3 Emis_29 median 2021-2023 at Holuhraun 0.955; Black Point lava flow 0.950; target surface is basaltic per B's source note"
         }
       },
       "weights": {
@@ -218,10 +218,10 @@
           "source_url": "https://doi.org/10.1016/j.icarus.2016.08.012"
         },
         "emis_b29": {
-          "value": 0.96,
-          "value_kind": "PLACEHOLDER: basalt proxy; to be replaced by MOD11C3 Emis_29 median at an Earth basalt reference site (e.g. Holuhraun) so Earth and target use the same sensor",
-          "status": "literature",
-          "source": "Mare basalt plateau (Marius Hills volcanic complex); value from basalt range in docs/target-values-needed.md"
+          "value": 0.952,
+          "value_kind": "basaltic surface as MODIS band 29 (8.55 um) sees Earth basalt: mean of two barren reference flows",
+          "status": "computed",
+          "source": "Computed by pipeline/targets.py from MOD11C3 Emis_29 median 2021-2023 at Holuhraun 0.955; Black Point lava flow 0.950; target surface is basaltic per B's source note"
         }
       },
       "weights": {

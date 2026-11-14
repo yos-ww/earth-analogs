@@ -17,7 +17,7 @@ import csv
 import numpy as np
 from osgeo import gdal, osr
 
-from .common import RAW, ROOT
+from .common import INTERIM, RAW, ROOT
 
 gdal.UseExceptions()
 HALF_M = 13_900.0  # half window: 30 GMTED pixels * 926 m / 2
@@ -61,8 +61,32 @@ def target_roughness(body, lat, lon):
     raise ValueError(f"no grid covers {body} {lat}, {lon}")
 
 
-def main():
+# Barren Earth basalt flows read through the same sensor (MOD11C3 Emis_29): Holuhraun and Black
+# Point (both in data/known_analogs.csv). Used for targets whose surface is basaltic and whose
+# emis_b29 row in B's literature file is still marked as a basalt-proxy placeholder.
+BASALT_REFERENCES = {"Holuhraun": (64.87, -16.83), "Black Point lava flow": (35.68, -111.48)}
+
+
+def basalt_emissivity_rows():
+    emis = np.load(INTERIM / "emis_b29.npy")
+    vals = {n: float(emis[int((90 - la) / 0.25), int((lo + 180) / 0.25)]) for n, (la, lo) in BASALT_REFERENCES.items()}
+    value = round(float(np.mean(list(vals.values()))), 3)
+    detail = "; ".join(f"{n} {v:.3f}" for n, v in vals.items())
     rows = []
+    for r in csv.DictReader(open(ROOT / "data" / "targets_literature.csv", newline="", encoding="utf-8")):
+        if r["feature_id"] == "emis_b29" and "basalt proxy" in r["value_kind"]:
+            rows.append({
+                "target_id": r["target_id"], "feature_id": "emis_b29", "value": f"{value}", "unit": "-",
+                "value_kind": "basaltic surface as MODIS band 29 (8.55 um) sees Earth basalt: mean of two barren reference flows",
+                "source": f"Computed by pipeline/targets.py from MOD11C3 Emis_29 median 2021-2023 at {detail}; "
+                          f"target surface is basaltic per B's source note",
+                "source_url": "", "status": "computed",
+            })
+    return rows
+
+
+def main():
+    rows = basalt_emissivity_rows()
     for t in csv.DictReader(open(ROOT / "data" / "targets.csv", newline="", encoding="utf-8")):
         lat, lon = float(t["lat"]), float(t["lon"])
         value, grid, n, scale, px = target_roughness(t["body"], lat, lon)

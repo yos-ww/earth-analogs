@@ -1,4 +1,7 @@
 target_id,feature_id,value,unit,value_kind,source,source_url,status
+jezero,emis_b29,0.952,-,basaltic surface as MODIS band 29 (8.55 um) sees Earth basalt: mean of two barren reference flows,Computed by pipeline/targets.py from MOD11C3 Emis_29 median 2021-2023 at Holuhraun 0.955; Black Point lava flow 0.950; target surface is basaltic per B's source note,,computed
+arcadia,emis_b29,0.952,-,basaltic surface as MODIS band 29 (8.55 um) sees Earth basalt: mean of two barren reference flows,Computed by pipeline/targets.py from MOD11C3 Emis_29 median 2021-2023 at Holuhraun 0.955; Black Point lava flow 0.950; target surface is basaltic per B's source note,,computed
+marius_hills,emis_b29,0.952,-,basaltic surface as MODIS band 29 (8.55 um) sees Earth basalt: mean of two barren reference flows,Computed by pipeline/targets.py from MOD11C3 Emis_29 median 2021-2023 at Holuhraun 0.955; Black Point lava flow 0.950; target surface is basaltic per B's source note,,computed
 jezero,roughness,280.4,m,std of elevation in a +-13.9 km window (992 px),Computed by pipeline/targets.py from MOLA MEGDR 64 px/deg,,computed
 gale,roughness,831.2,m,std of elevation in a +-13.9 km window (961 px),Computed by pipeline/targets.py from MOLA MEGDR 64 px/deg,,computed
 utopia,roughness,41.1,m,std of elevation in a +-13.9 km window (1054 px),Computed by pipeline/targets.py from MOLA MEGDR 64 px/deg,,computed
