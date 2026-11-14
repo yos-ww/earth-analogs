@@ -1,6 +1,6 @@
 # Analog Atlas: a global search for Earth's analogs of Moon and Mars landing sites
 
-> **Draft, 2026-11-14.** Sections marked **(B)** are Person B's and are placeholders here. Sections marked **(A)** are written from the generated files in `web/data/`; every number can be reproduced with the commands in "Reproduce". Numbers will change if the data or target values change, so re-check them at the data freeze.
+> **Draft, 2026-11-14.** Sections marked **(B)** are Person B's (Summary, problem and idea, Earth's limits, how to use and next steps; deep dive in progress). Sections marked **(A)** are written from the generated files in `web/data/`; every number can be reproduced with the commands in "Reproduce". Numbers will change if the data or target values change, so re-check them at the data freeze.
 
 ## Summary (B)
 
@@ -24,7 +24,18 @@ The atlas is a shortlist for the rest: a way for analog-programme planners, and 
 
 ## The problem and our idea (B)
 
-*To be written by B. One-paragraph version of the idea for reference: instead of picking one place that "looks like Mars", score every land cell on Earth against measured profiles of six Moon and Mars landing sites, one dimension at a time, so the result says what matches and where it breaks down, and test the method against sites that scientists already use as analogs.*
+**Why analogs matter.** A rover, drill or spacesuit that fails on Mars or the Moon cannot be repaired. So missions rehearse on Earth first, in deserts, polar regions, volcanic fields and impact craters that share some of the landing site's conditions. Apollo astronauts trained in Iceland and at Meteor Crater. NASA tested Curiosity's driving on the Mojave dunes. Life-detection instruments are tried in the Atacama.
+
+**The problem.** Analog sites are mostly chosen by eye, by tradition and by access: a place "looks like Mars" and has a research station nearby. The result is a short list of famous sites that are studied again and again. The challenge asks for something different: a systematic, data-driven search of the whole Earth that explains **what makes a place analogous and where the analogy breaks down**, and that looks beyond the well-known sites.
+
+**Our idea.** Start from the planet, not from Earth.
+1. **Describe each Mars and Moon site with numbers.** We take six real sites (three rover landing sites, a human-landing candidate, the Artemis south-pole region and a lava-tube skylight) and describe each one on twelve measurable properties: terrain, temperature, plants, rainfall, ground brightness, ice, dust and rock type. The values come from Mars and Moon missions and models.
+2. **Measure the same properties everywhere on Earth** from NASA satellite data, for 344,354 patches about 28 km across.
+3. **Score every patch, one property at a time.** The answer is never just "similar": it says which properties match and which do not. Where a Mars or Moon value lies beyond anything on Earth (every Mars night is colder than Earth's coldest), we score "as close as Earth gets" and flag it.
+4. **Test the method before trusting it.** If the score is meaningful, places scientists already use should rank higher than random plain desert. We fixed the method before looking at any result and report the test as it came out.
+5. **Look for new places and check them.** Candidate sites far from known analogs are checked against the literature before we call them new.
+
+**What is new.** Comparisons like this are usually made one site and one property at a time. Analog Atlas does it for all of Earth's land at once, for several targets, with every number traceable to a public dataset. It also turns the result into something a mission planner or a student can use in a few clicks: a 3D globe that shows where to go, why, and what will not match.
 
 ---
 
@@ -261,11 +272,66 @@ What the pattern says:
 - Cells where a dimension has no data (ice-sheet interiors have no vegetation, aerosol or winter albedo) have that dimension skipped, not penalised, so they can score higher than they deserve. The candidate list drops ice sheets for the Mars targets; the map shows them.
 - Moon albedo is a global mean; Shackleton's day temperature is an annual maximum, not the monthly mean used on Earth.
 
-**Earth's limits as an analog (B).** *To be written by B: gravity (Moon 1.62 m/s², Mars 3.71 m/s²), vacuum and thin CO₂ atmosphere, and radiation, with sources. `limits` in `web/data/targets.json` is still empty.*
+**Earth's limits as an analog (B).** No place on Earth reproduces the conditions below. They are stated, not scored, and every target in the app shows them in its "What Earth can never copy" card (`limits` in `web/data/targets.json`).
+
+| | Mars (all four targets) | Moon (both targets) | Earth |
+|---|---|---|---|
+| Gravity | 3.73 m/s², 38% of Earth's | 1.62 m/s², 17% | 9.81 m/s² |
+| Surface pressure | 723 to 839 Pa, 0.7–0.8% of Earth's; mostly CO₂ | about 3 × 10⁻¹⁰ Pa at night: a vacuum | 101,325 Pa |
+| Radiation dose at the surface | 0.64 mSv/day | 1.37 mSv/day | about 0.0066 mSv/day (2.4 mSv/yr world average natural dose) |
+| Temperature | every target's coldest night is below Earth's coldest (166–196 K vs 207 K) | day–night swing 276 K at Marius Hills vs at most 25 K on Earth | |
+
+Sources:
+- **Gravity:** NASA NSSDC Mars and Moon fact sheets. Mars 3.73 m/s² is the current sheet's mean surface gravity; 3.71 m/s² is the older, equatorial value.
+- **Mars pressure:** Mars Climate Database v6.2, yearly mean of 12 months at each target. Gale's 837 Pa agrees with the 700–900 Pa range Curiosity measures over a Martian year.
+- **Moon pressure:** NSSDC Moon fact sheet (3 × 10⁻¹⁵ bar).
+- **Radiation:**
+  - Mars: Curiosity RAD at Gale, 0.64 ± 0.12 mSv/day (Hassler et al. 2014, *Science* 343), used for all four Mars targets.
+  - Moon: Chang'e-4 LND on the far side, 1,369 µSv/day (Zhang et al. 2020, *Science Advances* 6, eaaz1334), used for both Moon targets.
+  - Earth's natural dose for comparison is about 2.4 mSv per year, so Mars's surface dose is about 100 times Earth's and the Moon's about 200 times.
+
+What this means in practice:
+- **Low gravity** changes how wheels sink and slip, how dust is thrown up, and how people walk and lift. Analog terrain tests mobility on the right ground, but not with the right weight. Rover teams compensate with lighter test vehicles (Curiosity's "Scarecrow" test rover on the Mojave dunes weighed what Curiosity weighs on Mars).
+- **Vacuum and thin air** change heat transfer, dust behaviour and the colour and spectra of rocks. These are tested in vacuum and Mars-atmosphere chambers, not in the field.
+- **Radiation** cannot be reproduced outdoors at all; it is studied with particle-beam facilities and with the dosimeters on the missions above.
+
+An Earth analog is therefore always partial. Analog Atlas helps choose the place that matches the surface: terrain, temperature, rock, dust and dryness. The laboratory covers the rest.
 
 ## How to use the atlas, deep dives and next steps (B)
 
-*To be written by B.*
+### How to use it (30 seconds)
+
+Open **https://yos-ww.github.io/earth-analogs/web/** in a desktop browser. Press **▶ Tour** for a 50-second guided story; adding `?tour=1` to the address starts it automatically.
+
+1. **Pick a site** on Mars or the Moon. Earth glows where it is similar: the brighter and redder, the closer.
+2. **Read the dots.**
+   - Green: a new find, with no analog study found in our first-pass literature search.
+   - Yellow: a little-studied find.
+   - Grey: a known area our search found too.
+   - Small orange and white dots: places scientists already use for Mars and the Moon.
+3. **Click a dot or any land.** The panel gives a score out of 100, what the place is good for practising and where it is different. "More details" has every number and the comparison with all six targets.
+4. **Open the fold-outs** for more:
+   - "About <site>": the mission, what teams must test on Earth first, and what Earth can never copy.
+   - "Does it work?": the validation.
+   - "Map options": layers, plus sliders that change how much each property counts.
+
+### Who it is for
+
+- **Analog-programme planners.** A short list of places that match a specific need. For example: flat, frost-free, basaltic ground near a human landing site; or rough, cold terrain for an Artemis-style traverse. Each place comes with the reasons and the caveats.
+- **Countries and regions without an analog site of their own.** Several top candidates lie in the Gulf region, North Africa and southern Africa, which have few established analog sites. The atlas shows where a national programme or university could build one, and what it would and would not be good for.
+- **Students, teachers and the public.** The globe explains in plain words why a desert can stand in for Mars and why no place on Earth can copy its gravity or air.
+
+### Deep dives (in progress)
+
+The first deep dive is the **Makran–Chagai–Hormozgan belt** (south-east Iran and south-west Pakistan), the top region for four of the six targets. It will cover what matches, where it breaks down and how it could help exploration. It follows a full Google Scholar and NASA ADS search: our first pass found no analog study for Makran and Chagai, and only conference comparisons of Iranian salt glaciers with Mars for the Hormozgan salt domes. Access to parts of the belt is difficult, so the deep dive will also name accessible places with similar scores, such as Egypt's Eastern Desert or central Saudi Arabia (Utopia's third candidate).
+
+### Next steps
+
+1. **Check the new candidates properly:** a full literature search, then field photographs and local geological maps for the top sites.
+2. **A better aridity measure.** Satellite rainfall cannot tell dry from extremely dry deserts (see "What the dimensions show"); a soil-moisture or station-based dryness index would make this dimension informative.
+3. **Add your own target.** Any Mars or Moon point with values for the twelve properties becomes a new search. The app already reads targets from a data file, so the next step is a form that lets a mission team enter their own site.
+4. **More properties:** radar roughness (the same kind of measurement exists for Earth and the Moon), mineral maps, and site-specific Moon albedo.
+5. **A stronger Moon test:** more lunar analog sites outside the USA, so the validation can say something for the Moon too.
 
 ## Reproduce
 
