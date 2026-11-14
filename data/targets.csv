@@ -1,0 +1,7 @@
+target_id,name,body,lat,lon,source,source_url
+jezero,Jezero Crater (Perseverance landing site),mars,18.4447,77.4508,Octavia E. Butler Landing (Perseverance touchdown 18 Feb 2021),https://en.wikipedia.org/wiki/Octavia_E._Butler_Landing
+gale,Gale Crater (Curiosity landing site),mars,-4.5895,137.4417,Bradbury Landing (Curiosity touchdown 6 Aug 2012),https://en.wikipedia.org/wiki/Bradbury_Landing
+utopia,Utopia Planitia (Zhurong landing site),mars,25.066,109.925,Tianwen-1 / Zhurong landing site (15 May 2021),https://en.wikipedia.org/wiki/Tianwen-1
+arcadia,Arcadia Planitia (shallow-ice landing candidate),mars,39.090,-170.210,HiRISE ESP_060706_2195 image centre (189.790 E): candidate SpaceX Starship landing site in a shallow ground-ice region,https://hirise.lpl.arizona.edu/ESP_060706_2195
+shackleton,Shackleton-de Gerlache ridge (Artemis candidate region),moon,-89.684,-163.261,LROC: intersection of the Shackleton-de Gerlache ridge and the Shackleton rim (196.739 E),https://lroc.im-ldi.com/images/1247
+marius_hills,Marius Hills Pit (lava-tube skylight),moon,14.0917,-56.7701,LROC Lunar Pit Atlas: Marius Hills Pit (303.2299 E),https://lroc.im-ldi.com/atlases/pits/list
