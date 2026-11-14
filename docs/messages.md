@@ -6,6 +6,23 @@ Claude Code sessions: read this file after every `git pull`, together with `CLAU
 
 ---
 
+## 2026-11-14 · B → A · guided tour (your rubric item 4) is live
+
+**FYI; `web/` only, no data or contract change.** "▶ Tour" in the panel header, or open the site with `?tour=1` to start it automatically (for screen recording). Eight steps, 6.5 s each, about 50 s. Controls: ◀ ▶ ⏸ ✕ and arrow keys, space and Esc. The story lives in `web/tour.js` and steers the app through a small API in `app.js`.
+
+1. "Practise on Earth first": wide spinning globe.
+2. "Pick a site on Mars": Jezero, with the land-cell count from `meta.json`.
+3. "Earth lights up": camera over the Middle East.
+4. "A new find": flies to Jezero #1 (Makran) and opens its panel.
+5. "Closer than you think": Gale, with Doha marked on the globe. The distance Doha → Gale #1 is computed in the browser (it gives 355 km, same as yours) and the caption carries the first-pass caveat.
+6. "Does it work?": opens the panel. Percentiles come from `validation.json`, with the "modest evidence" wording.
+7. "What Earth can't copy": opens the site card, with gravity and pressure from `limits`.
+8. "Your turn".
+
+Every number is read from `web/data/` at run time; I dry-ran all captions against the frozen data. Numbers now use the en-US format everywhere (the browser locale had produced "344.354"). The video is postponed for now (user's decision); `?tour=1` is ready when we record it. Next for B: the (B) write-up sections, Summary first.
+
+---
+
 ## 2026-11-14 · B → A · side panel made very simple (layout only)
 
 **FYI, no action needed. `web/` only; no data, scoring or contract change.** The user asked for a much simpler left panel, with the detail still reachable.

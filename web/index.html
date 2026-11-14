@@ -17,7 +17,7 @@
 
   <aside id="panel">
     <header>
-      <h1>Analog Atlas</h1>
+      <div class="title-row"><h1>Analog Atlas</h1><button id="tour-btn" type="button" title="A 50-second guided tour">▶ Tour</button></div>
       <p class="tagline">Find the places on Earth most like Mars or the Moon.</p>
     </header>
 
@@ -67,6 +67,23 @@
     <p id="status" class="note credit"></p>
     <p class="note credit">Earth imagery: NASA Blue Marble. Data: NASA MODIS, GPM IMERG, USGS GMTED2010, MGS MOLA/TES, LRO LOLA/Diviner, Mars Climate Database.</p>
   </aside>
+
+  <div id="tour" hidden role="dialog" aria-label="Guided tour">
+    <div class="tour-card">
+      <p id="tour-count" class="tour-count"></p>
+      <h2 id="tour-title"></h2>
+      <p id="tour-text"></p>
+      <div class="tour-foot">
+        <div id="tour-dots" class="tour-dots"></div>
+        <div class="tour-btns">
+          <button id="tour-back" type="button" title="Back">◀</button>
+          <button id="tour-play" type="button" title="Pause">⏸</button>
+          <button id="tour-next" type="button">Next ▶</button>
+          <button id="tour-exit" type="button" title="Close tour (Esc)">✕</button>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <script src="https://cdn.jsdelivr.net/npm/globe.gl@2.46.2/dist/globe.gl.min.js"></script>
   <script type="module" src="app.js"></script>

@@ -3,6 +3,7 @@
 import { decodeGrid, dimensionScores, overallScores, cellScores, cellIndex, targetCoverage, MIN_DIMENSIONS } from "./score.js";
 import { regionOf, VERDICT_TEXT } from "./regions.js";
 import { MISSIONS, USE } from "./missions.js";
+import { initTour } from "./tour.js";
 
 const DATA_DIR = "data"; // "mock" to test against web/mock/*
 const IMG = { earth: "img/earth-blue-marble.jpg", bump: "img/earth-topology.png" };
@@ -118,7 +119,10 @@ const globe = new Globe($("globe"))
   // rings: gentle pulse around candidates, orange pulse where the user clicked
   .ringLat((d) => d.lat).ringLng((d) => d.lng)
   .ringColor((d) => (t) => `rgba(${d.rgb},${(1 - t) * d.strength})`)
-  .ringMaxRadius((d) => d.maxR).ringPropagationSpeed((d) => d.speed).ringRepeatPeriod((d) => d.period);
+  .ringMaxRadius((d) => d.maxR).ringPropagationSpeed((d) => d.speed).ringRepeatPeriod((d) => d.period)
+  // text labels (used by the guided tour, e.g. to mark Doha)
+  .labelLat((d) => d.lat).labelLng((d) => d.lng).labelText((d) => d.text)
+  .labelSize(1.1).labelDotRadius(0.45).labelColor(() => "#ffffff").labelResolution(2).labelAltitude(0.02);
 
 const controls = globe.controls();
 controls.autoRotate = true;
@@ -465,7 +469,7 @@ function showPlace(lat, lng, { quiet = false, point = null } = {}) {
     simple += `<h3>${esc(reg.name || "Candidate place")}</h3>
       <p class="badge-line"><span class="tag" style="background:${st.colour}">${st.heading}</span></p>`;
     more += `<div class="newness ${v.tone}"><b>Is it new? ${v.label}.</b> ${v.text}</div>
-      <p class="note">${fmtLatLon(lat, lng)} · #${point.rank} for ${tn} · area about ${Math.round(point.area_km2).toLocaleString()} km² ·
+      <p class="note">${fmtLatLon(lat, lng)} · #${point.rank} for ${tn} · area about ${Math.round(point.area_km2).toLocaleString("en-US")} km² ·
         ${Math.round(point.nearest_known_km)} km from the nearest place scientists already use ·
         stays in the top list in ${Math.round(point.robustness * 100)}% of tests with changed weights.</p>`;
   } else {
@@ -600,8 +604,33 @@ async function main() {
   const first = state.targets.find((t) => targetCoverage(meta, t).have >= MIN_DIMENSIONS) || state.targets[0];
   sel.value = first.id;
   selectTarget(first.id);
-  status(`${meta.n_cells.toLocaleString()} places on Earth compared, each about 28 km across.`);
+  status(`${meta.n_cells.toLocaleString("en-US")} places on Earth compared, each about 28 km across.`);
   $("loader").classList.add("done");
+
+  // A small "remote control" for the guided tour (web/tour.js): it can only steer the app, not change data.
+  initTour({
+    selectTarget(id) { $("target").value = id; selectTarget(id); },
+    flyTo(lat, lng, altitude = 1.6, ms = 1800) { holdRotation(); globe.pointOfView({ lat, lng, altitude }, ms); },
+    rotate(on) { clearTimeout(resumeTimer); controls.autoRotate = on; },
+    candidate: (targetId, rank) => state.candidates.find((c) => c.target_id === targetId && c.rank === rank),
+    showCandidate(c) { if (c) showPlace(c.lat, c.lng, { point: c, quiet: false }); },
+    closePlace() {
+      state.clicked = null; $("place").hidden = true; $("hint").hidden = false; updateLayers();
+    },
+    openFold(id, open = true) {
+      const el = $(id);
+      if (!el) return;
+      el.open = open;
+      if (open) el.scrollIntoView({ behavior: "smooth", block: "nearest" });
+    },
+    closeFolds() { for (const id of ["site-more", "trust", "options"]) $(id).open = false; },
+    labels(list) { globe.labelsData(list || []); },
+    validation: () => state.validation,
+    target: (id) => state.targets.find((t) => t.id === id),
+    landCount: () => meta.n_cells,
+    distanceKm,
+    shortName,
+  });
 }
 
 main().catch((e) => {
