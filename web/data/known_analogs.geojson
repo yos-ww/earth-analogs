@@ -1,0 +1,895 @@
+{
+ "type": "FeatureCollection",
+ "features": [
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -70.0,
+     -24.08
+    ]
+   },
+   "properties": {
+    "name": "Atacama Yungay",
+    "country": "Chile",
+    "body": [
+     "mars"
+    ],
+    "dimensions": [
+     "aridity",
+     "biology"
+    ],
+    "why_analog": "Hyperarid soils near the dry limit of life; Viking-style experiments",
+    "reference": "Navarro-Gonzalez et al. 2003 Science",
+    "source_url": ""
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     161.6,
+     -77.52
+    ]
+   },
+   "properties": {
+    "name": "McMurdo Dry Valleys (Wright Valley)",
+    "country": "Antarctica",
+    "body": [
+     "mars"
+    ],
+    "dimensions": [
+     "temperature",
+     "ice",
+     "aridity"
+    ],
+    "why_analog": "Cold-desert landforms; ground ice; Mars-like microclimate zones",
+    "reference": "Marchant & Head 2007 Icarus",
+    "source_url": ""
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -89.68,
+     75.38
+    ]
+   },
+   "properties": {
+    "name": "Haughton Crater (Devon Island)",
+    "country": "Canada",
+    "body": [
+     "mars",
+     "moon"
+    ],
+    "dimensions": [
+     "terrain",
+     "ice",
+     "operations"
+    ],
+    "why_analog": "Polar-desert impact crater; HMP and FMARS field operations",
+    "reference": "Osinski et al. 2005 Meteoritics & Planetary Science",
+    "source_url": ""
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -155.47,
+     19.82
+    ]
+   },
+   "properties": {
+    "name": "Mauna Kea",
+    "country": "USA",
+    "body": [
+     "moon"
+    ],
+    "dimensions": [
+     "mineralogy",
+     "operations"
+    ],
+    "why_analog": "Basaltic tephra used for lunar ISRU field tests (RESOLVE 2008; ILSO 2010)",
+    "reference": "Sanders & Larson 2011 (ISRU field analogs; NASA JSC/KSC)",
+    "source_url": "https://ntrs.nasa.gov/citations/20100021362"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -155.48,
+     19.6
+    ]
+   },
+   "properties": {
+    "name": "Mauna Loa (HI-SEAS)",
+    "country": "USA",
+    "body": [
+     "mars"
+    ],
+    "dimensions": [
+     "operations"
+    ],
+    "why_analog": "Long-duration Mars habitat simulation on barren lava (2013-2018)",
+    "reference": "HI-SEAS program (Univ. of Hawaii; NASA Human Research Program)",
+    "source_url": "https://www.hi-seas.org/about-hi-seas"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -16.83,
+     64.87
+    ]
+   },
+   "properties": {
+    "name": "Holuhraun",
+    "country": "Iceland",
+    "body": [
+     "mars"
+    ],
+    "dimensions": [
+     "terrain",
+     "mineralogy"
+    ],
+    "why_analog": "2014-15 flood-basalt flow; analog for young Elysium Planitia lavas",
+    "reference": "Voigt et al. 2025 Planetary Science Journal (doi:10.3847/PSJ/adb5f1)",
+    "source_url": "https://www.usgs.gov/publications/2014-2015-holuhraun-lava-flow-field-iceland-a-planetary-analog-young-volcanic-terrains"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -16.75,
+     65.05
+    ]
+   },
+   "properties": {
+    "name": "Askja",
+    "country": "Iceland",
+    "body": [
+     "moon"
+    ],
+    "dimensions": [
+     "terrain"
+    ],
+    "why_analog": "Apollo geology training (July 1965 and July 1967)",
+    "reference": "Apollo program training (NASA rosters; Exploration Museum Husavik)",
+    "source_url": "https://en.wikipedia.org/wiki/Apollo_program_training"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -6.55,
+     37.72
+    ]
+   },
+   "properties": {
+    "name": "Rio Tinto",
+    "country": "Spain",
+    "body": [
+     "mars"
+    ],
+    "dimensions": [
+     "mineralogy",
+     "biology"
+    ],
+    "why_analog": "Acidic iron- and sulfate-rich river (jarosite) like Meridiani",
+    "reference": "Fernandez-Remolar et al. 2005 EPSL",
+    "source_url": ""
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -3.36,
+     39.55
+    ]
+   },
+   "properties": {
+    "name": "Tirez Lagoon",
+    "country": "Spain",
+    "body": [
+     "mars"
+    ],
+    "dimensions": [
+     "mineralogy",
+     "biology"
+    ],
+    "why_analog": "Sulfate-rich hypersaline lagoon; wet-to-dry transition analog",
+    "reference": "Fairen et al. 2023 Scientific Reports (doi:10.1038/s41598-023-28327-3)",
+    "source_url": ""
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -110.79,
+     38.41
+    ]
+   },
+   "properties": {
+    "name": "MDRS (Hanksville Utah)",
+    "country": "USA",
+    "body": [
+     "mars"
+    ],
+    "dimensions": [
+     "terrain",
+     "operations"
+    ],
+    "why_analog": "Mars Society analog station; inverted channels and layered badlands",
+    "reference": "Clarke & Stoker 2011 International Journal of Astrobiology (doi:10.1017/S1473550411000048)",
+    "source_url": ""
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     13.33,
+     79.45
+    ]
+   },
+   "properties": {
+    "name": "Svalbard Bockfjord Volcanic Complex",
+    "country": "Norway",
+    "body": [
+     "mars"
+    ],
+    "dimensions": [
+     "mineralogy",
+     "biology"
+    ],
+    "why_analog": "Carbonate globules like ALH84001; AMASE expeditions",
+    "reference": "Treiman et al. 2002 EPSL",
+    "source_url": ""
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     119.42,
+     -21.15
+    ]
+   },
+   "properties": {
+    "name": "Pilbara (Dresser Formation)",
+    "country": "Australia",
+    "body": [
+     "mars"
+    ],
+    "dimensions": [
+     "biology",
+     "mineralogy"
+    ],
+    "why_analog": "3.5 Ga stromatolites; hematite-altered like Mars targets",
+    "reference": "Hickman-Lewis et al. 2023 Geology 51(1) (doi:10.1130/G50390.1)",
+    "source_url": ""
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -13.75,
+     29.0
+    ]
+   },
+   "properties": {
+    "name": "Lanzarote (Timanfaya)",
+    "country": "Spain",
+    "body": [
+     "mars",
+     "moon"
+    ],
+    "dimensions": [
+     "terrain",
+     "mineralogy"
+    ],
+    "why_analog": "Basaltic volcanic terrain; ESA PANGAEA astronaut training",
+    "reference": "Sauro et al. 2024 IAC (ESA PANGAEA)",
+    "source_url": "https://iafastro.directory/iac/paper/id/86963/abstract-pdf/IAC-24%2CB3%2CIP%2C10%2Cx86963.brief.pdf"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -113.52,
+     43.42
+    ]
+   },
+   "properties": {
+    "name": "Craters of the Moon",
+    "country": "USA",
+    "body": [
+     "moon",
+     "mars"
+    ],
+    "dimensions": [
+     "terrain",
+     "subsurface"
+    ],
+    "why_analog": "Basaltic lava flows and tubes; NASA BASALT and FINESSE",
+    "reference": "Lim et al. 2019 Astrobiology (BASALT)",
+    "source_url": ""
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -121.51,
+     41.71
+    ]
+   },
+   "properties": {
+    "name": "Lava Beds National Monument",
+    "country": "USA",
+    "body": [
+     "mars",
+     "moon"
+    ],
+    "dimensions": [
+     "subsurface",
+     "biology"
+    ],
+    "why_analog": "Lava tubes; NASA BRAILLE cave-robotics and biosignature project",
+    "reference": "BRAILLE project (GSA 2022 abstract)",
+    "source_url": "https://gsa.confex.com/gsa/2022CD/webprogram/Paper374238.html"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -111.02,
+     35.03
+    ]
+   },
+   "properties": {
+    "name": "Meteor Crater",
+    "country": "USA",
+    "body": [
+     "moon"
+    ],
+    "dimensions": [
+     "terrain"
+    ],
+    "why_analog": "Simple impact crater; Apollo training",
+    "reference": "Shoemaker 1960",
+    "source_url": ""
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -111.53,
+     35.31
+    ]
+   },
+   "properties": {
+    "name": "Cinder Lake Crater Field",
+    "country": "USA",
+    "body": [
+     "moon"
+    ],
+    "dimensions": [
+     "terrain"
+    ],
+    "why_analog": "Artificial crater field (1967) copying Apollo landing sites",
+    "reference": "USGS Astrogeology",
+    "source_url": "https://www.usgs.gov/media/images/astronaut-field-training-cinder-lake"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -111.48,
+     35.68
+    ]
+   },
+   "properties": {
+    "name": "Black Point Lava Flow (SP Crater area)",
+    "country": "USA",
+    "body": [
+     "moon"
+    ],
+    "dimensions": [
+     "terrain",
+     "operations"
+    ],
+    "why_analog": "NASA Desert RATS rover and EVA tests; BP-1 lunar simulant source",
+    "reference": "NASA Desert RATS / BP-1 simulant report",
+    "source_url": "https://ntrs.nasa.gov/api/citations/20100036344/downloads/20100036344.pdf"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -116.87,
+     36.46
+    ]
+   },
+   "properties": {
+    "name": "Death Valley",
+    "country": "USA",
+    "body": [
+     "mars"
+    ],
+    "dimensions": [
+     "aridity",
+     "temperature",
+     "terrain"
+    ],
+    "why_analog": "Hot desert; playas; alluvial fans",
+    "reference": "challenge.md (organizer example)",
+    "source_url": ""
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -116.22,
+     35.68
+    ]
+   },
+   "properties": {
+    "name": "Mojave (Dumont Dunes)",
+    "country": "USA",
+    "body": [
+     "mars"
+    ],
+    "dimensions": [
+     "terrain",
+     "dust"
+    ],
+    "why_analog": "Curiosity mobility tests on dunes (Scarecrow rover 2012)",
+    "reference": "NASA JPL 2012",
+    "source_url": "https://www.jpl.nasa.gov/news/mojave-desert-tests-prepare-for-nasa-mars-roving/"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     10.57,
+     48.88
+    ]
+   },
+   "properties": {
+    "name": "Ries Crater",
+    "country": "Germany",
+    "body": [
+     "moon"
+    ],
+    "dimensions": [
+     "terrain"
+    ],
+    "why_analog": "Complex impact crater; Apollo 14 training (August 1970)",
+    "reference": "NASA Apollo 14 Lunar Surface Journal",
+    "source_url": "https://www.nasa.gov/history/alsj/a14/a14ries-News3.html"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -81.2,
+     46.6
+    ]
+   },
+   "properties": {
+    "name": "Sudbury",
+    "country": "Canada",
+    "body": [
+     "moon"
+    ],
+    "dimensions": [
+     "terrain",
+     "mineralogy"
+    ],
+    "why_analog": "Large impact structure; Apollo 16 (1971) and 17 (1972) training",
+    "reference": "CBC 2021 (Apollo astronauts trained in Sudbury)",
+    "source_url": "https://amp.cbc.ca/news/canada/sudbury/apollo-asronauts-trained-sudbury-50-years-ago-1.6096556"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -106.97,
+     31.97
+    ]
+   },
+   "properties": {
+    "name": "Kilbourne Hole",
+    "country": "USA",
+    "body": [
+     "moon"
+    ],
+    "dimensions": [
+     "terrain"
+    ],
+    "why_analog": "Maar crater; Apollo 12-17 training; NASA Goddard instrument tests",
+    "reference": "BLM 2021",
+    "source_url": "https://www-26.blm.gov/blog/2021-08-04/when-public-land-new-mexico-stood-moon"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     91.5,
+     38.6
+    ]
+   },
+   "properties": {
+    "name": "Qaidam Basin (Dalangtan)",
+    "country": "China",
+    "body": [
+     "mars"
+    ],
+    "dimensions": [
+     "aridity",
+     "mineralogy",
+     "dust"
+    ],
+    "why_analog": "Cold high-altitude salt playas and yardangs",
+    "reference": "Xiao et al. 2017 Earth-Science Reviews",
+    "source_url": ""
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     78.0,
+     33.3
+    ]
+   },
+   "properties": {
+    "name": "Ladakh (Tso Kar)",
+    "country": "India",
+    "body": [
+     "mars"
+    ],
+    "dimensions": [
+     "aridity",
+     "temperature",
+     "mineralogy"
+    ],
+    "why_analog": "Cold high-altitude desert with salt lakes and hot springs",
+    "reference": "Pandey et al. 2020 International Journal of Astrobiology 19(1) (doi:10.1017/S1473550419000119)",
+    "source_url": ""
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -4.23,
+     31.43
+    ]
+   },
+   "properties": {
+    "name": "Ibn Battuta field sites (Erfoud)",
+    "country": "Morocco",
+    "body": [
+     "mars"
+    ],
+    "dimensions": [
+     "terrain",
+     "aridity"
+    ],
+    "why_analog": "Sahara-margin field area; ExoMars rover tests; OeWF MARS2013",
+    "reference": "Ibn Battuta Centre; 2018 Astrobiology paper (authors TODO)",
+    "source_url": "https://core.ac.uk/download/163102078.pdf"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     15.04,
+     -23.56
+    ]
+   },
+   "properties": {
+    "name": "Namib (Gobabeb)",
+    "country": "Namibia",
+    "body": [
+     "mars"
+    ],
+    "dimensions": [
+     "aridity",
+     "dust",
+     "biology"
+    ],
+    "why_analog": "Fog-fed hyperarid desert; linear dunes; hypolith microbes",
+    "reference": "Lorenz & Radebaugh 2016 Communications of the Geological Survey of Namibia 17",
+    "source_url": ""
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     40.3,
+     14.24
+    ]
+   },
+   "properties": {
+    "name": "Dallol (Danakil Depression)",
+    "country": "Ethiopia",
+    "body": [
+     "mars"
+    ],
+    "dimensions": [
+     "biology",
+     "mineralogy"
+    ],
+    "why_analog": "Hyperacidic hypersaline hydrothermal field",
+    "reference": "Cavalazzi et al. 2019 Astrobiology",
+    "source_url": ""
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     58.2,
+     22.9
+    ]
+   },
+   "properties": {
+    "name": "Samail Ophiolite",
+    "country": "Oman",
+    "body": [
+     "mars"
+    ],
+    "dimensions": [
+     "mineralogy"
+    ],
+    "why_analog": "Serpentine and carbonate like Jezero/Nili Fossae",
+    "reference": "Leask et al. 2021 Earth and Space Science (doi:10.1029/2021EA001637)",
+    "source_url": ""
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     76.51,
+     19.98
+    ]
+   },
+   "properties": {
+    "name": "Lonar Crater",
+    "country": "India",
+    "body": [
+     "mars",
+     "moon"
+    ],
+    "dimensions": [
+     "terrain",
+     "mineralogy"
+    ],
+    "why_analog": "Impact crater in basalt",
+    "reference": "Maloof et al. 2010 GSA Bulletin",
+    "source_url": ""
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -68.01,
+     -22.33
+    ]
+   },
+   "properties": {
+    "name": "El Tatio",
+    "country": "Chile",
+    "body": [
+     "mars"
+    ],
+    "dimensions": [
+     "mineralogy",
+     "biology"
+    ],
+    "why_analog": "Silica sinter like Spirit's Home Plate",
+    "reference": "Ruff & Farmer 2016 Nature Communications",
+    "source_url": ""
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -67.88,
+     -22.83
+    ]
+   },
+   "properties": {
+    "name": "Licancabur",
+    "country": "Chile/Bolivia",
+    "body": [
+     "mars"
+    ],
+    "dimensions": [
+     "biology",
+     "temperature"
+    ],
+    "why_analog": "Summit lake: low pressure; high UV; Martian paleolake analog",
+    "reference": "Cabrol et al. (NASA High Lakes Project)",
+    "source_url": "https://ntrs.nasa.gov/citations/20030110696"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -68.82,
+     -25.15
+    ]
+   },
+   "properties": {
+    "name": "Salar de Pajonales",
+    "country": "Chile",
+    "body": [
+     "mars"
+    ],
+    "dimensions": [
+     "mineralogy",
+     "biology"
+    ],
+    "why_analog": "High-altitude Ca-sulfate (gypsum) salar",
+    "reference": "Hinman et al. 2022 Frontiers in Astronomy and Space Sciences (doi:10.3389/fspas.2021.797591)",
+    "source_url": ""
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     142.8,
+     -35.32
+    ]
+   },
+   "properties": {
+    "name": "Lake Tyrrell",
+    "country": "Australia",
+    "body": [
+     "mars"
+    ],
+    "dimensions": [
+     "mineralogy"
+    ],
+    "why_analog": "Acid hypersaline groundwater (lake water near-neutral)",
+    "reference": "Applied Geochemistry 2009 24(2):285-296 (authors TODO)",
+    "source_url": ""
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     139.33,
+     -30.31
+    ]
+   },
+   "properties": {
+    "name": "Arkaroola",
+    "country": "Australia",
+    "body": [
+     "mars"
+    ],
+    "dimensions": [
+     "terrain",
+     "mineralogy"
+    ],
+    "why_analog": "Mars Society Australia prime analog region (Flinders Ranges)",
+    "reference": "Mann Murphy Stoker & Clarke 2004 IAU Symposium 213",
+    "source_url": "https://ui.adsabs.harvard.edu/abs/2004IAUS..213..553L/abstract"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -90.75,
+     79.4
+    ]
+   },
+   "properties": {
+    "name": "Axel Heiberg (Gypsum Hill springs)",
+    "country": "Canada",
+    "body": [
+     "mars"
+    ],
+    "dimensions": [
+     "ice",
+     "biology"
+    ],
+    "why_analog": "Perennial cold saline springs through 600 m permafrost",
+    "reference": "Andersen Pollard McKay & Heldmann 2002 JGR",
+    "source_url": ""
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -121.74,
+     50.87
+    ]
+   },
+   "properties": {
+    "name": "Pavilion Lake",
+    "country": "Canada",
+    "body": [
+     "mars"
+    ],
+    "dimensions": [
+     "biology"
+    ],
+    "why_analog": "Freshwater microbialites; NASA/CSA Pavilion Lake Research Project",
+    "reference": "Lim & McKay 2004 (NASA conference paper)",
+    "source_url": "https://ntrs.nasa.gov/citations/20040191853"
+   }
+  }
+ ]
+}

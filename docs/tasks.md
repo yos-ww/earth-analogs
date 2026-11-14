@@ -38,7 +38,7 @@ Hours 4–7
 
 Hours 7–11
 - [ ] `pipeline/targets.py`: MOLA and LOLA terrain, Diviner values; merge with `data/targets_literature.csv` into `web/data/targets.json`
-- [ ] Export `known_analogs.geojson` from `data/known_analogs.csv`
+- [x] Export `known_analogs.geojson` from `data/known_analogs.csv`
 - [ ] Validation: known analogs vs. random land and random barren land (`score.py --validate`), also writing `web/data/validation.json`. Map the `mineralogy` tag to `geology`; tags with no matching dimension (`biology`, `operations`, `subsurface`) are reported as "not visible to the score"
 - [ ] **Science check (hour 11):** do known analogs beat random barren land?
 

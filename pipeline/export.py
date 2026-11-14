@@ -94,6 +94,31 @@ def export_targets(targets_csv=None, literature_csv=None, out=None):
         print("  note:", p)
 
 
+def export_known_analogs(src=None, out=None):
+    """Write web/data/known_analogs.geojson from B's data/known_analogs.csv (docs/contract.md).
+    Properties: name, country, body (list of mars/moon), dimensions (list), why_analog,
+    reference, source_url. GeoJSON coordinates are [lon, lat]."""
+    src = src or ROOT / "data" / "known_analogs.csv"
+    out = out or WEB_DATA / "known_analogs.geojson"
+    feats = []
+    for r in csv.DictReader(open(src, newline="", encoding="utf-8")):
+        lat, lon = float(r["lat"]), float(r["lon"])
+        assert -90 <= lat <= 90 and -180 <= lon <= 180, r["name"]
+        feats.append({
+            "type": "Feature",
+            "geometry": {"type": "Point", "coordinates": [lon, lat]},
+            "properties": {
+                "name": r["name"], "country": r["country"],
+                "body": [b.strip().lower() for b in r["body"].split("|")],
+                "dimensions": [d.strip() for d in r["dimensions"].split("|")],
+                "why_analog": r["why_analog"], "reference": r["reference"], "source_url": r["source_url"],
+            },
+        })
+    out.parent.mkdir(parents=True, exist_ok=True)
+    out.write_text(json.dumps({"type": "FeatureCollection", "features": feats}, indent=1, ensure_ascii=False) + "\n")
+    print(f"wrote {out.name}: {len(feats)} sites")
+
+
 def main():
     land = np.load(INTERIM / "land.npy")
     cells = np.flatnonzero(land.ravel()).astype("<u4")  # sorted ascending
@@ -135,6 +160,7 @@ def main():
     (WEB_DATA / "meta.json").write_text(json.dumps(meta, indent=2) + "\n")
     print(f"wrote {len(cells)} cells x {len(feats)} features, dimensions {dims}")
     export_targets()
+    export_known_analogs()
 
 
 if __name__ == "__main__":
