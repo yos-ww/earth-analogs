@@ -8,7 +8,10 @@
   "n_cells": 344354,
   "dimensions": [
     "terrain",
-    "vegetation"
+    "temperature",
+    "vegetation",
+    "aridity",
+    "geology"
   ],
   "features": [
     {
@@ -24,6 +27,18 @@
       "p99": 6.388574
     },
     {
+      "id": "lst_night_cold",
+      "label": "Coldest-month night temperature",
+      "dimension": "temperature",
+      "unit": "K",
+      "transform": "none",
+      "min": 197.275208,
+      "max": 301.9245,
+      "sigma": 27.959486,
+      "p1": 207.202137,
+      "p99": 295.265407
+    },
+    {
       "id": "ndvi_max",
       "label": "Yearly max NDVI",
       "dimension": "vegetation",
@@ -34,6 +49,30 @@
       "sigma": 0.335777,
       "p1": 0.0,
       "p99": 0.893262
+    },
+    {
+      "id": "precip",
+      "label": "Precipitation",
+      "dimension": "aridity",
+      "unit": "mm/yr",
+      "transform": "log1p",
+      "min": 0.0,
+      "max": 8.928555,
+      "sigma": 1.147895,
+      "p1": 0.0,
+      "p99": 8.144113
+    },
+    {
+      "id": "emis_b29",
+      "label": "Emissivity 8.55 um",
+      "dimension": "geology",
+      "unit": "-",
+      "transform": "none",
+      "min": 0.7032,
+      "max": 0.996,
+      "sigma": 0.019259,
+      "p1": 0.77104,
+      "p99": 0.98368
     }
   ]
 }

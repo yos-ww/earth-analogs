@@ -8,6 +8,7 @@ Each result is saved as data/interim/<name>.npy with shape (720, 1440), NaN = no
 (land is a bool array). pipeline/export.py turns these into web/data/*.
 """
 import glob
+import re
 import sys
 
 import numpy as np
@@ -138,7 +139,102 @@ def build_roughness():
     _save("roughness", out)
 
 
-BUILDERS = {"land": build_land, "ndvi_max": build_ndvi_max, "roughness": build_roughness}
+# ----------------------------------------------------------- precipitation
+
+HOURS_PER_YEAR = 8766  # 365.25 * 24
+
+
+def build_precip():
+    """Mean precipitation in mm/yr: IMERG monthly rate (mm/h) averaged over the 36 months
+    of 2021-2023, times hours per year.
+
+    The array is stored (lon, lat) with latitude running south to north and no georeference,
+    so it is transposed and flipped to north-up (checked: correlation with NDVI is 0.66 this
+    way and 0.18 unflipped). The 0.1 deg grid is repeated to 0.05 deg, then averaged over the
+    land sub-pixels of each cell. IMERG is unreliable over Antarctica and Greenland.
+    """
+    land05 = _load("land005")
+    acc = np.zeros((3600, 1800))
+    cnt = np.zeros((3600, 1800))
+    for f in sorted(glob.glob(str(RAW / "IMERG" / "*"))):
+        name = [n for n, _ in gdal.Open(f).GetSubDatasets() if n.endswith("/Grid/precipitation")][0]
+        a = gdal.Open(name).ReadAsArray()
+        ok = a > -9000  # fill is -9999.9
+        acc += np.where(ok, a, 0.0)
+        cnt += ok
+    mean = np.where(cnt > 0, acc / np.maximum(cnt, 1), np.nan).T[::-1]  # (1800 lat N->S, 3600 lon)
+    p05 = np.repeat(np.repeat(mean, 2, axis=0), 2, axis=1) * HOURS_PER_YEAR  # 3600 x 7200
+    valid = np.isfinite(p05) & land05
+    _save("precip", to_cells(np.where(valid, p05, 0.0), valid))
+
+
+# ------------------------------------------------------ MOD11C3 (LST, emissivity)
+
+MIN_CLIM_MONTHS = 6  # coldest-month night LST needs at least this many calendar months with data
+
+
+def _modis_files(product):
+    """Map calendar month (1-12) -> list of file paths, from the .AYYYYDDD. stamp."""
+    from datetime import date, timedelta
+    by_month = {m: [] for m in range(1, 13)}
+    for f in sorted(glob.glob(str(RAW / product / "*.hdf"))):
+        y, doy = re.search(r"\.A(\d{4})(\d{3})\.", f).groups()
+        by_month[(date(int(y), 1, 1) + timedelta(days=int(doy) - 1)).month].append(f)
+    return by_month
+
+
+def build_lst_night_cold():
+    """Coldest-month night land-surface temperature (K).
+
+    MOD11C3 gives monthly mean night LST at 0.05 deg. For each calendar month the available
+    years (2021-2023) are averaged, then the coldest of the 12 climatological months is taken
+    (monthly means, not single-night extremes, to match the planetary values). A pixel needs
+    at least MIN_CLIM_MONTHS months with data; winter months that are missing (polar night,
+    persistent cloud) bias the result warm, so high-latitude values are upper bounds.
+    """
+    land05 = _load("land005")
+    coldest = np.full((3600, 7200), np.inf, np.float32)
+    n_months = np.zeros((3600, 7200), np.uint8)
+    for month, files in _modis_files("MOD11C3").items():
+        s = np.zeros((3600, 7200), np.float32)
+        n = np.zeros((3600, 7200), np.uint8)
+        for f in files:
+            d = gdal.Open(_subdataset(f, "LST_Night_CMG")).ReadAsArray()
+            ok = d >= 7500  # valid_range 7500-65535, fill 0
+            s += np.where(ok, d * 0.02, 0.0)
+            n += ok
+        clim = np.where(n > 0, s / np.maximum(n, 1), np.inf)
+        coldest = np.minimum(coldest, clim)
+        n_months += n > 0
+    valid = (n_months >= MIN_CLIM_MONTHS) & np.isfinite(coldest) & land05
+    _save("lst_night_cold", to_cells(np.where(valid, coldest, 0.0), valid))
+
+
+def build_emis_b29():
+    """Emissivity at 8.55 um (MODIS band 29): per-pixel median over the 36 monthly MOD11C3
+    files, ignoring months with no data. value = code * 0.002 + 0.49, 0 = no data.
+    Low = quartz-rich (sand seas about 0.75), high = basalt and other low-silica rock
+    (about 0.97); vegetation is also high, so read it together with NDVI."""
+    land05 = _load("land005")
+    files = [f for fs in _modis_files("MOD11C3").values() for f in fs]
+    stack = np.zeros((len(files), 3600, 7200), np.uint8)
+    for i, f in enumerate(files):
+        stack[i] = gdal.Open(_subdataset(f, "Emis_29")).ReadAsArray()
+    med = np.zeros((3600, 7200), np.uint8)
+    nvalid = (stack != 0).sum(axis=0)
+    for r0 in range(0, 3600, 300):  # sort in row chunks to keep memory low
+        chunk = np.where(stack[:, r0:r0 + 300] == 0, 255, stack[:, r0:r0 + 300])
+        chunk.sort(axis=0)
+        idx = np.maximum(nvalid[r0:r0 + 300] - 1, 0) // 2  # lower median of the valid months
+        med[r0:r0 + 300] = np.take_along_axis(chunk, idx[None], axis=0)[0]
+    valid = (nvalid > 0) & land05
+    _save("emis_b29", to_cells(np.where(valid, med * 0.002 + 0.49, 0.0), valid))
+
+
+BUILDERS = {
+    "land": build_land, "ndvi_max": build_ndvi_max, "roughness": build_roughness,
+    "precip": build_precip, "lst_night_cold": build_lst_night_cold, "emis_b29": build_emis_b29,
+}
 
 if __name__ == "__main__":
     names = sys.argv[1:] or list(BUILDERS)
