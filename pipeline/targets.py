@@ -114,8 +114,46 @@ def basalt_emissivity_rows():
     return rows
 
 
+# ---- Shackleton temperatures from the Diviner polar resource product (dlre_prp_south.tab)
+# Columns: temp_max = annual MAXIMUM temperature at the surface (K); temp_avg = annual MEAN at 2 cm
+# depth (K). The table has no time of day and no monthly values.
+MOON_R_KM = 1737.4
+
+
+def diviner_rows():
+    import pandas as pd
+
+    t = next(r for r in csv.DictReader(open(ROOT / "data" / "targets.csv", newline="", encoding="utf-8"))
+             if r["target_id"] == "shackleton")
+    lat0, lon0 = float(t["lat"]), float(t["lon"])
+    d = pd.read_csv(RAW / "diviner" / "dlre_prp_south.tab", usecols=["tri_clon", "tri_clat", "temp_avg", "temp_max"],
+                    skipinitialspace=True)
+    d.columns = [c.strip() for c in d.columns]
+    d = d[d.tri_clat < -85]
+    lon = ((d.tri_clon.values + 180) % 360) - 180
+    p1, p2 = np.radians(d.tri_clat.values), np.radians(lat0)
+    a = np.sin((p2 - p1) / 2) ** 2 + np.cos(p1) * np.cos(p2) * np.sin(np.radians(lon - lon0) / 2) ** 2
+    near = d[2 * MOON_R_KM * np.arcsin(np.sqrt(a)) <= HALF_M / 1000]
+    day = float(np.median(near.temp_max))
+    print(f"shackleton    Diviner: {len(near)} triangles within +-{HALF_M / 1000:.1f} km; temp_max median {day:.1f} K "
+          f"(5-95%: {np.percentile(near.temp_max, 5):.0f}-{np.percentile(near.temp_max, 95):.0f}), "
+          f"temp_avg median {np.median(near.temp_avg):.1f} K")
+    src = "Computed by pipeline/targets.py from LRO Diviner PRP south (dlre_prp_south.tab)"
+    return [
+        {"target_id": "shackleton", "feature_id": "lst_day_warm", "value": f"{day:.1f}", "unit": "K",
+         "value_kind": f"ANNUAL MAXIMUM surface temperature (Diviner temp_max), median of {len(near)} triangles within "
+                       f"+-{HALF_M / 1000:.1f} km; not a warmest-month mean at 10:30 local (undefined at the pole), "
+                       f"so an upper bound against Earth's monthly-mean convention",
+         "source": src, "source_url": "", "status": "computed"},
+        {"target_id": "shackleton", "feature_id": "lst_range", "value": "na", "unit": "K",
+         "value_kind": "no day-night range at the pole: the Diviner PRP table gives only an annual maximum (surface) and "
+                       "an annual mean (2 cm), no day or night values",
+         "source": src, "source_url": "", "status": "computed"},
+    ]
+
+
 def main():
-    rows = basalt_emissivity_rows()
+    rows = basalt_emissivity_rows() + diviner_rows()
     units = {"roughness": "m", "relief": "m", "slope": "degrees"}
     for t in csv.DictReader(open(ROOT / "data" / "targets.csv", newline="", encoding="utf-8")):
         lat, lon = float(t["lat"]), float(t["lon"])

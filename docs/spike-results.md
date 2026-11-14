@@ -1,50 +1,73 @@
-# Hour-4 science spike: results
+# Science check: results with all 12 features and complete targets
 
-> Snapshot with 5 Earth features (written before `albedo`, `snow_ice`, `aod`, `lst_day_warm`, `lst_range`, `relief` and `slope` existed). Re-run `python -m pipeline.spike` and update this note once B's target values for the ice-related features are in. A re-run with `relief` and `slope` added (7 features) gave the same picture: median percentile 0.73, p = 0.008 (0.73 and p = 0.013 without Antarctica), top-1% overlap 0.41-0.69, top cells still on Antarctica.
+Run with `~/mamba/envs/analogs/bin/python -m pipeline.spike` (early check), `python -m pipeline.score --validate` (`web/data/validation.json`) and `python -m pipeline.candidates`. State: 2026-11-14, all 12 Earth features, all six targets complete (B's literature rows, MOLA/LOLA terrain and basalt emissivity computed by `pipeline/targets.py`, Shackleton's day temperature from the Diviner table). **Earlier snapshots (5 and 7 features) are superseded:** they ranked Antarctica high because albedo and snow/ice had no target values.
 
-Run with `~/mamba/envs/analogs/bin/python -m pipeline.spike`. Five Earth features (`roughness`, `lst_night_cold`, `ndvi_max`, `precip`, `emis_b29`; dimensions terrain, temperature, vegetation, aridity, geology) against three targets: Jezero, Arcadia, Marius Hills. Target values: B's literature rows in `data/targets_literature.csv`, with roughness (MOLA/LOLA) and the basalt emissivity computed by `pipeline/targets.py` into `data/targets_computed.csv`. The emissivity rule (target = mean `Emis_29` of two barren Earth basalt flows, Holuhraun and Black Point = 0.952) was proposed by B before any result existed; the first run used B's placeholder 0.96.
+## Target values that came from the data, not the literature
 
-## Terrain computed for the targets (replaces B's placeholders)
+| Target | Roughness | Relief | Slope | Notes |
+|---|---|---|---|---|
+| Jezero | 280 m | 1161 m | 2.7° | |
+| Gale | 831 m | 4396 m | 5.1° | rover landing site, foot of Mount Sharp |
+| Utopia | 41 m | 177 m | 0.4° | |
+| Arcadia | 158 m | 854 m | 2.1° | |
+| Shackleton | 1161 m | 4741 m | 15.2° | rim point; ±13.9 km includes the 4 km deep crater |
+| Marius Hills | 84 m | 443 m | 1.2° | |
 
-Std of elevation in the same ±13.9 km window an Earth cell uses.
+`emis_b29` of the basaltic targets = 0.952 (mean MODIS `Emis_29` of two barren Earth basalt flows; B proposed the rule before any result existed). Shackleton: `lst_day_warm` = 240.2 K, the median Diviner annual-maximum surface temperature of 4729 triangles within ±13.9 km (a different quantity from Earth's warmest-month mean at 10:30, so an upper bound); `lst_range` = n/a because the Diviner table has no day or night values; `emis_b29` = n/a (feldspathic highland).
 
-| Target | Computed roughness | B's placeholder |
-|---|---|---|
-| Jezero | 280 m | 60 m |
-| Gale | 831 m | – |
-| Utopia | 41 m | – |
-| Arcadia | 158 m | 15 m |
-| Shackleton | 1164 m | – |
-| Marius Hills | 87 m | 80 m |
+## Check 1: do the targets give different maps?
 
-## Check 1: do the three targets give different maps?
+Yes. The top 1% (by land area) of Jezero, Arcadia and Marius Hills overlaps little (Jaccard 0.26–0.31, down from 0.44–0.68 before albedo and snow/ice). Antarctica is no longer in the top regions. Maximum scores 0.72 (Jezero), 0.74 (Arcadia), 0.77 (Marius Hills).
 
-Only partly. With all land cells, the top 1% (by area) of the three maps overlaps heavily (Jaccard 0.31–0.58) and sits on the Antarctic plateau for all three targets.
+Strongest regions: south-eastern Iran and Baluchistan (Makran, Lut) for all of them; the Atacama–Altiplano for Jezero and Arcadia; the Namib, Argentina and Western Australia for Marius Hills; Egypt's Eastern Desert and the Tibet–Qaidam area further down.
 
-Why: all three temperature targets (196, 166, 95 K) are far below Earth's p1 (207 K), so they are directional and every cold cell scores 1 for temperature. `precip` = 0 matches the Antarctic plateau (IMERG reads 0 there). `ndvi_max` has no data over Antarctica, so it is skipped rather than penalised. `emis_b29` of ice (0.98) is close to the placeholder 0.96. Albedo and snow/ice, the two features that would mark an ice sheet as unlike a bare Mars plain, are not in yet.
-
-Diagnostic with Antarctica and Greenland removed (not a decision, only a test): the maps separate (Jaccard 0.11–0.38) and the top regions are eastern Iran (Lut/Kavir, Makran), the Tibetan Plateau, the Atacama–Altiplano and Egypt/Sudan, with different mixes per target. Max scores fall from about 0.95 to 0.65.
+**A ranking-rule warning.** Taking the top 1% by cell count instead of area puts 36% Antarctic cells in Utopia's and Shackleton's top 1% (Antarctica holds 28% of all cells but little area). By area, as the project rule says, it is 2% and 1%.
 
 ## Check 2: do known analogs stand out from random barren land?
 
-Each site is scored against its own body's targets, best of the set; the baseline cells take the best of the same set (review decision 1). Percentiles are area-weighted. Random sets are drawn with probability proportional to area.
+Percentiles are area-weighted positions among all scored land; a random land cell sits at 0.50 (checked on every run). Each site is scored only against the targets of its own body. Sites tagged only `biology`, `operations` or `subsurface` are not visible to the score and are excluded from the main figure.
 
-| Pool | Tagged sites | Median percentile | Random sets (median / 95th pct) | p |
-|---|---|---|---|---|
-| All barren land | 24 | 0.75 | 0.50 / 0.66 | 0.004 |
-| Excluding Antarctica | 23 | 0.72 | 0.50 / 0.67 | 0.013 |
+| | Known sites | Random barren land | p |
+|---|---|---|---|
+| **Mars**, best of 4 targets (26 sites) | 0.89 | 0.76 | 0.021 |
+| **Moon**, best of 2 targets (12 sites) | 0.70 | 0.57 | 0.205 |
+| Jezero alone | 0.87 | 0.56 | 0.002 |
+| Arcadia alone | 0.89 | 0.79 | 0.050 |
+| Gale alone | 0.86 | 0.77 | 0.097 |
+| Utopia alone | 0.87 | 0.79 | 0.082 |
+| Marius Hills alone | 0.73 | 0.60 | 0.200 |
+| Shackleton alone | 0.67 | 0.57 | 0.191 |
 
-"Tagged" = tagged terrain, temperature, aridity, ice or dust in `data/known_analogs.csv`. The signal is real but modest with five features. Sites picked for mineralogy or biology score low, as the plan expects: Rio Tinto 0.20, Lake Tyrrell 0.01. Mauna Kea scores 0.00 as a Moon analog because its roughness is far above Marius Hills (87 m).
+Reading: the evidence for Mars is real but modest (clear for Jezero, borderline for Arcadia, not significant for Gale and Utopia alone). For the Moon the sites are in the right direction but there are only 12, so it is not significant. The p-values assume the sites are independent (several are not: three are in Chile) and are not corrected for testing several targets.
 
-## What this means (A's reading, for discussion)
+The early check with best-of-body scoring over the three spike targets gives 0.67 (p = 0.041) and, without Antarctica, 0.69 (p = 0.022). It was 0.73–0.75 with five features, when ice sheets were rewarded (McMurdo Dry Valleys 1.00 → 0.42, Holuhraun 0.99 → 0.56). The drop is the score getting honest, not a regression.
 
-1. The method is not broken, but 5 of 12 features cannot decide it. The ice-sheet problem should disappear once `albedo` and `snow_ice` are in (hours 4–7). Re-run the spike then.
-2. The plan's rule stays: permanent ice-sheet cells are left out of candidates for the rocky Mars targets.
-3. The temperature dimension cannot separate the targets, because for every target Earth can only point in one direction. Terrain, albedo and geology carry the difference between targets (as `plan.md` expected).
-4. Geology: all three targets get the same `emis_b29` (0.952), so the dimension does not separate the targets. It separates quartz-rich deserts (Libyan erg 0.75) from everything else; barren land has a median of 0.936. Shackleton (feldspathic highland) must not get the basalt value.
+### By dimension (Jezero; the other Mars targets are similar)
+
+| Dimension | Known sites tagged with it | Random barren land |
+|---|---|---|
+| terrain | 0.83 | 0.41 |
+| temperature | 0.91 | 0.81 |
+| aridity | 0.87 | 0.85 |
+| geology | 0.57 | 0.07 |
+| ice | 0.11 | 0.51 |
+| dust | 0.21 | 0.71 |
+
+Terrain and temperature separate known sites from barren land. Aridity does not (barren land is dry too). **Ice and dust go the wrong way, and the write-up must say why:** the sites tagged `ice` (McMurdo, Haughton, Axel Heiberg) are snow-covered by definition while every Mars target has surface snow of 0 (decision 3: Arcadia's ice is below the surface; the score sees surface snow only). Mars dust optical depth is 0.4–0.6, so Earth's dustiest barren land matches best, while Qaidam, Mojave and Namib sit near 0.2–0.3. Geology: barren land is at 0.07 because quartz-rich deserts mismatch a basalt target.
+
+## What the score cannot see (for the write-up)
+
+`biology`, `operations` and `subsurface` tags (for example Lava Beds, Mauna Loa HI-SEAS, Pavilion Lake); subsurface ice; mineralogy beyond a silica index; Apollo-training sites chosen for crater shape or logistics (Ries, Sudbury, Lonar); gravity, vacuum and radiation.
+
+## Candidates (`web/data/candidates.geojson`, 70 points)
+
+Up to 3 per continent per target. The same few regions recur across targets, which is expected because all temperature targets are directional and terrain and albedo carry the difference. Two cautions:
+
+1. **Regions are big.** The top Jezero, Arcadia and Shackleton regions are 400,000–650,000 km² blobs (the Iranian–Pakistani deserts, the Atacama–Altiplano), and a candidate is only the best cell inside it. A dossier needs a site-scale point, so the large regions should be split into sub-regions or the dossier should pick a spot inside them.
+2. **Novelty is not yet established.** The nearest known analog from our 37-site list is 800–1500 km away for the Iranian regions, but our list is short; Dasht-e Lut and Makran may well be published analogs. B's literature check decides `under-studied` or `unrecognized`.
 
 ## Caveats
 
-- IMERG reads 0 mm/yr over the Antarctic plateau and is unreliable on ice sheets.
-- `lst_night_cold` at high latitudes is an upper bound where winter months are missing.
-- Numbers will change when the remaining features arrive; re-run the spike then.
+- IMERG reads 0 mm/yr over the Antarctic plateau and is unreliable on ice sheets; high-latitude coldest-night and range values are bounds; Arctic snow and albedo describe the sunlit season only.
+- Moon `albedo` is the global mean Bond albedo (0.11) for both sites, pending site-specific values; Mars albedo and dust are Mars Climate Database values (B).
+- Cells missing a dimension are skipped, not penalised, so cells with gaps (ice-sheet interiors, which lack NDVI, aerosol and winter albedo) can score higher than they deserve. Candidates for the Mars targets drop permanent ice sheets (snow/ice ≥ 0.9); the map shows them.

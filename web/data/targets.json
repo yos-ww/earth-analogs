@@ -38,6 +38,41 @@
           "status": "computed",
           "source": "Computed by pipeline/targets.py from MOD11C3 Emis_29 median 2021-2023 at Holuhraun 0.955; Black Point lava flow 0.950; target surface is basaltic per B's source note"
         },
+        "albedo": {
+          "value": 0.171,
+          "value_kind": "TES-derived bolometric bare-ground albedo (MCD ground_albedo; Earth uses MODIS white-sky shortwave; decision 5)",
+          "status": "literature",
+          "source": "Mars Climate Database v6.2 (LMD/OU/IAA/ESA/CNES) climatology average solar scenario; queried at the target point for 12 months (Ls 15..345)",
+          "source_url": "https://www-mars.lmd.jussieu.fr/mcd_python/"
+        },
+        "snow_ice": {
+          "value": 0.0,
+          "value_kind": "surface CO2 + H2O frost (MCD co2ice + surf_h2o_ice monthly means) is 0 in all 12 months; subsurface ice is not counted (decision 3)",
+          "status": "literature",
+          "source": "Mars Climate Database v6.2 (LMD/OU/IAA/ESA/CNES) climatology average solar scenario; queried at the target point for 12 months (Ls 15..345)",
+          "source_url": "https://www-mars.lmd.jussieu.fr/mcd_python/"
+        },
+        "aod": {
+          "value": 0.503,
+          "value_kind": "yearly mean of MCD monthly-mean dust column visible optical depth; used as 550 nm without conversion (Mars dust grains ~1.5 um give nearly flat visible extinction)",
+          "status": "literature",
+          "source": "Mars Climate Database v6.2 (LMD/OU/IAA/ESA/CNES) climatology average solar scenario; queried at the target point for 12 months (Ls 15..345)",
+          "source_url": "https://www-mars.lmd.jussieu.fr/mcd_python/"
+        },
+        "lst_day_warm": {
+          "value": 268.5,
+          "value_kind": "surface temperature at 10:30 local (Terra time) in the warmest month (Ls165)",
+          "status": "literature",
+          "source": "Mars Climate Database v6.2 (LMD/OU/IAA/ESA/CNES) climatology average solar scenario; queried at the target point for 12 months (Ls 15..345)",
+          "source_url": "https://www-mars.lmd.jussieu.fr/mcd_python/"
+        },
+        "lst_range": {
+          "value": 55.1,
+          "value_kind": "yearly mean of (10:30 minus 22:30 local) surface temperature over 12 months",
+          "status": "literature",
+          "source": "Mars Climate Database v6.2 (LMD/OU/IAA/ESA/CNES) climatology average solar scenario; queried at the target point for 12 months (Ls 15..345)",
+          "source_url": "https://www-mars.lmd.jussieu.fr/mcd_python/"
+        },
         "relief": {
           "value": 1161.0,
           "value_kind": "relief in a +-13.9 km window after averaging to ~926 m (992 px)",
@@ -71,6 +106,66 @@
       "lat": -4.5895,
       "lon": 137.4417,
       "features": {
+        "albedo": {
+          "value": 0.236,
+          "value_kind": "TES-derived bolometric bare-ground albedo (MCD ground_albedo; Earth uses MODIS white-sky shortwave; decision 5)",
+          "status": "literature",
+          "source": "Mars Climate Database v6.2 (LMD/OU/IAA/ESA/CNES) climatology average solar scenario; queried at the target point for 12 months (Ls 15..345)",
+          "source_url": "https://www-mars.lmd.jussieu.fr/mcd_python/"
+        },
+        "snow_ice": {
+          "value": 0.0,
+          "value_kind": "surface CO2 + H2O frost (MCD co2ice + surf_h2o_ice monthly means) is 0 in all 12 months; subsurface ice is not counted (decision 3)",
+          "status": "literature",
+          "source": "Mars Climate Database v6.2 (LMD/OU/IAA/ESA/CNES) climatology average solar scenario; queried at the target point for 12 months (Ls 15..345)",
+          "source_url": "https://www-mars.lmd.jussieu.fr/mcd_python/"
+        },
+        "aod": {
+          "value": 0.589,
+          "value_kind": "yearly mean of MCD monthly-mean dust column visible optical depth; used as 550 nm without conversion (Mars dust grains ~1.5 um give nearly flat visible extinction)",
+          "status": "literature",
+          "source": "Mars Climate Database v6.2 (LMD/OU/IAA/ESA/CNES) climatology average solar scenario; queried at the target point for 12 months (Ls 15..345)",
+          "source_url": "https://www-mars.lmd.jussieu.fr/mcd_python/"
+        },
+        "lst_day_warm": {
+          "value": 274.1,
+          "value_kind": "surface temperature at 10:30 local (Terra time) in the warmest month (Ls225)",
+          "status": "literature",
+          "source": "Mars Climate Database v6.2 (LMD/OU/IAA/ESA/CNES) climatology average solar scenario; queried at the target point for 12 months (Ls 15..345)",
+          "source_url": "https://www-mars.lmd.jussieu.fr/mcd_python/"
+        },
+        "lst_range": {
+          "value": 62.8,
+          "value_kind": "yearly mean of (10:30 minus 22:30 local) surface temperature over 12 months",
+          "status": "literature",
+          "source": "Mars Climate Database v6.2 (LMD/OU/IAA/ESA/CNES) climatology average solar scenario; queried at the target point for 12 months (Ls 15..345)",
+          "source_url": "https://www-mars.lmd.jussieu.fr/mcd_python/"
+        },
+        "lst_night_cold": {
+          "value": 189.4,
+          "value_kind": "surface temperature at 22:30 local in the coldest month (Ls 75 = southern winter)",
+          "status": "literature",
+          "source": "Mars Climate Database v6.2 (LMD/OU/IAA/ESA/CNES) climatology average solar scenario; queried at the target point for 12 months (Ls 15..345)",
+          "source_url": "https://www-mars.lmd.jussieu.fr/mcd_python/"
+        },
+        "precip": {
+          "value": 0.0,
+          "value_kind": "fixed (no rainfall on Mars)",
+          "status": "fixed",
+          "source": "No liquid precipitation on Mars"
+        },
+        "ndvi_max": {
+          "value": 0.0,
+          "value_kind": "fixed (no vegetation)",
+          "status": "fixed",
+          "source": "Contract rule: same fixed value for every target"
+        },
+        "emis_b29": {
+          "value": 0.952,
+          "value_kind": "basaltic surface as MODIS band 29 (8.55 um) sees Earth basalt: mean of two barren reference flows",
+          "status": "computed",
+          "source": "Computed by pipeline/targets.py from MOD11C3 Emis_29 median 2021-2023 at Holuhraun 0.955; Black Point lava flow 0.950; target surface is basaltic per B's source note"
+        },
         "roughness": {
           "value": 831.2,
           "value_kind": "roughness in a +-13.9 km window after averaging to ~926 m (961 px)",
@@ -110,6 +205,66 @@
       "lat": 25.066,
       "lon": 109.925,
       "features": {
+        "albedo": {
+          "value": 0.231,
+          "value_kind": "TES-derived bolometric bare-ground albedo (MCD ground_albedo; Earth uses MODIS white-sky shortwave; decision 5)",
+          "status": "literature",
+          "source": "Mars Climate Database v6.2 (LMD/OU/IAA/ESA/CNES) climatology average solar scenario; queried at the target point for 12 months (Ls 15..345)",
+          "source_url": "https://www-mars.lmd.jussieu.fr/mcd_python/"
+        },
+        "snow_ice": {
+          "value": 0.0,
+          "value_kind": "surface CO2 + H2O frost (MCD co2ice + surf_h2o_ice monthly means) is 0 in all 12 months; subsurface ice is not counted (decision 3)",
+          "status": "literature",
+          "source": "Mars Climate Database v6.2 (LMD/OU/IAA/ESA/CNES) climatology average solar scenario; queried at the target point for 12 months (Ls 15..345)",
+          "source_url": "https://www-mars.lmd.jussieu.fr/mcd_python/"
+        },
+        "aod": {
+          "value": 0.54,
+          "value_kind": "yearly mean of MCD monthly-mean dust column visible optical depth; used as 550 nm without conversion (Mars dust grains ~1.5 um give nearly flat visible extinction)",
+          "status": "literature",
+          "source": "Mars Climate Database v6.2 (LMD/OU/IAA/ESA/CNES) climatology average solar scenario; queried at the target point for 12 months (Ls 15..345)",
+          "source_url": "https://www-mars.lmd.jussieu.fr/mcd_python/"
+        },
+        "lst_day_warm": {
+          "value": 263.0,
+          "value_kind": "surface temperature at 10:30 local (Terra time) in the warmest month (Ls135)",
+          "status": "literature",
+          "source": "Mars Climate Database v6.2 (LMD/OU/IAA/ESA/CNES) climatology average solar scenario; queried at the target point for 12 months (Ls 15..345)",
+          "source_url": "https://www-mars.lmd.jussieu.fr/mcd_python/"
+        },
+        "lst_range": {
+          "value": 49.7,
+          "value_kind": "yearly mean of (10:30 minus 22:30 local) surface temperature over 12 months",
+          "status": "literature",
+          "source": "Mars Climate Database v6.2 (LMD/OU/IAA/ESA/CNES) climatology average solar scenario; queried at the target point for 12 months (Ls 15..345)",
+          "source_url": "https://www-mars.lmd.jussieu.fr/mcd_python/"
+        },
+        "lst_night_cold": {
+          "value": 187.3,
+          "value_kind": "surface temperature at 22:30 local in the coldest month (Ls 285 = northern winter)",
+          "status": "literature",
+          "source": "Mars Climate Database v6.2 (LMD/OU/IAA/ESA/CNES) climatology average solar scenario; queried at the target point for 12 months (Ls 15..345)",
+          "source_url": "https://www-mars.lmd.jussieu.fr/mcd_python/"
+        },
+        "precip": {
+          "value": 0.0,
+          "value_kind": "fixed (no rainfall on Mars)",
+          "status": "fixed",
+          "source": "No liquid precipitation on Mars"
+        },
+        "ndvi_max": {
+          "value": 0.0,
+          "value_kind": "fixed (no vegetation)",
+          "status": "fixed",
+          "source": "Contract rule: same fixed value for every target"
+        },
+        "emis_b29": {
+          "value": 0.952,
+          "value_kind": "basaltic surface as MODIS band 29 (8.55 um) sees Earth basalt: mean of two barren reference flows",
+          "status": "computed",
+          "source": "Computed by pipeline/targets.py from MOD11C3 Emis_29 median 2021-2023 at Holuhraun 0.955; Black Point lava flow 0.950; target surface is basaltic per B's source note"
+        },
         "roughness": {
           "value": 41.1,
           "value_kind": "roughness in a +-13.9 km window after averaging to ~926 m (1054 px)",
@@ -180,6 +335,41 @@
           "status": "computed",
           "source": "Computed by pipeline/targets.py from MOD11C3 Emis_29 median 2021-2023 at Holuhraun 0.955; Black Point lava flow 0.950; target surface is basaltic per B's source note"
         },
+        "albedo": {
+          "value": 0.238,
+          "value_kind": "TES-derived bolometric bare-ground albedo (MCD ground_albedo; Earth uses MODIS white-sky shortwave; decision 5)",
+          "status": "literature",
+          "source": "Mars Climate Database v6.2 (LMD/OU/IAA/ESA/CNES) climatology average solar scenario; queried at the target point for 12 months (Ls 15..345)",
+          "source_url": "https://www-mars.lmd.jussieu.fr/mcd_python/"
+        },
+        "snow_ice": {
+          "value": 0.0,
+          "value_kind": "surface CO2 + H2O frost (MCD co2ice + surf_h2o_ice monthly means) is 0 in all 12 months; subsurface ice is not counted (decision 3)",
+          "status": "literature",
+          "source": "Mars Climate Database v6.2 (LMD/OU/IAA/ESA/CNES) climatology average solar scenario; queried at the target point for 12 months (Ls 15..345)",
+          "source_url": "https://www-mars.lmd.jussieu.fr/mcd_python/"
+        },
+        "aod": {
+          "value": 0.426,
+          "value_kind": "yearly mean of MCD monthly-mean dust column visible optical depth; used as 550 nm without conversion (Mars dust grains ~1.5 um give nearly flat visible extinction)",
+          "status": "literature",
+          "source": "Mars Climate Database v6.2 (LMD/OU/IAA/ESA/CNES) climatology average solar scenario; queried at the target point for 12 months (Ls 15..345)",
+          "source_url": "https://www-mars.lmd.jussieu.fr/mcd_python/"
+        },
+        "lst_day_warm": {
+          "value": 268.3,
+          "value_kind": "surface temperature at 10:30 local (Terra time) in the warmest month (Ls135)",
+          "status": "literature",
+          "source": "Mars Climate Database v6.2 (LMD/OU/IAA/ESA/CNES) climatology average solar scenario; queried at the target point for 12 months (Ls 15..345)",
+          "source_url": "https://www-mars.lmd.jussieu.fr/mcd_python/"
+        },
+        "lst_range": {
+          "value": 62.0,
+          "value_kind": "yearly mean of (10:30 minus 22:30 local) surface temperature over 12 months",
+          "status": "literature",
+          "source": "Mars Climate Database v6.2 (LMD/OU/IAA/ESA/CNES) climatology average solar scenario; queried at the target point for 12 months (Ls 15..345)",
+          "source_url": "https://www-mars.lmd.jussieu.fr/mcd_python/"
+        },
         "relief": {
           "value": 854.0,
           "value_kind": "relief in a +-13.9 km window after averaging to ~926 m (1209 px)",
@@ -213,6 +403,54 @@
       "lat": -89.684,
       "lon": -163.261,
       "features": {
+        "albedo": {
+          "value": 0.11,
+          "value_kind": "global mean lunar Bond albedo; site-specific pending (feldspathic highland is brighter than the mean)",
+          "status": "literature",
+          "source": "NASA NSSDC Moon Fact Sheet: Bond albedo 0.11",
+          "source_url": "https://nssdc.gsfc.nasa.gov/planetary/factsheet/moonfact.html"
+        },
+        "snow_ice": {
+          "value": 0.0,
+          "value_kind": "target point is the sunlit Shackleton rim/ridge (lit 80-90% of the time); frost exists only on permanently shadowed crater floors (mission card text; decision 3)",
+          "status": "literature",
+          "source": "LROC: Shackleton-de Gerlache ridge and rim; NASA: rim points sunlit more than 90% of the year",
+          "source_url": "https://science.nasa.gov/resource/shackleton-craters-illuminated-rim-shadowed-interior/"
+        },
+        "aod": {
+          "na": true
+        },
+        "lst_night_cold": {
+          "value": 90.0,
+          "value_kind": "Shackleton average temperature ~90 K (interior about 88 K); far below Earth p1 (207 K) so scored as directional; rim night minimum not found",
+          "status": "literature",
+          "source": "Shackleton crater temperatures (secondary source summarising LRO Diviner)",
+          "source_url": "https://en.wikipedia.org/wiki/Shackleton_(crater)"
+        },
+        "emis_b29": {
+          "na": true
+        },
+        "precip": {
+          "value": 0.0,
+          "value_kind": "fixed (no rainfall on the Moon)",
+          "status": "fixed",
+          "source": "No atmosphere or precipitation on the Moon"
+        },
+        "ndvi_max": {
+          "value": 0.0,
+          "value_kind": "fixed (no vegetation)",
+          "status": "fixed",
+          "source": "Contract rule: same fixed value for every target"
+        },
+        "lst_day_warm": {
+          "value": 240.2,
+          "value_kind": "ANNUAL MAXIMUM surface temperature (Diviner temp_max), median of 4729 triangles within +-13.9 km; not a warmest-month mean at 10:30 local (undefined at the pole), so an upper bound against Earth's monthly-mean convention",
+          "status": "computed",
+          "source": "Computed by pipeline/targets.py from LRO Diviner PRP south (dlre_prp_south.tab)"
+        },
+        "lst_range": {
+          "na": true
+        },
         "roughness": {
           "value": 1160.9,
           "value_kind": "roughness in a +-13.9 km window after averaging to ~926 m (841 px)",
@@ -282,6 +520,36 @@
           "value_kind": "basaltic surface as MODIS band 29 (8.55 um) sees Earth basalt: mean of two barren reference flows",
           "status": "computed",
           "source": "Computed by pipeline/targets.py from MOD11C3 Emis_29 median 2021-2023 at Holuhraun 0.955; Black Point lava flow 0.950; target surface is basaltic per B's source note"
+        },
+        "albedo": {
+          "value": 0.11,
+          "value_kind": "global mean lunar Bond albedo; site-specific pending (mare is darker than the mean)",
+          "status": "literature",
+          "source": "NASA NSSDC Moon Fact Sheet: Bond albedo 0.11",
+          "source_url": "https://nssdc.gsfc.nasa.gov/planetary/factsheet/moonfact.html"
+        },
+        "snow_ice": {
+          "value": 0.0,
+          "value_kind": "no surface frost at the lunar equator; lunar surface frost only in permanently shadowed polar craters",
+          "status": "literature",
+          "source": "No exposed surface ice outside polar cold traps (LRO Diviner/LAMP)"
+        },
+        "aod": {
+          "na": true
+        },
+        "lst_day_warm": {
+          "value": 390.0,
+          "value_kind": "Diviner equatorial daytime maximum (near noon; not 10:30); far above Earth p99 so scored as directional",
+          "status": "literature",
+          "source": "Williams Paige Greenhagen & Sefton-Nash 2017 Icarus 283:300-325: equatorial day max ~387-397 K and pre-dawn ~95 K",
+          "source_url": "https://doi.org/10.1016/j.icarus.2016.08.012"
+        },
+        "lst_range": {
+          "value": 295.0,
+          "value_kind": "day maximum minus pre-dawn minimum (390 - 95 K); far above Earth p99 so scored as directional",
+          "status": "literature",
+          "source": "Williams Paige Greenhagen & Sefton-Nash 2017 Icarus 283:300-325: equatorial day max ~387-397 K and pre-dawn ~95 K",
+          "source_url": "https://doi.org/10.1016/j.icarus.2016.08.012"
         },
         "relief": {
           "value": 443.4,

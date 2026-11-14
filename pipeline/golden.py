@@ -6,7 +6,7 @@ Writes tests/golden_scores.json: a synthetic target that exercises every scoring
 high, a log-transformed feature, an `na` feature inside a dimension that has others, a feature with no target row, non-uniform weights),
 plus the Python result for a set of cells, including cells with missing data and cells that get no score.
 A test in Node loads web/data/* with score.js and compares (tolerance 1e-4, float32 arithmetic).
-`data_sha256` is the hash of cells.bin + features.bin + meta.json the numbers belong to.
+`data_sha256` is the hash of cells.bin + features.bin + meta.json (CRLF turned into LF in the json) the numbers belong to.
 """
 import hashlib
 import json
@@ -22,7 +22,10 @@ N_RANDOM = 250
 def data_hash():
     h = hashlib.sha256()
     for name in ("cells.bin", "features.bin", "meta.json"):
-        h.update((WEB_DATA / name).read_bytes())
+        data = (WEB_DATA / name).read_bytes()
+        if name.endswith(".json"):  # Git on Windows may check text files out with CRLF
+            data = data.replace(b"\r\n", b"\n")
+        h.update(data)
     return h.hexdigest()
 
 
