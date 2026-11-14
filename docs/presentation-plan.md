@@ -1,6 +1,6 @@
 # Presentation plan: one 3D globe that shows everything, plus the written report
 
-Status: **proposal by Person B, not yet agreed.** It builds on `plan.md`, `docs/contract.md` and `docs/tasks.md`; it changes the order of a few tasks and adds three small items, listed under "Changes to the existing plan".
+Status: **agreed by both people, 2026-11-14.** It builds on `plan.md`, `docs/contract.md` and `docs/tasks.md`; it changes the order of a few tasks and adds three small items, listed under "Changes to the existing plan".
 
 ## Goal
 
