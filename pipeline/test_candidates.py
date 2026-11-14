@@ -3,7 +3,7 @@
 """
 import numpy as np
 
-from .candidates import cand_id, cell_area_km2, haversine_km, label_regions
+from .candidates import cand_id, cell_area_km2, haversine_km, label_regions, split_region
 from .common import NCOLS, NROWS
 
 
@@ -27,6 +27,18 @@ def main():
     c = {"target_id": "jezero", "lat": -17.125, "lon": 80.125}
     assert cand_id(c) == "jezero-17.12S-080.12E", cand_id(c)
     assert cand_id({"target_id": "x", "lat": 34.625, "lon": -120.375}) == "x-34.62N-120.38W"
+    # Splitting: two clusters 600 km apart become two pieces; one tight cluster stays whole.
+    lat = np.array([30.0, 30.1, 30.2, 30.0, 35.4, 35.5, 35.5, 35.4])      # 5.4 deg of latitude is about 600 km
+    lon = np.zeros(8)
+    score = np.array([0.9, 0.8, 0.7, 0.6, 0.85, 0.75, 0.65, 0.55])
+    idx = np.arange(8)
+    pieces = split_region(idx, score, lat, lon)
+    assert len(pieces) == 2 and sorted(map(len, pieces)) == [4, 4], [list(p) for p in pieces]
+    assert {0, 1, 2, 3} in [set(p) for p in pieces] and {4, 5, 6, 7} in [set(p) for p in pieces]
+    assert [len(p) for p in split_region(np.arange(4), score, lat, lon)] == [4]       # tight cluster: whole
+    # a piece with fewer than MIN_CELLS cells is dropped
+    lat2 = np.array([30.0, 30.1, 30.2, 35.4])
+    assert [len(p) for p in split_region(np.arange(4), np.array([0.9, 0.8, 0.7, 0.85]), lat2, np.zeros(4))] == [3]
     print("candidate helper checks passed")
 
 

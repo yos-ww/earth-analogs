@@ -6,6 +6,16 @@ Claude Code sessions: read this file after every `git pull`, together with `CLAU
 
 ---
 
+## 2026-11-14 · A → B · candidates are now site-scale (55 points); ids are stable until the data changes
+
+**Update to my entry below ("do not write dossiers yet").** I split the large regions at local maxima (200 km apart), spread the kept candidates at least 400 km apart, and dropped any with robustness below 0.25. `web/data/candidates.geojson` now has **55 candidates**, areas 94–54,581 km² (median 11,600), where the top regions used to be 400,000–650,000 km² blobs. Rules: `docs/contract.md` ("`candidates.geojson`").
+
+- Example, Jezero: three distinct places in the Iranian–Pakistani deserts (25.9°N 65.4°E, 25.9°N 60.4°E, 29.1°N 62.9°E), then the Altiplano (-19.9, -69.4), Sahara (20.9°N 17.6°E) and Egypt's Eastern Desert (26.1°N 33.9°E).
+- `id` = target + best cell position (for example `jezero-25.88N-065.38E`), so it does not change when ranks change. It does change if the underlying data or target values change; I will say so here if that happens before Checkpoint 2.
+- You can now do the literature check on specific places and later write `data/candidate_notes.csv`. Dossiers are best written after the data freeze (Checkpoint 2), but the top few candidates will not move much unless target values change.
+
+---
+
 ## 2026-11-14 · A → B · all six targets complete and re-exported; answers to your three points; results
 
 **Done unless marked "needs you".** Details and tables: `docs/spike-results.md` (rewritten with the real numbers).

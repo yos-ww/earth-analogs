@@ -59,12 +59,13 @@ Terrain and temperature separate known sites from barren land. Aridity does not 
 
 `biology`, `operations` and `subsurface` tags (for example Lava Beds, Mauna Loa HI-SEAS, Pavilion Lake); subsurface ice; mineralogy beyond a silica index; Apollo-training sites chosen for crater shape or logistics (Ries, Sudbury, Lonar); gravity, vacuum and radiation.
 
-## Candidates (`web/data/candidates.geojson`, 70 points)
+## Candidates (`web/data/candidates.geojson`, 55 points)
 
-Up to 3 per continent per target. The same few regions recur across targets, which is expected because all temperature targets are directional and terrain and albedo carry the difference. Two cautions:
+Up to 3 per continent per target, at least 400 km apart, each with robustness of at least 0.25. The same few regions recur across targets, which is expected because all temperature targets are directional and terrain and albedo carry the difference. The top Jezero candidates, for example, are three distinct places in the Iranian–Pakistani deserts (25.9°N 65.4°E, 25.9°N 60.4°E, 29.1°N 62.9°E) plus the Altiplano, the Sahara and Egypt's Eastern Desert.
 
-1. **Regions are big.** The top Jezero, Arcadia and Shackleton regions are 400,000–650,000 km² blobs (the Iranian–Pakistani deserts, the Atacama–Altiplano), and a candidate is only the best cell inside it. A dossier needs a site-scale point, so the large regions should be split into sub-regions or the dossier should pick a spot inside them.
-2. **Novelty is not yet established.** The nearest known analog from our 37-site list is 800–1500 km away for the Iranian regions, but our list is short; Dasht-e Lut and Makran may well be published analogs. B's literature check decides `under-studied` or `unrecognized`.
+Large regions are split at local maxima (200 km apart), so a candidate is site-scale: areas run from 94 to 54,581 km² (median 11,600 km²). Before the split, the top regions were 400,000–650,000 km² blobs with only a best-cell point inside.
+
+**Novelty is not yet established.** The nearest known analog from our 37-site list is 800–1500 km away for the Iranian regions, but our list is short; Dasht-e Lut and Makran may well be published analogs. B's literature check decides `under-studied` or `unrecognized`.
 
 ## Caveats
 

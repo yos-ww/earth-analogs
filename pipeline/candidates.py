@@ -7,11 +7,14 @@ Per target with a complete enough profile (at least 4 scored dimensions):
     permanent ice-sheet cells (snow_ice >= ICE_SHEET) are removed first.
  2. Take the top TOP_FRAC of the remaining land area (cos-latitude weights) and group the cells into
     regions (8-connected, joined across the antimeridian). Regions need at least MIN_CELLS cells.
- 3. Drop regions whose best cell is within MIN_KNOWN_KM of any known analog site.
+ 3. Split each region at its local maxima (SPLIT_KM apart; every cell goes to its nearest maximum) so a
+    candidate is site-scale, not a whole desert. Drop pieces whose best cell is within MIN_KNOWN_KM of
+    any known analog site.
  4. Robustness = share of N_PERTURB random weight changes (each dimension weight multiplied by
     exp(N(0, WEIGHT_SIGMA))) in which the region's best score ranks in the top TOP_N of the regions.
- 5. Rank by score x robustness; keep at most PER_CONTINENT regions per continent, and skip a region
-    within MIN_SPACING_KM of an already kept higher-ranked one (near-duplicates of one place).
+ 5. Drop pieces with robustness below MIN_ROBUSTNESS. Rank by score x robustness; keep at most PER_CONTINENT regions per continent, and skip a region
+    within MIN_SPACING_KM of an already kept higher-ranked one (so three pieces of one desert do not
+    fill a continent's quota).
 B's data/candidate_notes.csv (id, name, novelty, dossier) is merged in when present.
 """
 import csv
@@ -34,7 +37,9 @@ N_PERTURB = 500
 WEIGHT_SIGMA = 0.5
 TOP_N = 50
 PER_CONTINENT = 3
-MIN_SPACING_KM = 150.0  # kept candidates of one target are at least this far apart
+MIN_ROBUSTNESS = 0.25  # below this the ranking depends too much on the slider settings to call it a finding
+SPLIT_KM = 200.0  # a region is split at local maxima that are at least this far apart
+MIN_SPACING_KM = 400.0  # kept candidates of one target are at least this far apart
 ICE_SHEET = 0.9  # snow_ice fraction at or above which a cell counts as permanent ice sheet
 EARTH_R_KM = 6371.0088
 
@@ -93,6 +98,22 @@ def continents_of(lats, lons):
     return cont.fillna("Unknown").values
 
 
+def split_region(idx, score, lat, lon):
+    """Split the cells idx of one region at its local maxima.
+
+    Cells are taken best-first; a cell becomes a peak if it is at least SPLIT_KM from every peak so far.
+    Each cell then joins its nearest peak. Returns a list of index arrays, one per piece with at least
+    MIN_CELLS cells. A region smaller than SPLIT_KM across has one peak and comes back whole."""
+    order = idx[np.argsort(-score[idx], kind="stable")]
+    peaks = []
+    for i in order:
+        if all(haversine_km(lat[i], lon[i], lat[p], lon[p]) >= SPLIT_KM for p in peaks):
+            peaks.append(i)
+    d = np.stack([haversine_km(lat[idx], lon[idx], lat[p], lon[p]) for p in peaks])  # (peaks, cells)
+    owner = d.argmin(axis=0)
+    return [idx[owner == k] for k in range(len(peaks)) if (owner == k).sum() >= MIN_CELLS]
+
+
 def candidates_for(grid, target, known, rng):
     meta, cells = grid["meta"], grid["cells"]
     dims = meta["dimensions"]
@@ -124,9 +145,10 @@ def candidates_for(grid, target, known, rng):
         idx = np.flatnonzero((pos_label == r) & top)
         if len(idx) < MIN_CELLS:
             continue
-        best = idx[np.argmax(overall[idx])]
-        d_known = float(haversine_km(lat[best], lon[best], known[:, 0], known[:, 1]).min())
-        regions.append({"idx": idx, "best": int(best), "nearest_known_km": d_known})
+        for piece in split_region(idx, overall, lat, lon):
+            best = piece[np.argmax(overall[piece])]
+            d_known = float(haversine_km(lat[best], lon[best], known[:, 0], known[:, 1]).min())
+            regions.append({"idx": piece, "best": int(best), "nearest_known_km": d_known})
     n_before = len(regions)
     regions = [g for g in regions if g["nearest_known_km"] > MIN_KNOWN_KM]
     if not regions:
@@ -161,6 +183,7 @@ def candidates_for(grid, target, known, rng):
             "area_km2": float(cell_area_km2(lat[g["idx"]]).sum()), "nearest_known_km": g["nearest_known_km"],
             "n_cells": int(len(g["idx"])),
         })
+    out = [c for c in out if c["robustness"] >= MIN_ROBUSTNESS]
     out.sort(key=lambda c: -c["score"] * c["robustness"])
     kept, count = [], {}
     for c in out:
@@ -170,7 +193,7 @@ def candidates_for(grid, target, known, rng):
             kept.append(c)
     for rank_, c in enumerate(kept, 1):
         c["rank"] = rank_
-    return kept, f"{nreg} regions in the top {TOP_FRAC:.0%}, {n_before} with >= {MIN_CELLS} cells, {len(regions)} beyond {MIN_KNOWN_KM:.0f} km of a known site"
+    return kept, f"{nreg} regions in the top {TOP_FRAC:.0%}, {n_before} pieces after splitting, {len(regions)} beyond {MIN_KNOWN_KM:.0f} km of a known site"
 
 
 def cand_id(c):
