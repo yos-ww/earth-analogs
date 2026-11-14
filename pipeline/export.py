@@ -161,6 +161,8 @@ def main():
     print(f"wrote {len(cells)} cells x {len(feats)} features, dimensions {dims}")
     export_targets()
     export_known_analogs()
+    from .golden import main as golden_main
+    golden_main()  # expected scores for the browser cross-check; hashes the files just written
 
 
 if __name__ == "__main__":
