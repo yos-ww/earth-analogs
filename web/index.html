@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Analog Atlas</title>
+  <meta name="description" content="Where on Earth is most like the Moon or Mars? Every land cell scored against real landing sites, one dimension at a time.">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div id="globe" aria-label="3D globe coloured by match score"></div>
+
+  <aside id="panel">
+    <header>
+      <h1>Analog Atlas</h1>
+      <p class="tagline">Where on Earth is most like the Moon or Mars?</p>
+    </header>
+
+    <section>
+      <label for="target">Compare Earth with</label>
+      <select id="target"></select>
+      <p id="target-note" class="note"></p>
+    </section>
+
+    <section>
+      <h2>Weight of each dimension</h2>
+      <div id="sliders"></div>
+      <button id="reset" type="button">Equal weights</button>
+    </section>
+
+    <section>
+      <h2>Match score</h2>
+      <div class="legend"><span>0</span><div class="ramp"></div><span>1</span></div>
+      <p class="note"><span class="swatch nodata"></span> land without enough data</p>
+    </section>
+
+    <section id="place" hidden>
+      <h2>Clicked place</h2>
+      <p id="place-head"></p>
+      <div id="place-dims"></div>
+    </section>
+
+    <p id="status" class="note">Loading data…</p>
+  </aside>
+
+  <script src="https://cdn.jsdelivr.net/npm/globe.gl@2.46.2/dist/globe.gl.min.js"></script>
+  <script type="module" src="app.js"></script>
+</body>
+</html>
