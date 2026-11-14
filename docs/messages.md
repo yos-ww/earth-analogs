@@ -6,6 +6,33 @@ Claude Code sessions: read this file after every `git pull`, together with `CLAU
 
 ---
 
+## 2026-11-14 · A → B · UI feedback for the judges (Claude's recommendations, your call)
+
+**Open for you: read, then build what you think is worth it. Your decision; nothing here is agreed.** No `web/data/`, scoring or contract change in any item.
+
+Yosif asked Claude how to make the live app easier to understand and more memorable for the judges. Claude read `web/` (after your UI-upgrade commit `2e6e831`) against the judging rubric and recommended the items below. The radar chart, the arcs to the nearest known site and "How Mars-like is…" are already in your upgrade, so they are not repeated here.
+
+**The gap Claude sees:** a judge who opens the link cold needs to understand it in 10 seconds. Today the six sites are hidden in a dropdown, nothing on screen says "6 sites × 344,354 places", the finds are dots to hunt for on a spinning globe, and the score has no reference point in the simple view.
+
+**Before the pitch, by points per hour:**
+
+1. **Percentile next to the big score** (~10 min). "55/100 · more similar than 98% of Earth's land". `showPlace` already computes `pct`; it is only in "More details" today. The percentile is easier to read than the raw score and matches the "Does it work?" numbers.
+2. **Six site cards instead of the `#target` dropdown** (~45 min). A Mars row and a Moon row; each card has the name, the one-line `TARGET_BLURB` and the number of new finds. Possibly a heading like "Search Earth for places like…": it shows the scope and frames the app as a search engine (Creativity).
+3. **"Top finds" list for the current site** (~1 h). The top 5 candidates by `rank`: verdict dot, region name, score. A click calls the existing camera flight + `showPlace` with the candidate. Judges get results without searching the globe.
+4. **First-visit welcome** (~30 min). One line ("Pick a Mars or Moon site; Earth glows where it matches") with "▶ Watch the 50-second tour" and "Explore myself". Remember the choice in `localStorage` inside try/catch; skip it with `?tour=1`.
+
+**Only if time remains:**
+
+5. **Small Mars/Moon inset globe** with the target pinned ("this spot there ↔ these places here"). The biggest wow, but needs public-domain Mars and Moon textures and adds GPU load next to the day/night shader. Only after the second-laptop test.
+6. **Slider feedback:** after a slider move, one line "Top match now: X (was Y)", so the slider demo shows a consequence, not only a colour shift.
+7. **Projector pass:** check the docked panel and the IBM Plex Mono numbers at projector resolution; larger type behind `?big=1` if needed. Fold it into the open second-laptop test together with the day/night frame rate (your item 6).
+
+**Claude deliberately left out** weight presets (decided against), new data layers and reverse search (no new science before the pitch), and anything touching `web/data/` (frozen).
+
+**Checks if you build any of it:** golden 306/306 unchanged (no `web/score.js` change); the tour runs start to finish with `?tour=1` (steps that call `selectTarget` must still work if the dropdown becomes cards); the welcome overlay never shows in tour mode.
+
+---
+
 ## 2026-11-14 · B → A · UI upgrade: instrument look, day/night, contours, arcs, fingerprint radar, "How Mars-like is…"
 
 **FYI, plus one thing for you (item 4). `web/` only; no `web/data/`, scoring or contract change. Golden check still 306/306.**
