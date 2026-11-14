@@ -6,11 +6,12 @@ Usage (from the repo root):
 Only features whose data/interim/<id>.npy exists are exported, in contract order, so a
 feature that is not ready (or was dropped) is simply left out of features.bin and meta.json.
 """
+import csv
 import json
 
 import numpy as np
 
-from .common import DIMENSIONS, FEATURES, INTERIM, NCOLS, NROWS, RES_DEG, WEB_DATA, cell_weights
+from .common import DIMENSIONS, FEATURES, INTERIM, NCOLS, NROWS, RES_DEG, ROOT, WEB_DATA, cell_weights
 
 SIGMA_FLOOR_FRAC = 0.05  # sigma is at least 5% of (p99 - p1), so mostly-zero features keep sigma > 0
 
@@ -25,6 +26,66 @@ def weighted_percentile(x, w, q):
 
 def transform(values, kind):
     return np.log1p(values) if kind == "log1p" else values
+
+
+def export_targets(targets_csv=None, literature_csv=None, out=None):
+    """Write web/data/targets.json from B's two CSVs (literature values only; docs/contract.md).
+
+    data/targets.csv:             target_id, name, body, lat, lon, source, source_url
+    data/targets_literature.csv:  target_id, feature_id, value, unit, value_kind, source, source_url
+                                  [, status]   (optional; literature (default), computed or fixed)
+    A feature_id is a feature id, `limit:<name>` (goes to limits) or `info:<name>` (not_scored).
+    value = `na` marks a feature with no meaning for that target.
+    """
+    targets_csv = targets_csv or ROOT / "data" / "targets.csv"
+    literature_csv = literature_csv or ROOT / "data" / "targets_literature.csv"
+    out = out or WEB_DATA / "targets.json"
+    if not (targets_csv.exists() and literature_csv.exists()):
+        print(f"targets.json skipped: {targets_csv.name} / {literature_csv.name} not both present")
+        return
+    feature_ids = {f[0] for f in FEATURES}
+    targets = {}
+    for t in csv.DictReader(open(targets_csv, newline="", encoding="utf-8")):
+        targets[t["target_id"]] = {
+            "id": t["target_id"], "name": t["name"], "body": t["body"],
+            "lat": float(t["lat"]), "lon": float(t["lon"]),
+            "features": {}, "weights": {d: 1 for d in DIMENSIONS},
+            "not_scored": {}, "limits": {},
+        }
+    problems = []
+    for row in csv.DictReader(open(literature_csv, newline="", encoding="utf-8")):
+        t = targets.get(row["target_id"])
+        fid, raw = row["feature_id"].strip(), row["value"].strip()
+        if t is None:
+            problems.append(f"unknown target_id {row['target_id']!r}")
+            continue
+        src = {"source": row["source"].strip()}
+        if row.get("source_url", "").strip():
+            src["source_url"] = row["source_url"].strip()
+        if fid.startswith("limit:"):
+            t["limits"][fid[6:]] = {"value": float(raw), **src}
+        elif fid.startswith("info:"):
+            t["not_scored"][fid[5:]] = {"value": float(raw), "unit": row["unit"].strip(), **src}
+        elif fid in feature_ids:
+            if raw.lower() == "na":
+                t["features"][fid] = {"na": True}
+            else:
+                entry = {"value": float(raw)}
+                if row.get("value_kind", "").strip():
+                    entry["value_kind"] = row["value_kind"].strip()
+                entry["status"] = (row.get("status") or "").strip() or "literature"
+                t["features"][fid] = {**entry, **src}
+        else:
+            problems.append(f"{row['target_id']}: unknown feature_id {fid!r}")
+    for t in targets.values():
+        missing = [f for f in feature_ids if f not in t["features"]]
+        if missing:
+            problems.append(f"{t['id']}: no row yet for {', '.join(sorted(missing))}")
+    out.parent.mkdir(parents=True, exist_ok=True)
+    out.write_text(json.dumps({"targets": list(targets.values())}, indent=2, ensure_ascii=False) + "\n")
+    print(f"wrote {out.name}: {len(targets)} targets")
+    for p in problems:
+        print("  note:", p)
 
 
 def main():
@@ -67,6 +128,7 @@ def main():
     }
     (WEB_DATA / "meta.json").write_text(json.dumps(meta, indent=2) + "\n")
     print(f"wrote {len(cells)} cells x {len(feats)} features, dimensions {dims}")
+    export_targets()
 
 
 if __name__ == "__main__":

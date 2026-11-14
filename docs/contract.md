@@ -96,7 +96,7 @@ Little-endian `Uint32`, one value per land cell: the flat grid index. Length = `
 ### Sources of `targets.json` (both hand-edited, owner: B)
 
 - `data/targets.csv`: one row per target. Columns: `target_id, name, body, lat, lon, source, source_url`. `lat`/`lon` is the one exact centre point (review decision 7).
-- `data/targets_literature.csv`: one row per target and value. Columns: `target_id, feature_id, value, unit, value_kind, source, source_url`. Special cases:
+- `data/targets_literature.csv`: one row per target and value. Columns: `target_id, feature_id, value, unit, value_kind, source, source_url`, plus an optional last column `status` (`literature` if empty, or `fixed` for values like `precip = 0` that need no lookup). Special cases:
   - `value` = `na` makes the feature `{ "na": true }` (for example `aod` for the Moon).
   - `feature_id` = `limit:gravity_ms2`, `limit:pressure_pa` or `limit:radiation_msv_day` goes to `limits`.
   - `feature_id` starting with `info:` (for example `info:thermal_inertia`) goes to `not_scored`.
