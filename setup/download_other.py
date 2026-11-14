@@ -18,7 +18,8 @@ USGS = "https://edcintl.cr.usgs.gov/downloads/sciweb1/shared/topo/downloads/GMTE
 MOLA = "https://pds-geosciences.wustl.edu/mgs/mgs-m-mola-5-megdr-l3-v1/mgsl_300x/meg064/"
 TES = "https://pds-geosciences.wustl.edu/mgs/mgs-m-tes-5-timap-v1/"
 LOLA = "https://pds-geosciences.wustl.edu/lro/lro-l-lola-3-rdr-v1/lrolol_1xxx/data/lola_gdr/"
-DIV = "https://pds-geosciences.wustl.edu/lro/urn-nasa-pds-lro_diviner_derived1/data_derived_prp/"
+DIVBASE = "https://pds-geosciences.wustl.edu/lro/urn-nasa-pds-lro_diviner_derived1/"
+DIV = DIVBASE + "data_derived_prp/"
 
 # (folder, url). GDAL reads the PDS3 .img files only when the .lbl sits next to them.
 FILES = (
@@ -28,6 +29,7 @@ FILES = (
     + [("lola", LOLA + "cylindrical/img/ldem_64" + e) for e in (".img", ".lbl")]
     + [("lola", LOLA + "polar/img/" + n + e) for n in ("ldem_75s_240m", "ldem_80s_80m") for e in (".img", ".lbl")]
     + [("diviner", DIV + "dlre_prp_south" + e) for e in (".tab", ".xml", ".lbl")]
+    + [("diviner", DIVBASE + "data_derived_gcp/global_cumul_avg_cyl_10n20n_002" + e) for e in (".tab", ".xml", ".lbl")]
 )
 
 
