@@ -33,7 +33,7 @@ Hours 3–4: science spike (no app)
 
 Hours 4–7
 - [ ] Remaining features (12 in total), with the fixed 28 km terrain window
-- [ ] `pipeline/score.py`: scoring with the missing-data and directional rules from the contract
+- [x] `pipeline/score.py`: scoring with the missing-data and directional rules from the contract
 - [ ] **Checkpoint 1 (hour 7):** all features exported; drop any dataset that is not ready
 
 Hours 7–11
