@@ -6,6 +6,70 @@ Claude Code sessions: read this file after every `git pull`, together with `CLAU
 
 ---
 
+## 2026-11-14 · A → B · review against the judging rubric (agreed by both); data frozen; limits in; figures; your list
+
+**Open for you: the list in section 4, in that order. Everything in section 2 is done.**
+
+### 1. The review in short
+
+We read the judging rubric (`Judging_Criteria_NASA_Space_Apps_Doha_2026.pdf`, kept local) against the project and both agreed on the result: five criteria at 1–5 each; "3 = solid", "5 = genuinely surprised us"; the Sunday pitch feeds mainly into Presentation; about 2 of 19 teams go on to NASA's global round.
+
+| Criterion | If judged now | Reachable | What closes the gap |
+|---|---|---|---|
+| Relevance | 4–5 | 5 | "How it helps exploration" inside the app (mission cards) |
+| Validity | 4 | 4–5 | "Does it work?" panel; aridity explained, not shown as every place's weakness |
+| Creativity | 3–4 | 4–5 | Tell the surprise result (the Makran–Chagai–Hormozgan belt) where judges see it |
+| Impact | 2–3 | 4 | Say who uses this and why: mission cards, one deep dive, next steps |
+| Presentation | 1–2 | 4–5 | Slides, 30-second video, tour mode, a summary at the top of the write-up |
+
+The science is the strongest part and stays as it is. The points are in Presentation and Impact, which is mostly your area, so section 4 is ordered by points per hour. I take what I can (figures, slide drafts, numbers).
+
+### 2. Done by A (commit with this entry)
+
+- **Limits re-exported:** `limits` in `web/data/targets.json` now holds your gravity, pressure and radiation rows for all six targets (format as in the contract, plus `source_url`). Mars gravity is **3.73** m/s² (your rows); the placeholder in the write-up's (B) section still says 3.71, please use 3.73 there. Nothing else in `web/data/` changed; golden file still current, all four tests pass.
+- **Data frozen (Checkpoint 2 brought forward).** No more changes to `web/data/` except bug fixes, and I will announce any here first. Candidate ids are final, so you can write `data/candidate_notes.csv` and dossiers against them.
+- **Figures** in `docs/figures/` (`python -m pipeline.figures`; it stops if a number disagrees with `validation.json`):
+  - `validation.png`: known sites vs random barren land, Mars and Moon (slide 4)
+  - `sensitivity.png`: the Mars result under 16 changed choices (slide 4 or backup)
+  - `candidates.png`: the 55 candidates and 37 known sites on a world map (slide 5)
+  - `gulf.png`: candidates around the Gulf with Doha marked (slide 1 or 5, the pitch hook)
+- **Write-up (my sections):** figures 1–3 with captions; aridity decision recorded under "Choices"; a paragraph on the first-pass literature result for the Makran belt. `docs/tasks.md` (A lines) ticked and `README.md` status updated: both are shared files, edited with Yosif's go-ahead.
+
+### 3. Decisions taken in the review
+
+- **Aridity: no scoring change** (option "keep and say it plainly"). Lowering its weight now would be tuning to the answer. Dropping it would barely move the Mars result (0.90 vs 0.75, p = 0.017).
+- **Ask for the panel:** "what is different" currently leads with "aridity 0.00" for almost every candidate, so the breakdown looks the same everywhere. Please show the weakest dimension *other than aridity* as the breakdown. Show aridity separately with a short note, e.g. "Rainfall: satellite estimate, too coarse to tell dry from extremely dry deserts", and grey its fingerprint axis.
+- **Novelty wording rule unchanged:** "no analog study found in a first-pass search" until the Scholar/ADS check; never "unrecognized" before it.
+
+**One correction to `docs/literature-check.md`** (your file, so I have not edited it): "800–1500 km from every site in our known list" is not right for the belt. From `nearest_known_km` in `candidates.geojson`, the belt's candidates are **360–1,010 km** from the nearest known site, which is the **Samail Ophiolite, Oman**, for all of them. Example: Arcadia #2 is 361 km away, Jezero #2 397 km, Utopia #1 424 km, Gale #1 570 km. Also, the belt itself (Makran, Chagai, Hormozgan) holds the #1 candidate of **four** targets (Jezero, Gale, Utopia, Arcadia). It is five of six only if the Lut, just north of it, is counted (Marius Hills #1). The write-up says it that way. For the Scholar/ADS pass, it is worth searching specifically for Iranian salt glaciers ("namakier") compared with Mars, in case the Zagros salt domes have a Mars link that a first pass misses.
+
+### 4. Your list, in order of points per hour
+
+1. **"Does it work?" panel** from `validation.json`, with the wording we agreed: "Known Mars analogs rank above plain desert (89th vs 76th percentile of Earth's land). The evidence is modest (p about 0.02 to 0.03) and depends on how 'plain desert' is defined. The Moon test has too few independent sites to conclude." `validation.png` can go in it as an image.
+2. **Mission cards + "why this place matters"** (`web/missions.js`, as planned). This is challenge question 3 in the app and most of the Impact score.
+3. **Earth-limits card** from the new `limits` (gravity, pressure, radiation per target, with sources).
+4. **Tour mode**, 5–6 steps: spinning globe → pick Jezero → the glow → fly to the Makran candidate → its fingerprint → "Does it work?" → Earth's limits. It doubles as the script for the 30-second video and as a safe demo if the live pitch is rushed.
+5. **Second-laptop WebGL test** of the live URL today, to close the flat-map fallback question.
+6. **Write-up (B) sections, Summary first** (judges read it first), then "Problem and idea", "Earth's limits" (numbers now in `targets.json`), "How to use / next steps". For next steps, Yosif and I suggest naming the users: analog-programme planners (shortlist sites per mission need), countries without a national analog site (Gulf, North Africa), and the public through the globe. Add "add your own target" as the natural extension: any Mars or Moon point with values becomes a new search.
+7. **Slides (7) + 30-second video: start tonight**, not at hour 19. My drafts for slides 3–5 are below; change anything.
+8. **One deep dive**: the Makran–Chagai belt after the Scholar/ADS check (match / where it breaks down / how it helps exploration). State the access limits in Iran and Pakistan honestly, and name an accessible alternative with similar scores, such as Egypt's Eastern Desert or central Saudi Arabia (Utopia #3).
+9. **Pitch hook** (both of us): "The best Mars match our search found for Curiosity's Gale crater is 355 km from this room" (Gale #1, 26.9°N 54.6°E, Hormozgan; score 0.71, stays in the top 50 in 498 of 500 random weightings). Always with the novelty caveat.
+
+**Still open, for both of us:**
+- the licence for the repo (Yosif sets it, both agree);
+- who checks the Space Apps submission form (project page, demo link, data section, any AI-use disclosure) before tomorrow;
+- the judging PDF stays local (not committed).
+
+### 5. Draft text for slides 3–5 (A)
+
+**Slide 3, "How it works."** We compare every 28 km patch of Earth's land (344,354 places) with six Mars and Moon landing sites on eight dimensions: terrain, temperature, vegetation, aridity, albedo, ice, dust and geology. Earth data: NASA MODIS (five products), GPM IMERG and USGS GMTED. Mars and Moon data: MGS MOLA, TES, LRO LOLA, Diviner and the Mars Climate Database. Where the planet's value lies inside Earth's range we compare like for like; where it is beyond anything on Earth (every Mars and Moon night is colder than Earth's coldest), we score "as close as Earth gets". Visual: the eight dimensions as a row of icons, each with its Earth / Mars / Moon source.
+
+**Slide 4, "Does it work?"** Scientists' known Mars analog sites score better than 89% of Earth's land; random barren land scores better than 76%. Modest evidence (p ≈ 0.02–0.03), and the direction holds under every change we tried. For the Moon there are too few independent sites to tell. The score cannot see biology, caves, lava tubes, subsurface ice or operations. Visual: `validation.png` (or the "Does it work?" panel).
+
+**Slide 5, "What we found."** 55 candidate sites, each at least 200 km from any known analog. Every first-ranked candidate stays in the top 50 in at least 498 of 500 random re-weightings of the dimensions. The biggest surprise is a belt across south-east Iran and south-west Pakistan: Makran, Chagai and the Hormozgan salt domes. It holds the top candidate for four of the six targets, and our first literature search found no analog study there. Visual: `gulf.png` or `candidates.png`.
+
+---
+
 ## 2026-11-14 · B → A · candidates on the globe, simpler panel, literature check, Earth-limits values, write-up review
 
 **Open for you: re-export (the limits rows) and a look at the literature verdicts.**

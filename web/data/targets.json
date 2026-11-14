@@ -97,7 +97,23 @@
         "geology": 1
       },
       "not_scored": {},
-      "limits": {}
+      "limits": {
+        "gravity_ms2": {
+          "value": 3.73,
+          "source": "NASA NSSDC Mars Fact Sheet: mean surface gravity",
+          "source_url": "https://nssdc.gsfc.nasa.gov/planetary/factsheet/marsfact.html"
+        },
+        "pressure_pa": {
+          "value": 723.0,
+          "source": "Mars Climate Database v6.2 surface pressure (ps); yearly mean of 12 months at the target point",
+          "source_url": "https://www-mars.lmd.jussieu.fr/mcd_python/"
+        },
+        "radiation_msv_day": {
+          "value": 0.64,
+          "source": "Hassler et al. 2014 Science 343: Curiosity RAD surface dose equivalent 0.64 +- 0.12 mSv/day (Gale; used for all Mars sites)",
+          "source_url": "https://doi.org/10.1126/science.1244797"
+        }
+      }
     },
     {
       "id": "gale",
@@ -196,7 +212,23 @@
         "geology": 1
       },
       "not_scored": {},
-      "limits": {}
+      "limits": {
+        "gravity_ms2": {
+          "value": 3.73,
+          "source": "NASA NSSDC Mars Fact Sheet: mean surface gravity",
+          "source_url": "https://nssdc.gsfc.nasa.gov/planetary/factsheet/marsfact.html"
+        },
+        "pressure_pa": {
+          "value": 837.0,
+          "source": "Mars Climate Database v6.2 surface pressure (ps); yearly mean of 12 months at the target point",
+          "source_url": "https://www-mars.lmd.jussieu.fr/mcd_python/"
+        },
+        "radiation_msv_day": {
+          "value": 0.64,
+          "source": "Hassler et al. 2014 Science 343: Curiosity RAD surface dose equivalent 0.64 +- 0.12 mSv/day (Gale; used for all Mars sites)",
+          "source_url": "https://doi.org/10.1126/science.1244797"
+        }
+      }
     },
     {
       "id": "utopia",
@@ -295,7 +327,23 @@
         "geology": 1
       },
       "not_scored": {},
-      "limits": {}
+      "limits": {
+        "gravity_ms2": {
+          "value": 3.73,
+          "source": "NASA NSSDC Mars Fact Sheet: mean surface gravity",
+          "source_url": "https://nssdc.gsfc.nasa.gov/planetary/factsheet/marsfact.html"
+        },
+        "pressure_pa": {
+          "value": 837.0,
+          "source": "Mars Climate Database v6.2 surface pressure (ps); yearly mean of 12 months at the target point",
+          "source_url": "https://www-mars.lmd.jussieu.fr/mcd_python/"
+        },
+        "radiation_msv_day": {
+          "value": 0.64,
+          "source": "Hassler et al. 2014 Science 343: Curiosity RAD surface dose equivalent 0.64 +- 0.12 mSv/day (Gale; used for all Mars sites)",
+          "source_url": "https://doi.org/10.1126/science.1244797"
+        }
+      }
     },
     {
       "id": "arcadia",
@@ -394,7 +442,23 @@
         "geology": 1
       },
       "not_scored": {},
-      "limits": {}
+      "limits": {
+        "gravity_ms2": {
+          "value": 3.73,
+          "source": "NASA NSSDC Mars Fact Sheet: mean surface gravity",
+          "source_url": "https://nssdc.gsfc.nasa.gov/planetary/factsheet/marsfact.html"
+        },
+        "pressure_pa": {
+          "value": 839.0,
+          "source": "Mars Climate Database v6.2 surface pressure (ps); yearly mean of 12 months at the target point",
+          "source_url": "https://www-mars.lmd.jussieu.fr/mcd_python/"
+        },
+        "radiation_msv_day": {
+          "value": 0.64,
+          "source": "Hassler et al. 2014 Science 343: Curiosity RAD surface dose equivalent 0.64 +- 0.12 mSv/day (Gale; used for all Mars sites)",
+          "source_url": "https://doi.org/10.1126/science.1244797"
+        }
+      }
     },
     {
       "id": "shackleton",
@@ -481,7 +545,23 @@
         "geology": 1
       },
       "not_scored": {},
-      "limits": {}
+      "limits": {
+        "gravity_ms2": {
+          "value": 1.62,
+          "source": "NASA NSSDC Moon Fact Sheet: surface gravity 1.62 m/s2",
+          "source_url": "https://nssdc.gsfc.nasa.gov/planetary/factsheet/moonfact.html"
+        },
+        "pressure_pa": {
+          "value": 3e-10,
+          "source": "NASA NSSDC Moon Fact Sheet: surface pressure (night)",
+          "source_url": "https://nssdc.gsfc.nasa.gov/planetary/factsheet/moonfact.html"
+        },
+        "radiation_msv_day": {
+          "value": 1.369,
+          "source": "Zhang et al. 2020 Science Advances 6:eaaz1334: Chang'e-4 LND surface dose equivalent 1369 uSv/day (used for both Moon sites)",
+          "source_url": "https://doi.org/10.1126/sciadv.aaz1334"
+        }
+      }
     },
     {
       "id": "marius_hills",
@@ -572,7 +652,23 @@
         "geology": 1
       },
       "not_scored": {},
-      "limits": {}
+      "limits": {
+        "gravity_ms2": {
+          "value": 1.62,
+          "source": "NASA NSSDC Moon Fact Sheet: surface gravity 1.62 m/s2",
+          "source_url": "https://nssdc.gsfc.nasa.gov/planetary/factsheet/moonfact.html"
+        },
+        "pressure_pa": {
+          "value": 3e-10,
+          "source": "NASA NSSDC Moon Fact Sheet: surface pressure (night)",
+          "source_url": "https://nssdc.gsfc.nasa.gov/planetary/factsheet/moonfact.html"
+        },
+        "radiation_msv_day": {
+          "value": 1.369,
+          "source": "Zhang et al. 2020 Science Advances 6:eaaz1334: Chang'e-4 LND surface dose equivalent 1369 uSv/day (used for both Moon sites)",
+          "source_url": "https://doi.org/10.1126/sciadv.aaz1334"
+        }
+      }
     }
   ]
 }

@@ -111,6 +111,7 @@ Choices made after a first look at results, listed so they can be judged:
 1. The basaltic emissivity target changed from a placeholder (0.96) to 0.952 from Earth basalt flows. B proposed the rule before any result existed. It moved the validation figures slightly in the favourable direction.
 2. Candidates: regions need at least 3 cells; large regions are split at local maxima 200 km apart; kept candidates are at least 400 km apart (150 km at first) and need robustness of at least 0.25. These shape which places are shown and do not affect validation.
 3. Shackleton's day–night range was set to n/a rather than filled with a different quantity.
+4. Aridity was kept as designed after we found it nearly uninformative (see "What the dimensions show"). Lowering its weight would have been tuning to the answer; dropping it moves the Mars result only slightly (0.90 vs 0.75, p = 0.017, Figure 2). The app marks it as limited by the rainfall data instead. Decided by both, 2026-11-14.
 
 ## Validation (A)
 
@@ -138,6 +139,10 @@ The known analog sites (`data/known_analogs.csv`, 37 published sites) are the te
 | Shackleton alone | 12 | 0.67 | 0.57 | 0.194 |
 
 Reading: **known Mars analogs rank above random barren land** (the median known site is better than 89% of Earth's land, against 76% for the typical barren cell; p ≈ 0.02 to 0.03). For Jezero on its own the evidence is strong (p = 0.002). For Arcadia, Gale and Utopia on their own the difference is in the same direction but not significant (p between 0.06 and 0.10). For the Moon the sites are in the right direction but there are only 12 and the difference could be chance. Counting every site of the body, including those the score cannot see, gives similar figures (for example Jezero 0.86 with 29 sites).
+
+![Known analog sites against random barren land, per body](figures/validation.png)
+
+*Figure 1. Each dot is a known analog site, placed at its percentile among all of Earth's land for the best-matching target of its body. Grey bars: random barren land, by share of its area. The lowest Mars sites are the Arctic ones (Haughton, Axel Heiberg, Svalbard), which are snow-covered while the Mars targets have no surface frost.*
 
 ### What the dimensions show
 
@@ -185,9 +190,17 @@ Median percentile of the dimension score, for sites tagged with that dimension a
 
 The direction (known sites above barren land) holds in every variant. Whether p crosses 0.05 depends on choices: it passes 0.05 when the barren baseline is loosened to include semi-arid land, when the Atacama sites are removed, when all σ are narrowed, or when terrain or albedo is dropped, which are the two dimensions carrying most of the separation. It does not depend on any single site. Dropping vegetation makes the result much stronger because barren land matches the vegetation target (no plants) by construction, so comparing against barren land is a conservative test in that respect. For the Moon the result cannot be interpreted: with 6 of the 12 sites in the USA, removing them gives 0.42 vs 0.57 (p = 0.83), and the sign reverses when albedo or geology is dropped.
 
+![The Mars validation under changed choices](figures/sensitivity.png)
+
+*Figure 2. The Mars result for each variant in the table (blue: known sites, grey: random barren land). The p values are a separate Monte Carlo run, so the design row reads 0.028 here and 0.024 in `validation.json`.*
+
 ## Results: new candidates (A)
 
 For each target the pipeline takes the top 1% of land area, groups the cells into regions, splits large regions at their local maxima, removes anything within 200 km of a known analog and, for the Mars targets, permanent ice sheets, and ranks what is left by score × robustness. Robustness is the share of 500 random changes of the dimension weights (each multiplied by exp(N(0, 0.5))) in which the place stays in the top 50. At most 3 candidates per continent are kept, at least 400 km apart. The result is 55 candidates (`web/data/candidates.geojson`).
+
+![The 55 candidates and the 37 known sites](figures/candidates.png)
+
+*Figure 3. Candidates by target (orange: Mars, blue: Moon) and the known analog sites used for validation (grey crosses).*
 
 Top three for each target (score at the default equal weights; "weakest" shows where the analogy breaks down):
 
@@ -216,7 +229,7 @@ What the pattern says:
 
 - The same few regions recur across targets: **the Iranian plateau and Baluchistan** (Dasht-e Lut, Makran and the desert to their east, about 25–36°N, 55–66°E), with one Arabian candidate, the **Altiplano and Atacama**, **Egypt's Eastern Desert and the central Sahara**, the **Tibet–Qaidam–Tarim** area, and, for the Moon targets, southern Africa. This is expected: temperature targets are directional, so terrain, albedo, dust and geology carry the difference between targets.
 - **Every top-three candidate in the table has aridity 0.00.** According to IMERG the first-ranked candidate of each target gets 69 to 266 mm/yr, so by this measure they are arid, not hyperarid. Given the bias of the rainfall data explained above, we cannot tell from our data whether they are drier than that. The candidates are therefore places that match on terrain, temperature, albedo, dust and geology, not proven hyperarid ones.
-- **"Under-studied" is not yet established.** The nearest site on our list of 37 is 250 km to 1,500 km away, but our list is short, and a place far from it may still be a published analog (the Dasht-e Lut, for example, is a known desert-geomorphology site). A literature check per candidate decides whether it is called "under-studied", and the word "unrecognized" is used only if that search finds nothing.
+- **"Under-studied" is not yet established.** The nearest site on our list of 37 is 250 km to 1,500 km away, but our list is short, and a place far from it may still be a published analog (the Dasht-e Lut, for example, is a known desert-geomorphology site). A literature check per candidate decides whether it is called "under-studied", and the word "unrecognized" is used only if that search finds nothing. A first pass (titles and abstracts, `docs/literature-check.md`) found no analog study for the Makran coast, Chagai–Registan and the Hormozgan salt domes. This belt across south-east Iran and south-west Pakistan holds the first-ranked candidate of four targets (Jezero, Gale, Utopia, Arcadia), and the Lut desert just north of it (aeolian analog work only) holds the first-ranked Marius Hills candidate. The nearest site on our list to the belt is the Samail Ophiolite in Oman, 360 to 1,010 km away, an analog studied for a different reason (serpentinisation). A Scholar and ADS search comes before any stronger claim.
 
 ## What the score cannot see (A), and Earth's limits (B)
 
@@ -248,6 +261,7 @@ python -m pipeline.export              # web/data/* and tests/golden_scores.json
 python -m pipeline.score --validate    # web/data/validation.json
 python -m pipeline.candidates          # web/data/candidates.geojson
 python -m pipeline.sensitivity         # how the validation changes under other choices
+python -m pipeline.figures             # docs/figures/*.png (checks its numbers against validation.json)
 python -m pipeline.spike               # early science check, prints to the terminal
 ```
 

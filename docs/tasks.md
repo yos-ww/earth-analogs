@@ -23,8 +23,8 @@ Ordered by the timeline in `plan.md`. Tick a box in the same commit that finishe
 Hours 1–3
 - [x] `pipeline/features.py`: land mask, `cells.bin`, and two features (`roughness`, `ndvi_max`)
 - [x] `pipeline/export.py`: write `web/data/cells.bin`, `features.bin`, `meta.json` in the contract format
-- [ ] `pipeline/export.py`: also write a literature-only `web/data/targets.json` from `data/targets.csv` and `data/targets_literature.csv` (see contract), so B can swap the mock targets for real ones
-- [ ] **Checkpoint 0 (hour 3):** these two features render on B's globe
+- [x] `pipeline/export.py`: also write a literature-only `web/data/targets.json` from `data/targets.csv` and `data/targets_literature.csv` (see contract), so B can swap the mock targets for real ones
+- [x] **Checkpoint 0 (hour 3):** these two features render on B's globe
 
 Hours 3–4: science spike (no app)
 - [x] Add three quick regrid features: `precip`, `lst_night_cold`, `emis_b29` (median of `Emis_29` over the 36 MOD11C3 files)
@@ -34,21 +34,21 @@ Hours 3–4: science spike (no app)
 Hours 4–7
 - [x] Remaining features (12 in total), with the fixed 28 km terrain window
 - [x] `pipeline/score.py`: scoring with the missing-data and directional rules from the contract
-- [ ] **Checkpoint 1 (hour 7):** all features exported; drop any dataset that is not ready
+- [x] **Checkpoint 1 (hour 7):** all features exported; drop any dataset that is not ready (all 12 kept)
 
 Hours 7–11
-- [ ] `pipeline/targets.py`: MOLA and LOLA terrain, Diviner values; merge with `data/targets_literature.csv` into `web/data/targets.json`
+- [x] `pipeline/targets.py`: MOLA and LOLA terrain, Diviner values; merge with `data/targets_literature.csv` into `web/data/targets.json`
 - [x] Export `known_analogs.geojson` from `data/known_analogs.csv`
-- [ ] Validation: known analogs vs. random land and random barren land (`score.py --validate`), also writing `web/data/validation.json`. Map the `mineralogy` tag to `geology`; tags with no matching dimension (`biology`, `operations`, `subsurface`) are reported as "not visible to the score"
-- [ ] **Science check (hour 11):** do known analogs beat random barren land?
+- [x] Validation: known analogs vs. random land and random barren land (`score.py --validate`), also writing `web/data/validation.json`. Map the `mineralogy` tag to `geology`; tags with no matching dimension (`biology`, `operations`, `subsurface`) are reported as "not visible to the score"
+- [x] **Science check (hour 11):** do known analogs beat random barren land? Mars yes (0.89 vs 0.76, p ≈ 0.02–0.03, sensitivity in the write-up); Moon not interpretable (12 sites, p = 0.21)
 
 Hours 11–14
-- [ ] Candidate extraction, robustness, 200 km novelty filter → `web/data/candidates.geojson`
+- [x] Candidate extraction, robustness, 200 km novelty filter → `web/data/candidates.geojson`
 
 Hours 17–21
-- [ ] **Checkpoint 2 (hour 17):** freeze the data
-- [ ] `docs/writeup.md`: methods and validation sections, figures, PDF export
-- [ ] Unit checks listed under "Verification" in `plan.md`
+- [x] **Checkpoint 2 (hour 17):** freeze the data. Brought forward: frozen 2026-11-14 about 17:30 after the limits re-export (agreed by both after the progress review)
+- [ ] (methods, validation, results and figures 1–3 done; PDF export after B's sections) `docs/writeup.md`: methods and validation sections, figures, PDF export
+- [ ] (three of four pass: terrain, `meta.json`/`features.bin`, golden 306/306; the fingerprint check waits for B's radar chart) Unit checks listed under "Verification" in `plan.md`
 - [x] Small fixes from `docs/review-notes.md`: script the GMTED and PDS downloads (`setup/download_other.py`; sizes of all 20 files verified against the servers on 2026-11-14)
 
 ## Person B: app and story

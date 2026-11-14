@@ -4,7 +4,9 @@ A global, data-driven search for places on Earth that resemble Moon and Mars lan
 
 Built for the "Earth Analogs for Lunar and Martian Exploration" hackathon challenge (`challenge.md`).
 
-**Status:** the data pipeline is complete (12 Earth features, scoring, validation, candidate extraction); the app (`web/`) and the write-up are in progress. Candidate and validation numbers are provisional until the planetary target values are complete.
+**Live app:** https://yos-ww.github.io/earth-analogs/web/ · **Write-up:** [`docs/writeup.md`](docs/writeup.md)
+
+**Status (2026-11-14):** the data is frozen. All six Moon and Mars targets are complete, and 12 Earth features are scored for 344,354 land cells. The validation (known analogs vs. random barren land, with a sensitivity analysis) is in `web/data/validation.json`, and the 55 candidate sites are in `web/data/candidates.geojson`. The app and the write-up are being finished.
 
 ## Where things are
 
@@ -45,5 +47,6 @@ python -m pipeline.candidates               # -> web/data/candidates.geojson
 
 Checks: `python -m pipeline.test_score`, `python -m pipeline.test_terrain`, `python -m pipeline.test_candidates`.
 `python -m pipeline.spike` prints the early science check described in `docs/spike-results.md`.
+`python -m pipeline.figures` draws the write-up figures into `docs/figures/` and stops if a number disagrees with `validation.json`.
 `python -m pipeline.sensitivity` re-runs the validation under changed choices (barren threshold, left-out sites, dropped dimensions, σ scale); results are in `docs/writeup.md`.
 Rebuilding all features from the raw data gives bit-identical arrays (checked 2026-11-14).
