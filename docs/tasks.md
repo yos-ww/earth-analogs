@@ -54,28 +54,28 @@ Hours 17–21
 ## Person B: app and story
 
 Hours 1–3
-- [ ] `web/mock/`: `cells.bin`, `features.bin`, `meta.json`, `targets.json` in the contract format (no Python env on B's machine: generate the mock with the standard library or in JS)
-- [ ] `data/targets.csv` (one row per target, one exact centre point each) next to `data/targets_literature.csv`; formats in `docs/contract.md`
-- [ ] `web/index.html` + `web/app.js`: globe with the score texture and one slider per dimension, on the mock data
-- [ ] **By hour 3, for the spike:** literature values for Jezero, Arcadia and Marius Hills in `data/targets_literature.csv` (roughness placeholder, coldest-month night temperature, 8.55 µm emissivity), each with a source
-- [ ] The rest of `data/targets_literature.csv`: the 36 values in `docs/target-values-needed.md`, plus placeholder terrain values and the Earth-limits values, each with a source
-- [ ] One exact centre point for Arcadia Planitia and for the Shackleton–de Gerlache ridge
+- [x] ~~`web/mock/`~~ not needed: A's real `web/data/` existed from hour 1, so the app was built and tested on it directly (B)
+- [x] `data/targets.csv` (one row per target, one exact centre point each) next to `data/targets_literature.csv`; formats in `docs/contract.md`
+- [x] `web/index.html` + `web/app.js`: globe with the score texture and one slider per dimension (on the real data; `web/score.js` passes the golden check 306/306)
+- [x] **By hour 3, for the spike:** literature values for Jezero, Arcadia and Marius Hills in `data/targets_literature.csv` (roughness placeholder, coldest-month night temperature, 8.55 µm emissivity), each with a source
+- [x] The rest of `data/targets_literature.csv`: the 36 values in `docs/target-values-needed.md`, plus placeholder terrain values and the Earth-limits values, each with a source
+- [x] One exact centre point for Arcadia Planitia and for the Shackleton–de Gerlache ridge
 - [ ] Fill the two "authors TODO" references in `data/known_analogs.csv`
-- [ ] Turn on GitHub Pages once the repo is public
-- [ ] **Checkpoint 0 (hour 3):** the page is live and shows A's two real features
+- [x] Turn on GitHub Pages once the repo is public (done by A)
+- [x] **Checkpoint 0 (hour 3):** the page is live and shows A's two real features
 
 Hours 3–7
-- [ ] Target picker, Earth / Mars / Moon switch
-- [ ] Click-to-fly with per-dimension bars and "directional" badges
+- [ ] Target picker (done), Earth / Mars / Moon switch (next)
+- [x] Click-to-fly with per-dimension bars and "directional" badges (badge text: "beyond Earth")
 - [ ] Fingerprint chart (radar, one axis per dimension from `meta.json`) in the Place panel; ~1–2 h (`plan.md`, "How the app presents a match")
-- [ ] Mission context in `web/missions.js`: mission card per target, one sentence per dimension, "why this place matters" text in the Place panel; ~1 h
-- [ ] **Checkpoint 1 (hour 7):** slider drags re-colour the globe smoothly; if not, fall back to the flat map
+- [ ] (partly: one-sentence target descriptions and plain "what is similar / different" text are in `web/app.js`) Mission context in `web/missions.js`: mission card per target, one sentence per dimension, "why this place matters" text in the Place panel; ~1 h
+- [ ] **Checkpoint 1 (hour 7):** slider drags re-colour the globe smoothly (yes on B's laptop, about 8 ms per move; second-laptop test still to do); if not, fall back to the flat map
 
 Hours 7–11
-- [ ] Known-analog layer, candidate list panel, Earth-limits card, About/method panel
+- [ ] Known-analog layer (done), candidate layer with "Is it new?" panel (done), Earth-limits card, About/method panel
 
 Hours 14–17
-- [ ] Literature check on the top candidates; set `novelty`, `name` and `dossier` in `data/candidate_notes.csv` (never in `web/data/`)
+- [ ] First-pass literature check done (`docs/literature-check.md`, shown in the app); still to do: Scholar/ADS check, then set `novelty`, `name` and `dossier` in `data/candidate_notes.csv` (never in `web/data/`)
 - [ ] Deep dives on the top 2–3 sites → `docs/sites/*.md` (match / breaks down / exploration use)
 
 Hours 17–21

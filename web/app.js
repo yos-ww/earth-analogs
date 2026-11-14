@@ -1,46 +1,50 @@
-// Analog Atlas: 3D globe coloured by how well each Earth land cell matches a Moon or Mars target.
+// Analog Atlas: 3D globe showing where Earth is most like a chosen Mars or Moon site.
 // Data formats: docs/contract.md. Scoring: score.js (mirrors pipeline/score.py).
-import { decodeGrid, dimensionScores, overallScores, cellIndex, targetCoverage, MIN_DIMENSIONS } from "./score.js";
+import { decodeGrid, dimensionScores, overallScores, cellScores, cellIndex, targetCoverage, MIN_DIMENSIONS } from "./score.js";
+import { regionOf, VERDICT_TEXT } from "./regions.js";
 
 const DATA_DIR = "data"; // "mock" to test against web/mock/*
 const IMG = { earth: "img/earth-blue-marble.jpg", bump: "img/earth-topology.png" };
 
-// Heat ramp for good matches. Poor matches stay transparent so the real Earth shows through;
-// opacity rises with the score from SHOW_FROM (invisible) to 1 (MAX_ALPHA).
+// Look: weak matches stay transparent (real Earth shows), strong matches glow warm.
 const RAMP_STOPS = ["#ffe66d", "#ffb02e", "#ff6a1a", "#e8202a", "#a3004f"]; // low -> high match
 const SHOW_FROM = 0.35;         // scores below this are fully transparent
 const MAX_ALPHA = 235;          // 0-255 opacity of a perfect match
 const TEX_SCALE = 2;            // texture = 2x the score grid (2880 x 1440), smoothed
 const FADE_MS = 550;            // cross-fade when the target changes
-const BODY_COLOUR = { mars: "#ff7a45", moon: "#f2f5fa" };
 const RESUME_ROTATE_MS = 2500;  // auto-rotation resumes this long after the user lets go
 const ICE_SHEET_FROM = 0.9;     // snow_ice fraction from which a cell counts as permanent ice sheet
+const COLOURS = { mars: "#ff7a45", moon: "#f2f5fa", cand: "#3ef0ff", click: "255,179,71" };
+
+// Everyday words for visitors.
+const DIM_NAME = {
+  terrain: "Landscape shape", temperature: "Temperature", vegetation: "Plants", aridity: "Rainfall",
+  albedo: "Ground brightness", ice: "Ice & snow", dust: "Dust in the air", geology: "Rock type",
+};
+const TARGET_BLURB = {
+  jezero: "Where NASA's Perseverance rover landed in 2021: an ancient lake bed with a dried-up river delta.",
+  gale: "Where NASA's Curiosity rover landed in 2012: plains at the foot of a 5 km high mountain.",
+  utopia: "Where China's Zhurong rover landed in 2021: wide, flat northern plains.",
+  arcadia: "A candidate landing site for the first human crews: flat plains with ice just below the surface.",
+  shackleton: "The rim of Shackleton crater at the Moon's south pole, in NASA's Artemis landing region: almost constant sunlight next to dark, icy craters.",
+  marius_hills: "A hole into an underground lava tube on the Moon: a possible natural shelter for a future base.",
+};
 
 const $ = (id) => document.getElementById(id);
 const status = (msg) => { $("status").textContent = msg; };
-const label = (d) => d.charAt(0).toUpperCase() + d.slice(1);
+const dimName = (d) => DIM_NAME[d] || d.charAt(0).toUpperCase() + d.slice(1);
+const bodyName = (b) => (b === "moon" ? "the Moon" : "Mars");
+const shortName = (t) => t.name.split(" (")[0];
+const esc = (s) => String(s ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
 const fmtLatLon = (lat, lng) =>
   `${Math.abs(lat).toFixed(2)}°${lat >= 0 ? "N" : "S"}, ${Math.abs(lng).toFixed(2)}°${lng >= 0 ? "E" : "W"}`;
 
 const state = {
   grid: null, targets: [], target: null, dims: null, weights: [],
-  overall: null, shown: null, fade: null, clicked: null, analogs: [], showAnalogs: true,
-  iceSheet: null, hideIce: false, // iceSheet[i] = 1 where snow_ice >= ICE_SHEET_FROM
+  overall: null, shown: null, fade: null, clicked: null,
+  analogs: [], candidates: [], showAnalogs: true, showCandidates: true,
+  iceSheet: null, hideIce: false, cellWeight: null,
 };
-
-// Cells that are permanent ice sheet (Antarctica, inner Greenland, ice caps). Hidden from the
-// colouring for rocky Mars targets: missing dimensions there are skipped, not penalised, so the
-// flat ice would otherwise look like a fair match (see docs/messages.md, A's 2026-11-14 reply).
-function findIceSheets(grid) {
-  const j = grid.meta.features.findIndex((f) => f.id === "snow_ice");
-  const mask = new Uint8Array(grid.n);
-  if (j < 0) return mask; // feature dropped: nothing to hide
-  for (let i = 0; i < grid.n; i++) {
-    const v = grid.values[i * grid.nf + j]; // transform "none": the fraction itself
-    if (v >= ICE_SHEET_FROM) mask[i] = 1;
-  }
-  return mask;
-}
 
 // ---------- colours ----------
 function hexToRgb(h) { const n = parseInt(h.slice(1), 16); return [(n >> 16) & 255, (n >> 8) & 255, n & 255]; }
@@ -71,6 +75,16 @@ function loadImage(src) {
   });
 }
 
+// Cells that are permanent ice sheet. Hidden from the colouring for rocky Mars targets: missing
+// dimensions there are skipped, not penalised, so flat ice would otherwise look like a fair match.
+function findIceSheets(grid) {
+  const j = grid.meta.features.findIndex((f) => f.id === "snow_ice");
+  const mask = new Uint8Array(grid.n);
+  if (j < 0) return mask;
+  for (let i = 0; i < grid.n; i++) if (grid.values[i * grid.nf + j] >= ICE_SHEET_FROM) mask[i] = 1;
+  return mask;
+}
+
 // ---------- globe ----------
 const globe = new Globe($("globe"))
   .backgroundColor("#05070d")
@@ -81,19 +95,17 @@ const globe = new Globe($("globe"))
   .atmosphereAltitude(0.16)
   .pointOfView({ lat: 22, lng: 40, altitude: 2.3 })
   .onGlobeClick(({ lat, lng }) => { showPlace(lat, lng); flyTo(lat, lng); })
-  // known analog sites
+  // points: known analogs (small, orange/white) and new candidates (bigger, cyan)
   .pointLat((d) => d.lat).pointLng((d) => d.lng)
-  .pointColor((d) => d.colour).pointAltitude(0.012).pointRadius(0.32).pointResolution(12)
+  .pointColor((d) => d.colour).pointAltitude((d) => d.alt).pointRadius((d) => d.radius).pointResolution(12)
   .pointsMerge(false).pointsTransitionDuration(400)
-  .pointLabel((d) => `<div class="tip"><b>${d.name}</b><br>${d.country} · ${d.bodies} analog<br><span>${d.why}</span></div>`)
-  .onPointClick((d) => { showAnalog(d); flyTo(d.lat, d.lng); })
-  // pulse where the user clicked
+  .pointLabel((d) => `<div class="tip"><b>${esc(d.title)}</b><br><span>${esc(d.subtitle)}</span></div>`)
+  .onPointClick((d) => { showPlace(d.lat, d.lng, { point: d }); flyTo(d.lat, d.lng); })
+  // rings: gentle pulse around candidates, orange pulse where the user clicked
   .ringLat((d) => d.lat).ringLng((d) => d.lng)
-  .ringColor(() => (t) => `rgba(255,179,71,${1 - t})`)
-  .ringMaxRadius(3).ringPropagationSpeed(2.2).ringRepeatPeriod(1100);
+  .ringColor((d) => (t) => `rgba(${d.rgb},${(1 - t) * d.strength})`)
+  .ringMaxRadius((d) => d.maxR).ringPropagationSpeed((d) => d.speed).ringRepeatPeriod((d) => d.period);
 
-// Smooth camera: slow rotation that pauses only while the user holds the globe (or during a
-// fly-to), then picks up again RESUME_ROTATE_MS after they let go.
 const controls = globe.controls();
 controls.autoRotate = true;
 controls.autoRotateSpeed = 0.4;
@@ -105,53 +117,60 @@ function resumeRotationSoon(extraMs = 0) {
   clearTimeout(resumeTimer);
   resumeTimer = setTimeout(() => { controls.autoRotate = true; }, RESUME_ROTATE_MS + extraMs);
 }
-controls.addEventListener("start", holdRotation);        // mouse/finger down on the globe
-controls.addEventListener("end", () => resumeRotationSoon()); // released
+controls.addEventListener("start", holdRotation);
+controls.addEventListener("end", () => resumeRotationSoon());
 
 function flyTo(lat, lng) {
   holdRotation();
-  const alt = Math.min(globe.pointOfView().altitude, 1.8);
-  globe.pointOfView({ lat, lng, altitude: alt }, 1000);
-  resumeRotationSoon(1000); // after the 1 s flight, plus the usual pause
+  globe.pointOfView({ lat, lng, altitude: Math.min(globe.pointOfView().altitude, 1.8) }, 1000);
+  resumeRotationSoon(1000);
 }
 
 window.addEventListener("resize", () => globe.width(window.innerWidth).height(window.innerHeight));
+
+// Points and rings shown for the current target and toggles.
+function targetCandidates() {
+  return state.candidates.filter((c) => c.target_id === state.target?.id);
+}
+function updateLayers() {
+  const cands = state.showCandidates ? targetCandidates() : [];
+  globe.pointsData([...(state.showAnalogs ? state.analogs : []), ...cands]);
+  const rings = cands.map((c) => ({ lat: c.lat, lng: c.lng, rgb: "62,240,255", strength: 0.55, maxR: 2.2, speed: 1.2, period: 2200 }));
+  if (state.clicked) rings.push({ lat: state.clicked[0], lng: state.clicked[1], rgb: COLOURS.click, strength: 1, maxR: 3, speed: 2.2, period: 1100 });
+  globe.ringsData(rings);
+}
 
 // ---------- painting ----------
 function paintScores(values) {
   const { grid } = state;
   const px = scoreImage.data;
-  px.fill(0); // transparent: ocean and land without a score show the photo
+  px.fill(0);
   for (let i = 0; i < grid.n; i++) {
     const s = values[i];
-    if (Number.isNaN(s)) continue;
-    if (s <= SHOW_FROM) continue; // poor match: leave the real Earth visible
-    if (state.hideIce && state.iceSheet[i]) continue; // permanent ice sheet hidden for this target
-    const v = (Math.min(s, 1) - SHOW_FROM) / (1 - SHOW_FROM); // 0..1 within the visible range
+    if (Number.isNaN(s) || s <= SHOW_FROM) continue;          // weak match: real Earth shows
+    if (state.hideIce && state.iceSheet[i]) continue;         // ice sheet hidden for this target
+    const v = (Math.min(s, 1) - SHOW_FROM) / (1 - SHOW_FROM);
     const p = grid.cells[i] * 4, k = Math.round(v * 255) * 3;
     px[p] = LUT[k]; px[p + 1] = LUT[k + 1]; px[p + 2] = LUT[k + 2];
-    px[p + 3] = Math.round(MAX_ALPHA * Math.pow(v, 0.8)); // fades in smoothly from transparent
+    px[p + 3] = Math.round(MAX_ALPHA * Math.pow(v, 0.8));
   }
   scoreCtx.putImageData(scoreImage, 0, 0);
-
   texCtx.drawImage(earthPhoto, 0, 0, texCanvas.width, texCanvas.height);
   texCtx.imageSmoothingEnabled = true;
   texCtx.imageSmoothingQuality = "high";
   texCtx.drawImage(scoreCanvas, 0, 0, texCanvas.width, texCanvas.height);
-
   const map = globe.globeMaterial().map;
   if (map) { map.image = texCanvas; map.needsUpdate = true; }
-  else requestAnimationFrame(() => paintScores(values)); // photo texture not created yet: try next frame
+  else requestAnimationFrame(() => paintScores(values)); // photo texture not created yet
 }
 
-// Blend old -> new overall scores over FADE_MS (NaN on either side shows the new value).
 function startFade(from, to) {
   if (!from) { state.shown = to; paintScores(to); return; }
   const mix = new Float32Array(to.length), t0 = performance.now();
-  state.fade = { from, to, mix, t0 };
+  state.fade = { t0 };
   const step = (now) => {
-    if (state.fade?.t0 !== t0) return; // superseded by a newer change
-    const t = Math.min((now - t0) / FADE_MS, 1), e = t * t * (3 - 2 * t); // smoothstep
+    if (state.fade?.t0 !== t0) return;
+    const t = Math.min((now - t0) / FADE_MS, 1), e = t * t * (3 - 2 * t);
     for (let i = 0; i < to.length; i++) {
       const a = from[i], b = to[i];
       mix[i] = Number.isNaN(b) ? NaN : Number.isNaN(a) ? b : a + (b - a) * e;
@@ -165,7 +184,7 @@ function startFade(from, to) {
 
 let frame = 0;
 function rescore({ fade = false } = {}) {
-  if (frame && !fade) return; // sliders: at most one repaint per animation frame
+  if (frame && !fade) return;
   cancelAnimationFrame(frame);
   const previous = fade && state.shown ? Float32Array.from(state.shown) : null;
   frame = requestAnimationFrame(() => {
@@ -173,7 +192,7 @@ function rescore({ fade = false } = {}) {
     state.overall = overallScores(state.dims.dimScores, state.dims.nd, state.weights);
     if (fade) startFade(previous, state.overall);
     else { state.fade = null; state.shown = state.overall; paintScores(state.overall); }
-    if (state.clicked) showPlace(...state.clicked, { quiet: true });
+    refreshPanel();
   });
 }
 
@@ -184,7 +203,7 @@ function buildSliders() {
   state.grid.meta.dimensions.forEach((d, k) => {
     const row = document.createElement("div");
     row.className = "slider";
-    row.innerHTML = `<label for="w-${d}">${label(d)}</label>
+    row.innerHTML = `<label for="w-${d}">${dimName(d)}</label>
       <input id="w-${d}" type="range" min="0" max="2" step="0.1" value="${state.weights[k]}">
       <span>${state.weights[k].toFixed(1)}</span>`;
     const input = row.querySelector("input"), out = row.querySelector("span");
@@ -199,19 +218,16 @@ function buildSliders() {
 
 function selectTarget(id) {
   const t = state.targets.find((x) => x.id === id);
-  const { meta } = state.grid;
   state.target = t;
-  state.weights = meta.dimensions.map((d) => t.weights?.[d] ?? 1);
+  state.weights = state.grid.meta.dimensions.map((d) => t.weights?.[d] ?? 1);
   state.dims = dimensionScores(state.grid, t);
-  state.hideIce = t.body === "mars"; // default per body; the user can flip it
+  state.hideIce = t.body === "mars";
   $("hide-ice").checked = state.hideIce;
-  const cov = targetCoverage(meta, t);
-  const dirs = Object.keys(state.dims.directional);
-  $("target-note").textContent =
-    `${t.body === "moon" ? "Moon" : "Mars"} · ${fmtLatLon(t.lat, t.lon)} · values for ${cov.have} of ${cov.total} features` +
-    (cov.have < MIN_DIMENSIONS ? " — not enough yet to score Earth" : "") +
-    (dirs.length ? ` · beyond Earth's range: ${dirs.join(", ")}` : "");
+  const n = targetCandidates().length;
+  $("target-blurb").innerHTML = `${esc(TARGET_BLURB[t.id] || "")}` +
+    (n ? ` <span class="sub">${n} new candidate place${n === 1 ? "" : "s"} on Earth.</span>` : "");
   buildSliders();
+  updateLayers();
   rescore({ fade: true });
 }
 
@@ -220,63 +236,192 @@ $("reset").addEventListener("click", () => {
   buildSliders();
   rescore({ fade: true });
 });
-
 $("hide-ice").addEventListener("change", (e) => {
   state.hideIce = e.target.checked;
   if (state.shown) paintScores(state.shown);
-  if (state.clicked) showPlace(...state.clicked, { quiet: true });
+  refreshPanel();
 });
+$("show-analogs").addEventListener("change", (e) => { state.showAnalogs = e.target.checked; updateLayers(); });
+$("show-candidates").addEventListener("change", (e) => { state.showCandidates = e.target.checked; updateLayers(); });
 
-$("show-analogs").addEventListener("change", (e) => {
-  state.showAnalogs = e.target.checked;
-  globe.pointsData(state.showAnalogs ? state.analogs : []);
-});
-
-// ---------- side panel: clicked place / analog site ----------
-function markClick(lat, lng) {
-  globe.ringsData([{ lat, lng }]);
+// ---------- side panel ----------
+function cellValue(i, id) {
+  const j = state.grid.meta.features.findIndex((f) => f.id === id);
+  if (j < 0) return NaN;
+  const f = state.grid.meta.features[j], v = state.grid.values[i * state.grid.nf + j];
+  return f.transform === "log1p" ? Math.expm1(v) : v;
 }
 
-function dimensionBars(i) {
-  const { grid, dims } = state;
-  const dirDims = new Set(grid.meta.features.filter((f) => dims.directional[f.id]).map((f) => f.dimension));
-  return grid.meta.dimensions.map((d, k) => {
-    const v = dims.dimScores[i * dims.nd + k];
-    const badge = dirDims.has(d) ? `<span class="badge" title="The target lies beyond anything on Earth; Earth can only point in this direction">beyond Earth</span>` : "";
-    if (Number.isNaN(v)) return `<div class="dim missing"><span>${label(d)}${badge}</span><div class="track"></div><span class="val">–</span></div>`;
-    return `<div class="dim"><span>${label(d)}${badge}</span><div class="track"><div class="fill" style="width:${(v * 100).toFixed(0)}%"></div></div><span class="val">${v.toFixed(2)}</span></div>`;
-  }).join("");
+function fmtValue(id, unit, v) {
+  if (v === null || v === undefined || Number.isNaN(v)) return "–";
+  if (unit === "K" && id === "lst_range") return `${v.toFixed(0)} K`; // a difference: no °C
+  if (unit === "K") return `${(v - 273.15).toFixed(0)} °C`;
+  if (id === "snow_ice") return `${(v * 100).toFixed(0)}%`;
+  if (unit === "mm/yr") return `${v < 10 ? v.toFixed(1) : v.toFixed(0)} mm/yr`;
+  if (unit === "m") return `${v.toFixed(0)} m`;
+  if (unit === "degrees" || unit === "deg") return `${v.toFixed(1)}°`;
+  return v.toFixed(v < 1 ? 2 : 1);
 }
 
-function showPlace(lat, lng, { quiet = false } = {}) {
-  state.clicked = [lat, lng];
-  if (!quiet) markClick(lat, lng);
-  const i = cellIndex(state.grid, lat, lng);
-  $("place").hidden = false;
-  $("place-title").textContent = "Clicked place";
-  $("place-extra").innerHTML = "";
-  if (i < 0) { $("place-head").textContent = `${fmtLatLon(lat, lng)} · ocean or not on the land grid`; $("place-dims").innerHTML = ""; return; }
-  const s = state.overall[i];
-  $("place-head").innerHTML = Number.isNaN(s)
-    ? `${fmtLatLon(lat, lng)} · not scored (fewer than ${MIN_DIMENSIONS} dimensions with data)`
-    : `${fmtLatLon(lat, lng)} · match <strong>${s.toFixed(2)}</strong>`;
-  $("place-dims").innerHTML = dimensionBars(i);
-  if (state.hideIce && state.iceSheet[i]) {
-    $("place-extra").innerHTML = `<p class="note">Permanent ice sheet: not coloured for this target. ` +
-      `Vegetation and dust have no data on ice, so they are skipped rather than counted against it, ` +
-      `which would make flat ice look like a rocky Mars plain. Untick "Hide permanent ice sheets" to see its score.</p>`;
+// One plain sentence per dimension: what it is here, and on the target.
+function describe(dim, i) {
+  const t = state.target, there = (id) => t.features[id], body = bodyName(t.body);
+  const val = (id) => cellValue(i, id);
+  switch (dim) {
+    case "terrain": {
+      const r = val("relief"), tr = there("relief")?.value;
+      return `height differences of ${fmtValue("relief", "m", r)} here${tr !== undefined ? `, ${fmtValue("relief", "m", tr)} at ${esc(shortName(t))}` : ""}`;
+    }
+    case "temperature": {
+      const n = val("lst_night_cold"), tn = there("lst_night_cold")?.value;
+      return `coldest nights about ${fmtValue("x", "K", n)} here${tn !== undefined ? `, ${fmtValue("x", "K", tn)} on ${body}` : ""}`;
+    }
+    case "vegetation": {
+      const v = val("ndvi_max");
+      return Number.isNaN(v) ? "no plant data here" : v < 0.15 ? "almost no plants, like " + body : "plants grow here, none on " + body;
+    }
+    case "aridity": {
+      // IMERG overestimates desert rain (e.g. ~45 mm/yr at Atacama Yungay, really a few mm), so
+      // say "satellite estimate" and explain why even very dry deserts rarely match (A, 2026-11-14).
+      const p = val("precip");
+      return `the rain satellite estimates ${fmtValue("precip", "mm/yr", p).replace(" mm/yr", " mm")} a year here, none on ${body}. ` +
+        `<span class="sub">Satellites tend to overestimate rain in deserts, so even very dry places rarely match on rainfall.</span>`;
+    }
+    case "albedo": {
+      const a = val("albedo"), ta = there("albedo")?.value;
+      return `ground reflects ${Number.isNaN(a) ? "–" : Math.round(a * 100) + "%"} of sunlight here${ta !== undefined ? `, about ${Math.round(ta * 100)}% at ${esc(shortName(t))}` : ""}`;
+    }
+    case "ice": {
+      const s = val("snow_ice");
+      return Number.isNaN(s) ? "no snow data here" : s < 0.05 ? "no snow or ice on the ground, like the site" : `snow or ice ${Math.round(s * 100)}% of the year here`;
+    }
+    case "dust": {
+      const d = val("aod"), td = there("aod")?.value;
+      return Number.isNaN(d) ? "no dust data here" : `${d > 0.3 ? "dusty" : "fairly clear"} air here${td !== undefined ? `; ${body} is ${td > 0.3 ? "dusty" : "clear"}` : ""}`;
+    }
+    case "geology": {
+      const e = val("emis_b29");
+      if (Number.isNaN(e)) return "no rock data here";
+      return e < 0.9 ? "quartz-rich sand and rock here; the site is darker, basalt-like rock" : "dark, basalt-like rock or soil, like the site";
+    }
+    default: return "";
   }
 }
 
-function showAnalog(a) {
-  showPlace(a.lat, a.lng);
-  $("place-title").textContent = "Known analog site";
-  const i = cellIndex(state.grid, a.lat, a.lng);
-  const s = i >= 0 ? state.overall[i] : NaN;
-  $("place-head").innerHTML = `<b>${a.name}</b> · ${a.country}<br>${a.bodies} analog · ` +
-    (Number.isNaN(s) ? "not scored here" : `match with ${state.target.name.split(" (")[0]} <strong>${s.toFixed(2)}</strong>`);
-  const ref = a.url ? `<a href="${a.url}" target="_blank" rel="noopener">${a.reference}</a>` : a.reference;
-  $("place-extra").innerHTML = `<p>${a.why}</p><p class="note">Known for: ${a.dimensions.join(", ")} · ${ref}</p>`;
+const verdictWord = (s) => (s >= 0.8 ? "very similar" : s >= 0.6 ? "similar" : s >= 0.4 ? "partly similar" : "different");
+
+function areaPercentile(s) {
+  const { overall } = state, w = state.cellWeight;
+  let below = 0, total = 0;
+  for (let i = 0; i < overall.length; i++) {
+    const v = overall[i];
+    if (Number.isNaN(v)) continue;
+    total += w[i];
+    if (v < s) below += w[i];
+  }
+  return total ? below / total : NaN;
+}
+
+function distanceKm(lat1, lng1, lat2, lng2) {
+  const r = Math.PI / 180, a = Math.sin(((lat2 - lat1) * r) / 2) ** 2 +
+    Math.cos(lat1 * r) * Math.cos(lat2 * r) * Math.sin(((lng2 - lng1) * r) / 2) ** 2;
+  return 12742 * Math.asin(Math.sqrt(a));
+}
+
+function bar(name, v) {
+  if (Number.isNaN(v)) return `<div class="dim missing"><span>${name}</span><div class="track"></div><span class="val">–</span></div>`;
+  return `<div class="dim"><span>${name}</span><div class="track"><div class="fill" style="width:${(v * 100).toFixed(0)}%"></div></div><span class="val">${Math.round(v * 100)}</span></div>`;
+}
+
+// Everything in "See all the numbers": bars, measured values side by side, every target.
+function detailsBlock(i) {
+  const { grid, target, dims } = state;
+  const bars = grid.meta.dimensions.map((d, k) => bar(dimName(d), dims.dimScores[i * dims.nd + k])).join("");
+  const rows = grid.meta.features.map((f) => {
+    const entry = target.features[f.id];
+    const there = !entry ? "–" : entry.na ? "does not apply" : fmtValue(f.id, f.unit, entry.value);
+    const beyond = dims.directional[f.id] ? ` <span class="badge" title="No place on Earth reaches this value">beyond Earth</span>` : "";
+    const note = f.id === "precip" ? ` <span class="sub" title="Satellite rain estimates are too high in deserts">(estimate)</span>` : "";
+    return `<tr><td>${esc(f.label || f.id)}${note}</td><td>${fmtValue(f.id, f.unit, cellValue(i, f.id))}</td><td>${there}${beyond}</td></tr>`;
+  }).join("");
+  const all = state.targets.map((t) => ({ t, s: cellScores(grid, t, i, state.weights).overall }))
+    .sort((a, b) => (Number.isNaN(b.s) ? -1 : b.s) - (Number.isNaN(a.s) ? -1 : a.s))
+    .map(({ t, s }) => bar(`${esc(shortName(t))} <span class="sub">${t.body === "moon" ? "Moon" : "Mars"}</span>`, s)).join("");
+  return `<details class="more"><summary>See all the numbers</summary>
+    <h4>Similarity by property (out of 100)</h4>${bars}
+    <h4>Measured here vs ${esc(shortName(target))}</h4>
+    <table class="cmp"><thead><tr><th></th><th>Here</th><th>${esc(shortName(target))}</th></tr></thead><tbody>${rows}</tbody></table>
+    <h4>Similarity to every Mars and Moon site</h4>${all}</details>`;
+}
+
+// Fill the panel for a clicked place, known analog or candidate (`point`).
+function showPlace(lat, lng, { quiet = false, point = null } = {}) {
+  state.clicked = [lat, lng, point];
+  if (!quiet) updateLayers(); // moves the click pulse
+  const t = state.target, i = cellIndex(state.grid, lat, lng);
+  let html = "";
+
+  if (point?.kind === "analog") {
+    const ref = point.url ? `<a href="${esc(point.url)}" target="_blank" rel="noopener">${esc(point.reference)}</a>` : esc(point.reference);
+    html += `<h3>${esc(point.name)}</h3>
+      <p class="sub">${esc(point.country)} · <span class="tag ${point.bodyKey}">already used for ${point.bodies}</span></p>
+      <p>${esc(point.why)}</p><p class="note">Source: ${ref}</p>`;
+  } else if (point?.kind === "candidate") {
+    const reg = regionOf(lat, lng), v = VERDICT_TEXT[reg.verdict];
+    html += `<h3>${esc(reg.name || "New candidate place")}</h3>
+      <p class="sub">${fmtLatLon(lat, lng)} · <span class="tag cand">new candidate #${point.rank} for ${esc(shortName(t))}</span></p>
+      <div class="newness ${v.tone}"><b>Is it new? ${v.label}.</b> ${v.text}</div>
+      <p class="note">Area about ${Math.round(point.area_km2).toLocaleString()} km² · ${Math.round(point.nearest_known_km)} km from the nearest place scientists already use ·
+        stays in the top list in ${Math.round(point.robustness * 100)}% of tests with changed weights.</p>`;
+  } else {
+    const reg = regionOf(lat, lng);
+    html += `<h3>${reg.name ? esc(reg.name) : fmtLatLon(lat, lng)}</h3>${reg.name ? `<p class="sub">${fmtLatLon(lat, lng)}</p>` : ""}`;
+  }
+
+  if (i < 0) {
+    html += `<p class="note">This is sea, or outside our land map, so it has no score.</p>`;
+  } else if (Number.isNaN(state.overall[i])) {
+    html += `<p class="note">Not enough satellite data here to compare it with ${esc(shortName(t))}.</p>`;
+  } else {
+    const s = state.overall[i], pct = areaPercentile(s);
+    html += `<div class="score-big"><strong>${Math.round(s * 100)}<small>/100</small></strong>
+      <span>similar to ${esc(shortName(t))} on ${bodyName(t.body)}<br>more similar than ${Math.round(pct * 100)}% of Earth's land</span></div>`;
+    if (state.hideIce && state.iceSheet[i]) {
+      html += `<p class="note">This is a permanent ice sheet, so it is not coloured for a Mars site: Mars sites have no ice on the surface.</p>`;
+    }
+    const scored = state.grid.meta.dimensions.map((d, k) => ({ d, s: state.dims.dimScores[i * state.dims.nd + k] }))
+      .filter((x) => !Number.isNaN(x.s)).sort((a, b) => b.s - a.s);
+    const good = scored.filter((x) => x.s >= 0.6), bad = scored.filter((x) => x.s < 0.4).reverse();
+    if (good.length) html += `<h4>✔ What is similar</h4><ul class="why good">${good.map((x) =>
+      `<li><b>${dimName(x.d)}</b> (${verdictWord(x.s)}): ${describe(x.d, i)}</li>`).join("")}</ul>`;
+    if (bad.length) html += `<h4>✖ What is different</h4><ul class="why bad">${bad.map((x) =>
+      `<li><b>${dimName(x.d)}</b>: ${describe(x.d, i)}</li>`).join("")}</ul>`;
+    html += `<p class="note">Earth can never copy Mars or the Moon fully: gravity, the thin or missing air and space radiation are always different.</p>`;
+    html += detailsBlock(i);
+  }
+
+  if (point?.kind !== "candidate") {
+    let best = null;
+    for (const c of targetCandidates()) { const d = distanceKm(lat, lng, c.lat, c.lng); if (!best || d < best.d) best = { c, d }; }
+    if (best) html += `<p class="note">Nearest new candidate place for ${esc(shortName(t))}: ${Math.round(best.d)} km away.</p>`;
+  }
+
+  $("place-title").textContent = point?.kind === "candidate" ? "New candidate place" : point?.kind === "analog" ? "Place scientists already use" : "Selected place";
+  $("place-body").innerHTML = html;
+  const wasHidden = $("place").hidden;
+  $("place").hidden = false;
+  $("hint").hidden = true;
+  if (!quiet || wasHidden) $("place").scrollIntoView({ behavior: "smooth", block: "start" });
+}
+
+function refreshPanel() {
+  if (!state.clicked) return;
+  const [lat, lng, point] = state.clicked;
+  if (point?.kind === "candidate" && point.target_id !== state.target.id) { // candidate of another target
+    showPlace(lat, lng, { quiet: true });
+    return;
+  }
+  showPlace(lat, lng, { quiet: true, point });
 }
 
 // ---------- load ----------
@@ -287,36 +432,52 @@ async function fetchOk(path, kind) {
 }
 
 async function main() {
-  const [meta, cellsBuf, featBuf, targets, analogs, photo] = await Promise.all([
+  const [meta, cellsBuf, featBuf, targets, analogs, candidates, photo] = await Promise.all([
     fetchOk("meta.json", "json"), fetchOk("cells.bin"), fetchOk("features.bin"), fetchOk("targets.json", "json"),
-    fetchOk("known_analogs.geojson", "json").catch(() => ({ features: [] })), // optional layer
+    fetchOk("known_analogs.geojson", "json").catch(() => ({ features: [] })),
+    fetchOk("candidates.geojson", "json").catch(() => ({ features: [] })),
     loadImage(IMG.earth),
   ]);
   state.grid = decodeGrid(meta, cellsBuf, featBuf);
   state.iceSheet = findIceSheets(state.grid);
   state.targets = targets.targets;
+  state.cellWeight = new Float32Array(state.grid.n); // cos latitude: area of each cell
+  for (let i = 0; i < state.grid.n; i++) {
+    const row = Math.floor(state.grid.cells[i] / meta.grid.ncols);
+    state.cellWeight[i] = Math.cos(((90 - (row + 0.5) * meta.grid.res_deg) * Math.PI) / 180);
+  }
   earthPhoto = photo;
   scoreCanvas.width = meta.grid.ncols; scoreCanvas.height = meta.grid.nrows;
   scoreImage = scoreCtx.createImageData(scoreCanvas.width, scoreCanvas.height);
   texCanvas.width = meta.grid.ncols * TEX_SCALE; texCanvas.height = meta.grid.nrows * TEX_SCALE;
 
   state.analogs = analogs.features.map((f) => {
-    const p = f.properties, bodies = p.body.map((b) => (b === "moon" ? "Moon" : "Mars")).join(" & ");
+    const p = f.properties, bodies = p.body.map((b) => (b === "moon" ? "the Moon" : "Mars")).join(" and ");
     return {
-      lat: f.geometry.coordinates[1], lng: f.geometry.coordinates[0], name: p.name, country: p.country,
-      bodies, why: p.why_analog, dimensions: p.dimensions, reference: p.reference, url: p.source_url,
-      colour: BODY_COLOUR[p.body[0]] || "#ffffff",
+      kind: "analog", lat: f.geometry.coordinates[1], lng: f.geometry.coordinates[0],
+      name: p.name, country: p.country, bodies, bodyKey: p.body[0], why: p.why_analog,
+      reference: p.reference, url: p.source_url,
+      title: p.name, subtitle: `Already used to prepare for ${bodies}`,
+      colour: COLOURS[p.body[0]] || "#ffffff", radius: 0.28, alt: 0.012,
     };
   });
-  globe.pointsData(state.analogs);
+  state.candidates = candidates.features.map((f) => {
+    const lat = f.geometry.coordinates[1], lng = f.geometry.coordinates[0];
+    const reg = regionOf(lat, lng);
+    return {
+      kind: "candidate", lat, lng, ...f.properties,
+      title: reg.name || "New candidate place", subtitle: `New candidate #${f.properties.rank} · ${VERDICT_TEXT[reg.verdict].label}`,
+      colour: COLOURS.cand, radius: 0.5, alt: 0.03,
+    };
+  });
 
   const sel = $("target");
   for (const body of ["mars", "moon"]) {
     const group = document.createElement("optgroup");
     group.label = body === "mars" ? "Mars" : "Moon";
     for (const t of state.targets.filter((x) => x.body === body)) {
-      const cov = targetCoverage(meta, t);
-      group.appendChild(new Option(cov.have < MIN_DIMENSIONS ? `${t.name} (values pending)` : t.name, t.id));
+      const ok = targetCoverage(meta, t).have >= MIN_DIMENSIONS;
+      group.appendChild(new Option(ok ? t.name : `${t.name} (values pending)`, t.id));
     }
     sel.appendChild(group);
   }
@@ -324,7 +485,7 @@ async function main() {
   const first = state.targets.find((t) => targetCoverage(meta, t).have >= MIN_DIMENSIONS) || state.targets[0];
   sel.value = first.id;
   selectTarget(first.id);
-  status(`${meta.n_cells.toLocaleString()} land cells · ${meta.features.length} features in ${meta.dimensions.length} dimensions · click the globe or a site`);
+  status(`${meta.n_cells.toLocaleString()} places on Earth compared, each about 28 km across.`);
   $("loader").classList.add("done");
 }
 

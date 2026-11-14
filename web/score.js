@@ -33,13 +33,9 @@ export function directional(feature, t) {
   return t < feature.p1 ? "low" : t > feature.p99 ? "high" : null;
 }
 
-// Per-dimension scores for one target. Returns Float32Array (n_cells * n_dims), NaN = missing,
-// plus which features were scored one-sided. This is the slow part; it runs once per target.
-export function dimensionScores(grid, target) {
-  const { meta, values, n, nf } = grid;
-  const dims = meta.dimensions, nd = dims.length;
-  const dirs = {};
-  // feature -> (target value t, sigma, mode) or null if skipped
+// Per-feature scoring plan for one target: (target value t, sigma, mode) or null if skipped.
+function featurePlan(meta, target) {
+  const dims = meta.dimensions, dirs = {};
   const plan = meta.features.map((feat) => {
     const entry = target.features[feat.id];
     if (!entry || entry.na) return null; // no target value, or not meaningful: skipped
@@ -48,27 +44,55 @@ export function dimensionScores(grid, target) {
     if (d) dirs[feat.id] = d;
     return { t, d, sigma: feat.sigma, p1: feat.p1, p99: feat.p99, dim: dims.indexOf(feat.dimension) };
   });
+  return { plan, dirs };
+}
 
+// Score (0-1) of one feature value f against its plan entry p.
+function featureScore(p, f) {
+  let diff;
+  if (p.d === "low") diff = Math.max(f - p.p1, 0);       // Earth can only reach p1
+  else if (p.d === "high") diff = Math.max(p.p99 - f, 0); // Earth can only reach p99
+  else diff = f - p.t;
+  const q = diff / p.sigma;
+  return Math.exp(-q * q);
+}
+
+// Dimension scores of cell i into out[offset .. offset+nd); NaN = dimension missing.
+function cellDimensions(values, nf, nd, plan, i, out, offset, sum, cnt) {
+  sum.fill(0); cnt.fill(0);
+  for (let j = 0; j < nf; j++) {
+    const p = plan[j];
+    if (!p) continue;
+    const f = values[i * nf + j];
+    if (Number.isNaN(f)) continue; // no data in this cell: skipped
+    sum[p.dim] += featureScore(p, f);
+    cnt[p.dim] += 1;
+  }
+  for (let k = 0; k < nd; k++) out[offset + k] = cnt[k] ? sum[k] / cnt[k] : NaN; // mean within dimension
+}
+
+// Per-dimension scores for one target. Returns Float32Array (n_cells * n_dims), NaN = missing,
+// plus which features were scored one-sided. This is the slow part; it runs once per target.
+export function dimensionScores(grid, target) {
+  const { meta, values, n, nf } = grid;
+  const nd = meta.dimensions.length;
+  const { plan, dirs } = featurePlan(meta, target);
   const out = new Float32Array(n * nd);
   const sum = new Float64Array(nd), cnt = new Uint8Array(nd);
-  for (let i = 0; i < n; i++) {
-    sum.fill(0); cnt.fill(0);
-    for (let j = 0; j < nf; j++) {
-      const p = plan[j];
-      if (!p) continue;
-      const f = values[i * nf + j];
-      if (Number.isNaN(f)) continue; // no data in this cell: skipped
-      let diff;
-      if (p.d === "low") diff = Math.max(f - p.p1, 0);       // Earth can only reach p1
-      else if (p.d === "high") diff = Math.max(p.p99 - f, 0); // Earth can only reach p99
-      else diff = f - p.t;
-      const q = diff / p.sigma;
-      sum[p.dim] += Math.exp(-q * q);
-      cnt[p.dim] += 1;
-    }
-    for (let k = 0; k < nd; k++) out[i * nd + k] = cnt[k] ? sum[k] / cnt[k] : NaN; // mean within dimension
-  }
+  for (let i = 0; i < n; i++) cellDimensions(values, nf, nd, plan, i, out, i * nd, sum, cnt);
   return { dimScores: out, directional: dirs, nd };
+}
+
+// The same scores for a single cell (used by the side panel to compare one place with every target).
+// Returns { dims: Float32Array(nd), overall, directional }.
+export function cellScores(grid, target, i, weights) {
+  const { meta, values, nf } = grid;
+  const nd = meta.dimensions.length;
+  const { plan, dirs } = featurePlan(meta, target);
+  const dims = new Float32Array(nd);
+  cellDimensions(values, nf, nd, plan, i, dims, 0, new Float64Array(nd), new Uint8Array(nd));
+  const overall = overallScores(dims, nd, weights || meta.dimensions.map((d) => target.weights?.[d] ?? 1))[0];
+  return { dims, overall, directional: dirs };
 }
 
 // Overall score from cached dimension scores and slider weights. Fast: runs on every slider move.
