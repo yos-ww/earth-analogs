@@ -49,7 +49,7 @@ Hours 17–21
 - [ ] **Checkpoint 2 (hour 17):** freeze the data
 - [ ] `docs/writeup.md`: methods and validation sections, figures, PDF export
 - [ ] Unit checks listed under "Verification" in `plan.md`
-- [ ] Small fixes from `docs/review-notes.md`: script the GMTED and PDS downloads
+- [x] Small fixes from `docs/review-notes.md`: script the GMTED and PDS downloads (`setup/download_other.py`; sizes of all 20 files verified against the servers on 2026-11-14)
 
 ## Person B: app and story
 
