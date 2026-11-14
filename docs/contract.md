@@ -135,7 +135,7 @@ A `FeatureCollection` of `Point`s at the region's best cell. Properties:
 
 | Property | Type | Meaning |
 |---|---|---|
-| `id` | string | Stable slug, e.g. `jezero-af-1` |
+| `id` | string | Stable slug built from the target and the best cell, e.g. `jezero-34.62N-080.12E`. It does not change when the ranking changes |
 | `name` | string | Place name |
 | `target_id` | string | Matches `targets.json` |
 | `score` | number 0–1 | Overall score at default weights |
@@ -145,6 +145,10 @@ A `FeatureCollection` of `Point`s at the region's best cell. Properties:
 | `nearest_known_km` | number | Distance to the nearest known analog |
 | `novelty` | string | `under-studied` or `unrecognized` (set by B after the literature check) |
 | `dossier` | string or null | Path to the site page, e.g. `sites/xyz.md` |
+| `continent` | string | Natural Earth continent of the best cell (used for the per-continent cap) |
+| `rank` | integer | Rank within the target by score × robustness, 1 = best |
+
+How candidates are chosen (`pipeline/candidates.py`): per target, remove permanent ice-sheet cells (`snow_ice` ≥ 0.9) for the Mars targets, take the top 1% of the remaining land area, group the cells into regions (8-connected, joined across the antimeridian, at least 3 cells), drop regions whose best cell is within 200 km of any known analog, compute robustness over 500 random weight changes (each dimension weight × exp(N(0, 0.5)); "stays in the top 50" = the region's best score ranks in the top 50 of the regions that remain), rank by score × robustness, and keep at most 3 per continent per target, at least 150 km apart. A target without enough values to score at least 4 dimensions gets no candidates.
 
 `web/data/` is generated, so B does not edit this file. B's input is `data/candidate_notes.csv` (owner: B), with columns `id, name, novelty, dossier`, where `id` matches a candidate `id`. `export.py` merges it in. A candidate with no row gets `name` = "lat, lon", `novelty` = `under-studied` and `dossier` = null.
 
