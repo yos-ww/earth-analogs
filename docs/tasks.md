@@ -15,7 +15,7 @@ Ordered by the timeline in `plan.md`. Tick a box in the same commit that finishe
 - [x] Read `CLAUDE.md` and `docs/contract.md`; confirm or change the seven proposed defaults in `CLAUDE.md` (both confirmed, 2026-11-14)
 - [x] Make the repo public, so GitHub Pages works and judges can open the code link
 - [ ] Download the three globe images (Earth Blue Marble, USGS Mars colour mosaic, LROC WAC Moon) into `web/img/`
-- [ ] Turn on GitHub Pages (Settings → Pages → `main`, root folder) and add an empty `.nojekyll`. Needs admin rights, so `yos-ww` (repo owner) does this unless B has been given admin. The app is then at `https://yos-ww.github.io/earth-analogs/web/`
+- [x] Turn on GitHub Pages (Settings → Pages → `main`, root folder) and add an empty `.nojekyll`. Done by `yos-ww` (repo owner). The app is then at `https://yos-ww.github.io/earth-analogs/web/`
 - [x] Decide the four proposals in `docs/presentation-plan.md` ("Changes to the existing plan"): `validation.json` (added to the contract as optional), tour mode, flat-map fallback moved to stretch, one-dimension view. Accepted by both, 2026-11-14
 
 ## Person A: data and science
