@@ -28,6 +28,7 @@ All Earth data are open NASA or USGS products; Mars and Moon data are NASA Plane
 | MGS MOLA MEGDR | Mars terrain at the targets | 64 pixels per degree (926 m) | Same window and formulas as Earth |
 | LRO LOLA gridded data | Moon terrain at the targets | 64 pixels per degree (474 m) and the 240 m south-polar grid | Averaged to about 926 m first, then as Earth |
 | LRO Diviner polar resource product (south) | Day temperature at Shackleton | 2.88 million surface triangles | Median within the target window |
+| LRO Diviner global cumulative averages (10°–20°N band) | Day and night temperature at Marius Hills | Mission-average bolometric temperature, 0.25-hour local-time bins, 0.5° tiles | Tiles inside the target window, interpolated to 10:30 and 22:30 local time |
 | Mars Climate Database v6.2 (B) | Mars temperature, albedo, dust opacity and surface frost at each target | Climatology average solar scenario, 12 months at 10:30 and 22:30 local time | Values read at each target point |
 
 Terra crosses the equator at about 10:30 local time (day) and 22:30 (night). Mars day and night values were taken at the same two local times so that Earth and planetary temperatures are comparable.
@@ -81,12 +82,12 @@ Each target is one point, a measured landing site or candidate, with a value for
 | Utopia Planitia (Mars) | 177 | 41 | 0.4 | 263 | 187 ↓ | 50 ↑ | 0.231 | 0.54 | 0 | 0.952 |
 | Arcadia Planitia (Mars) | 854 | 158 | 2.1 | 268 | 166 ↓ | 62 ↑ | 0.238 | 0.43 | 0 | 0.952 |
 | Shackleton rim (Moon) | 4,741 ↑ | 1,161 ↑ | 15.2 ↑ | 240 ↓ | 90 ↓ | n/a | 0.11 | n/a | 0 | n/a |
-| Marius Hills pit (Moon) | 443 | 84 | 1.2 | 390 ↑ | 95 ↓ | 295 ↑ | 0.11 | n/a | 0 | 0.952 |
+| Marius Hills pit (Moon) | 443 | 84 | 1.2 | 381 ↑ | 105 ↓ | 276 ↑ | 0.11 | n/a | 0 | 0.952 |
 
 Vegetation (NDVI) and precipitation are 0 for every target (no vegetation, no rainfall). Sources:
 
 - **Mars temperatures, albedo, dust and frost:** Mars Climate Database v6.2, climatology average solar scenario, queried at each target point for 12 months at 10:30 and 22:30 local time. Albedo is the model's TES-derived bolometric ground albedo; dust is the yearly mean visible opacity, used at 550 nm without conversion. Surface CO₂ and H₂O frost is zero in all 12 months at all four points.
-- **Moon:** Marius Hills temperatures from Williams et al. (2017, Icarus 283:300–325). Shackleton night temperature from a secondary summary of Diviner results (any value under 207 K scores the same). Shackleton day temperature is the median Diviner annual-maximum surface temperature of 4,729 triangles within ±13.9 km, which is an upper bound against Earth's monthly-mean convention. The Diviner table has no day or night values, so Shackleton's day–night range is n/a. Albedo 0.11 is the global mean lunar Bond albedo (NASA NSSDC fact sheet) and is a placeholder for site values.
+- **Moon:** Marius Hills temperatures from the Diviner global cumulative product (J.-P. Williams, UCLA; the dataset behind Williams et al. 2017, Icarus 283:300–325): the mission-average bolometric temperature of the two 0.5° tiles inside the target window, interpolated to 10:30 local time (day, 381 K) and 22:30 (night, 105 K), the Terra overpass times; the range is their difference (276 K). The table has no seasons, so these are mission averages, not warmest- or coldest-month values. The peak and trough of the same profile are 392 K and 94 K, which is what the earlier literature-based values (390 K and 95 K) represented. Shackleton night temperature from a secondary summary of Diviner results (any value under 207 K scores the same). Shackleton day temperature is the median Diviner annual-maximum surface temperature of 4,729 triangles within ±13.9 km, which is an upper bound against Earth's monthly-mean convention. The Diviner table has no day or night values, so Shackleton's day–night range is n/a. Albedo 0.11 is the global mean lunar Bond albedo (NASA NSSDC fact sheet) and is a placeholder for site values.
 - **Geology:** the basaltic targets get the 8.55 µm emissivity that MODIS measures on two barren Earth basalt flows (Holuhraun 0.955, Black Point 0.950, mean 0.952), so the target and Earth come from the same sensor. Shackleton is feldspathic highland, for which there is no Earth reference, so geology is skipped for it.
 - **Ice** is surface snow or frost only. Arcadia's shallow ground ice and the ice in Shackleton's shadowed craters are below or off the surface and are described in the mission text, not scored.
 

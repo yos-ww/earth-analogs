@@ -152,8 +152,53 @@ def diviner_rows():
     ]
 
 
+# ---- Marius Hills temperatures at the Terra overpass times, from the Diviner global cumulative product
+# data/raw/diviner/global_cumul_avg_cyl_10n20n_002.tab (Williams, UCLA): bolometric brightness temperature
+# averaged over the whole mission in 0.25-hour local-time bins on 0.5 degree tiles. It has no seasons, so
+# there is no "warmest month": the values are mission averages at 10:30 and 22:30 local time, the times
+# Terra sees Earth (review decision 4). Some local-time bins are empty; the profile is interpolated linearly
+# between the bins that have data.
+TERRA_DAY_H, TERRA_NIGHT_H = 10.5, 22.5
+
+
+def diviner_gcp_rows(target_id="marius_hills"):
+    import pandas as pd
+
+    t = next(r for r in csv.DictReader(open(ROOT / "data" / "targets.csv", newline="", encoding="utf-8"))
+             if r["target_id"] == target_id)
+    lat0, lon0 = float(t["lat"]), float(t["lon"])
+    assert 10 <= lat0 < 20, "only the 10N-20N table is on disk"
+    d = pd.read_csv(RAW / "diviner" / "global_cumul_avg_cyl_10n20n_002.tab", usecols=["clon", "clat", "ltim", "tbol"],
+                    skipinitialspace=True)
+    d.columns = [c.strip() for c in d.columns]
+    d = d[d.tbol > -9000]
+    half_lat = HALF_M / (MOON_R_KM * 1000 * np.pi / 180)  # the same +-13.9 km window as the terrain
+    half_lon = half_lat / np.cos(np.radians(lat0))
+    w = d[(abs(d.clat - lat0) <= half_lat) & (abs(d.clon - lon0) <= half_lon)]
+    n_tiles = len(w[["clat", "clon"]].drop_duplicates())
+    prof = w.groupby("ltim").tbol.mean().sort_index()
+    day = float(np.interp(TERRA_DAY_H, prof.index.values, prof.values))
+    night = float(np.interp(TERRA_NIGHT_H, prof.index.values, prof.values))
+    print(f"{target_id:13s} Diviner GCP: {n_tiles} tiles, {len(prof)} local-time bins with data; "
+          f"tbol {day:.1f} K at {TERRA_DAY_H} h, {night:.1f} K at {TERRA_NIGHT_H} h")
+    src = ("Computed by pipeline/targets.py from LRO Diviner global cumulative averages (PDS "
+           "urn:nasa:pds:lro_diviner_derived1, global_cumul_avg_cyl_10n20n_002; J.-P. Williams)")
+    how = (f"mission-average bolometric temperature of {n_tiles} 0.5-degree tile(s) within +-{HALF_M / 1000:.1f} km, "
+           f"interpolated across empty local-time bins; no seasons in the table")
+    return [
+        {"target_id": target_id, "feature_id": "lst_day_warm", "value": f"{day:.1f}", "unit": "K",
+         "value_kind": f"{how}; at {TERRA_DAY_H:g} h local time (Terra day)", "source": src, "source_url": "", "status": "computed"},
+        {"target_id": target_id, "feature_id": "lst_night_cold", "value": f"{night:.1f}", "unit": "K",
+         "value_kind": f"{how}; at {TERRA_NIGHT_H:g} h local time (Terra night), not the pre-dawn minimum", "source": src,
+         "source_url": "", "status": "computed"},
+        {"target_id": target_id, "feature_id": "lst_range", "value": f"{day - night:.1f}", "unit": "K",
+         "value_kind": f"{how}; value at {TERRA_DAY_H:g} h minus value at {TERRA_NIGHT_H:g} h", "source": src,
+         "source_url": "", "status": "computed"},
+    ]
+
+
 def main():
-    rows = basalt_emissivity_rows() + diviner_rows()
+    rows = basalt_emissivity_rows() + diviner_rows() + diviner_gcp_rows()
     units = {"roughness": "m", "relief": "m", "slope": "degrees"}
     for t in csv.DictReader(open(ROOT / "data" / "targets.csv", newline="", encoding="utf-8")):
         lat, lon = float(t["lat"]), float(t["lon"])

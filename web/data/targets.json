@@ -509,11 +509,10 @@
           "source": "Contract rule: same fixed value for every target"
         },
         "lst_night_cold": {
-          "value": 95.0,
-          "value_kind": "Diviner equatorial pre-dawn minimum (end of lunar night; not 22:30 local); far below Earth p1 so scored as directional",
-          "status": "literature",
-          "source": "Williams Paige Greenhagen & Sefton-Nash 2017 Icarus 283:300-325 (doi:10.1016/j.icarus.2016.08.012)",
-          "source_url": "https://doi.org/10.1016/j.icarus.2016.08.012"
+          "value": 105.1,
+          "value_kind": "mission-average bolometric temperature of 2 0.5-degree tile(s) within +-13.9 km, interpolated across empty local-time bins; no seasons in the table; at 22.5 h local time (Terra night), not the pre-dawn minimum",
+          "status": "computed",
+          "source": "Computed by pipeline/targets.py from LRO Diviner global cumulative averages (PDS urn:nasa:pds:lro_diviner_derived1, global_cumul_avg_cyl_10n20n_002; J.-P. Williams)"
         },
         "emis_b29": {
           "value": 0.952,
@@ -538,18 +537,16 @@
           "na": true
         },
         "lst_day_warm": {
-          "value": 390.0,
-          "value_kind": "Diviner equatorial daytime maximum (near noon; not 10:30); far above Earth p99 so scored as directional",
-          "status": "literature",
-          "source": "Williams Paige Greenhagen & Sefton-Nash 2017 Icarus 283:300-325: equatorial day max ~387-397 K and pre-dawn ~95 K",
-          "source_url": "https://doi.org/10.1016/j.icarus.2016.08.012"
+          "value": 380.8,
+          "value_kind": "mission-average bolometric temperature of 2 0.5-degree tile(s) within +-13.9 km, interpolated across empty local-time bins; no seasons in the table; at 10.5 h local time (Terra day)",
+          "status": "computed",
+          "source": "Computed by pipeline/targets.py from LRO Diviner global cumulative averages (PDS urn:nasa:pds:lro_diviner_derived1, global_cumul_avg_cyl_10n20n_002; J.-P. Williams)"
         },
         "lst_range": {
-          "value": 295.0,
-          "value_kind": "day maximum minus pre-dawn minimum (390 - 95 K); far above Earth p99 so scored as directional",
-          "status": "literature",
-          "source": "Williams Paige Greenhagen & Sefton-Nash 2017 Icarus 283:300-325: equatorial day max ~387-397 K and pre-dawn ~95 K",
-          "source_url": "https://doi.org/10.1016/j.icarus.2016.08.012"
+          "value": 275.7,
+          "value_kind": "mission-average bolometric temperature of 2 0.5-degree tile(s) within +-13.9 km, interpolated across empty local-time bins; no seasons in the table; value at 10.5 h minus value at 22.5 h",
+          "status": "computed",
+          "source": "Computed by pipeline/targets.py from LRO Diviner global cumulative averages (PDS urn:nasa:pds:lro_diviner_derived1, global_cumul_avg_cyl_10n20n_002; J.-P. Williams)"
         },
         "relief": {
           "value": 443.4,
