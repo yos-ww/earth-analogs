@@ -61,6 +61,16 @@ Both people confirmed these (2026-11-14). Code to them; they are not open.
 | 6 | Polar LOLA grid | Compute slope from projected x/y metres. Read scale and offset from the `.lbl` | A |
 | 7 | Targets need one exact point | B picks and cites one centre point for Arcadia Planitia and for the Shackleton–de Gerlache ridge | B |
 
+## Decisions from the rubric review (2026-11-14, both agreed)
+
+Judged on Impact, Creativity, Validity, Relevance, Presentation (1–5 each); the gap is Presentation and Impact, not science. Details and B's prioritised list: `docs/messages.md` (entry "review against the judging rubric").
+
+- **Data frozen at about 17:30 on 2026-11-14** (Checkpoint 2 brought forward). `web/data/` changes only for bug fixes, announced in `docs/messages.md` first. Candidate ids are final.
+- **Aridity: scoring unchanged.** The app shows the weakest dimension other than aridity as "where it breaks down" and marks aridity as limited by the rainfall data.
+- **No new science features or stretch data** (e.g. LOLA normal albedo) before the pitch; time goes to slides, video, tour, mission cards, "Does it work?", one deep dive (Makran–Chagai belt) and the write-up.
+- **Pitch hook:** Gale #1 (Hormozgan) is 355 km from Doha; always with "no analog study found in a first-pass search" until Scholar/ADS is done.
+- Write-up figures come from `python -m pipeline.figures` (`docs/figures/`).
+
 ## Person A's environment
 
 - Python: `~/mamba/envs/analogs/bin/python` (py3.12, GDAL with HDF4/HDF5/netCDF/PDS). Call binaries by full path.
