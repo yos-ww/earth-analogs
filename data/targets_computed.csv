@@ -1,0 +1,7 @@
+target_id,feature_id,value,unit,value_kind,source,source_url,status
+jezero,roughness,280.4,m,std of elevation in a +-13.9 km window (992 px),Computed by pipeline/targets.py from MOLA MEGDR 64 px/deg,,computed
+gale,roughness,831.2,m,std of elevation in a +-13.9 km window (961 px),Computed by pipeline/targets.py from MOLA MEGDR 64 px/deg,,computed
+utopia,roughness,41.1,m,std of elevation in a +-13.9 km window (1054 px),Computed by pipeline/targets.py from MOLA MEGDR 64 px/deg,,computed
+arcadia,roughness,157.5,m,std of elevation in a +-13.9 km window (1209 px),Computed by pipeline/targets.py from MOLA MEGDR 64 px/deg,,computed
+shackleton,roughness,1164.2,m,std of elevation in a +-13.9 km window (13689 px),Computed by pipeline/targets.py from LOLA GDR ldem_75s_240m,,computed
+marius_hills,roughness,87.2,m,std of elevation in a +-13.9 km window (3660 px),Computed by pipeline/targets.py from LOLA GDR ldem_64,,computed

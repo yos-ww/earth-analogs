@@ -28,8 +28,8 @@ Hours 1–3
 
 Hours 3–4: science spike (no app)
 - [x] Add three quick regrid features: `precip`, `lst_night_cold`, `emis_b29` (median of `Emis_29` over the 36 MOD11C3 files)
-- [ ] Score Jezero, Arcadia and Marius Hills with B's literature values
-- [ ] **Spike check (hour 4):** report the overlap of the three top-1% maps, and where the known sites tagged terrain / temperature / aridity / ice / dust rank against random barren land. If the maps are nearly the same or known sites do not stand out, apply the "result is weak" steps in `plan.md` now
+- [x] Score Jezero, Arcadia and Marius Hills with B's literature values
+- [x] **Spike check (hour 4):** report the overlap of the three top-1% maps, and where the known sites tagged terrain / temperature / aridity / ice / dust rank against random barren land. If the maps are nearly the same or known sites do not stand out, apply the "result is weak" steps in `plan.md` now
 
 Hours 4–7
 - [ ] Remaining features (12 in total), with the fixed 28 km terrain window

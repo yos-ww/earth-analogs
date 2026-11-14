@@ -101,7 +101,7 @@ Little-endian `Uint32`, one value per land cell: the flat grid index. Length = `
   - `feature_id` = `limit:gravity_ms2`, `limit:pressure_pa` or `limit:radiation_msv_day` goes to `limits`.
   - `feature_id` starting with `info:` (for example `info:thermal_inertia`) goes to `not_scored`.
   - Every other `feature_id` must be a feature `id` from the table above.
-- Terrain rows are placeholders until A replaces them with values computed from MOLA and LOLA.
+- Terrain rows are placeholders until A replaces them with values computed from MOLA and LOLA. A's values go in `data/targets_computed.csv` (same columns, `status` = `computed`, written by `pipeline/targets.py`); `export.py` applies it after the literature file, so a computed value replaces a literature value for the same target and feature. B's file is never edited by A.
 - `weights` are all 1 unless a target row says otherwise; `n/a` features follow from the `na` rows.
 - **From hour 1, A's `export.py` also writes `web/data/targets.json` from these two CSVs** (literature values only). `pipeline/targets.py` later replaces the terrain values with computed ones. B can therefore replace the mock `targets.json` as soon as the CSVs exist.
 

@@ -36,6 +36,8 @@ def export_targets(targets_csv=None, literature_csv=None, out=None):
                                   [, status]   (optional; literature (default), computed or fixed)
     A feature_id is a feature id, `limit:<name>` (goes to limits) or `info:<name>` (not_scored).
     value = `na` marks a feature with no meaning for that target.
+    data/targets_computed.csv (A, same columns) is applied after the literature file, so a
+    computed value replaces a literature placeholder for the same target and feature.
     """
     targets_csv = targets_csv or ROOT / "data" / "targets.csv"
     literature_csv = literature_csv or ROOT / "data" / "targets_literature.csv"
@@ -53,7 +55,11 @@ def export_targets(targets_csv=None, literature_csv=None, out=None):
             "not_scored": {}, "limits": {},
         }
     problems = []
-    for row in csv.DictReader(open(literature_csv, newline="", encoding="utf-8")):
+    rows = list(csv.DictReader(open(literature_csv, newline="", encoding="utf-8")))
+    computed_csv = ROOT / "data" / "targets_computed.csv"  # A's values (pipeline/targets.py)
+    if computed_csv.exists() and literature_csv == ROOT / "data" / "targets_literature.csv":
+        rows += list(csv.DictReader(open(computed_csv, newline="", encoding="utf-8")))  # later rows win
+    for row in rows:
         t = targets.get(row["target_id"])
         fid, raw = row["feature_id"].strip(), row["value"].strip()
         if t is None:

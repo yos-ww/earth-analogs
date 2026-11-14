@@ -1,0 +1,241 @@
+{
+  "targets": [
+    {
+      "id": "jezero",
+      "name": "Jezero Crater (Perseverance landing site)",
+      "body": "mars",
+      "lat": 18.4447,
+      "lon": 77.4508,
+      "features": {
+        "roughness": {
+          "value": 280.4,
+          "value_kind": "std of elevation in a +-13.9 km window (992 px)",
+          "status": "computed",
+          "source": "Computed by pipeline/targets.py from MOLA MEGDR 64 px/deg"
+        },
+        "precip": {
+          "value": 0.0,
+          "value_kind": "fixed (no rainfall on Mars)",
+          "status": "fixed",
+          "source": "No liquid precipitation on Mars"
+        },
+        "ndvi_max": {
+          "value": 0.0,
+          "value_kind": "fixed (no vegetation)",
+          "status": "fixed",
+          "source": "Contract rule: same fixed value for every target"
+        },
+        "lst_night_cold": {
+          "value": 196.1,
+          "value_kind": "model surface temperature at 22:30 local time; coldest Mars month (Ls 285 = northern winter); climatology average solar scenario",
+          "status": "literature",
+          "source": "Mars Climate Database v6.2 (LMD/OU/IAA/ESA/CNES) web interface; queried at 18.4447N 77.4508E for Ls 15..345",
+          "source_url": "https://www-mars.lmd.jussieu.fr/mcd_python/"
+        },
+        "emis_b29": {
+          "value": 0.96,
+          "value_kind": "PLACEHOLDER: basalt proxy; to be replaced by MOD11C3 Emis_29 median at an Earth basalt reference site (e.g. Holuhraun) so Earth and target use the same sensor",
+          "status": "literature",
+          "source": "Surface is basaltic/olivine-bearing (Mars 2020 crater floor); value from basalt range in docs/target-values-needed.md"
+        }
+      },
+      "weights": {
+        "terrain": 1,
+        "temperature": 1,
+        "vegetation": 1,
+        "aridity": 1,
+        "albedo": 1,
+        "ice": 1,
+        "dust": 1,
+        "geology": 1
+      },
+      "not_scored": {},
+      "limits": {}
+    },
+    {
+      "id": "gale",
+      "name": "Gale Crater (Curiosity landing site)",
+      "body": "mars",
+      "lat": -4.5895,
+      "lon": 137.4417,
+      "features": {
+        "roughness": {
+          "value": 831.2,
+          "value_kind": "std of elevation in a +-13.9 km window (961 px)",
+          "status": "computed",
+          "source": "Computed by pipeline/targets.py from MOLA MEGDR 64 px/deg"
+        }
+      },
+      "weights": {
+        "terrain": 1,
+        "temperature": 1,
+        "vegetation": 1,
+        "aridity": 1,
+        "albedo": 1,
+        "ice": 1,
+        "dust": 1,
+        "geology": 1
+      },
+      "not_scored": {},
+      "limits": {}
+    },
+    {
+      "id": "utopia",
+      "name": "Utopia Planitia (Zhurong landing site)",
+      "body": "mars",
+      "lat": 25.066,
+      "lon": 109.925,
+      "features": {
+        "roughness": {
+          "value": 41.1,
+          "value_kind": "std of elevation in a +-13.9 km window (1054 px)",
+          "status": "computed",
+          "source": "Computed by pipeline/targets.py from MOLA MEGDR 64 px/deg"
+        }
+      },
+      "weights": {
+        "terrain": 1,
+        "temperature": 1,
+        "vegetation": 1,
+        "aridity": 1,
+        "albedo": 1,
+        "ice": 1,
+        "dust": 1,
+        "geology": 1
+      },
+      "not_scored": {},
+      "limits": {}
+    },
+    {
+      "id": "arcadia",
+      "name": "Arcadia Planitia (shallow-ice landing candidate)",
+      "body": "mars",
+      "lat": 39.09,
+      "lon": -170.21,
+      "features": {
+        "roughness": {
+          "value": 157.5,
+          "value_kind": "std of elevation in a +-13.9 km window (1209 px)",
+          "status": "computed",
+          "source": "Computed by pipeline/targets.py from MOLA MEGDR 64 px/deg"
+        },
+        "precip": {
+          "value": 0.0,
+          "value_kind": "fixed (no rainfall on Mars)",
+          "status": "fixed",
+          "source": "No liquid precipitation on Mars"
+        },
+        "ndvi_max": {
+          "value": 0.0,
+          "value_kind": "fixed (no vegetation)",
+          "status": "fixed",
+          "source": "Contract rule: same fixed value for every target"
+        },
+        "lst_night_cold": {
+          "value": 166.1,
+          "value_kind": "model surface temperature at 22:30 local time; coldest Mars month (Ls 285 = northern winter); climatology average solar scenario",
+          "status": "literature",
+          "source": "Mars Climate Database v6.2 (LMD/OU/IAA/ESA/CNES) web interface; queried at 39.090N 189.790E for Ls 15..345",
+          "source_url": "https://www-mars.lmd.jussieu.fr/mcd_python/"
+        },
+        "emis_b29": {
+          "value": 0.96,
+          "value_kind": "PLACEHOLDER: basalt proxy; to be replaced by MOD11C3 Emis_29 median at an Earth basalt reference site (e.g. Holuhraun) so Earth and target use the same sensor",
+          "status": "literature",
+          "source": "Northern-plains surface is basaltic (TES surface types) with a dust mantle; value from basalt range in docs/target-values-needed.md"
+        }
+      },
+      "weights": {
+        "terrain": 1,
+        "temperature": 1,
+        "vegetation": 1,
+        "aridity": 1,
+        "albedo": 1,
+        "ice": 1,
+        "dust": 1,
+        "geology": 1
+      },
+      "not_scored": {},
+      "limits": {}
+    },
+    {
+      "id": "shackleton",
+      "name": "Shackleton-de Gerlache ridge (Artemis candidate region)",
+      "body": "moon",
+      "lat": -89.684,
+      "lon": -163.261,
+      "features": {
+        "roughness": {
+          "value": 1164.2,
+          "value_kind": "std of elevation in a +-13.9 km window (13689 px)",
+          "status": "computed",
+          "source": "Computed by pipeline/targets.py from LOLA GDR ldem_75s_240m"
+        }
+      },
+      "weights": {
+        "terrain": 1,
+        "temperature": 1,
+        "vegetation": 1,
+        "aridity": 1,
+        "albedo": 1,
+        "ice": 1,
+        "dust": 1,
+        "geology": 1
+      },
+      "not_scored": {},
+      "limits": {}
+    },
+    {
+      "id": "marius_hills",
+      "name": "Marius Hills Pit (lava-tube skylight)",
+      "body": "moon",
+      "lat": 14.0917,
+      "lon": -56.7701,
+      "features": {
+        "roughness": {
+          "value": 87.2,
+          "value_kind": "std of elevation in a +-13.9 km window (3660 px)",
+          "status": "computed",
+          "source": "Computed by pipeline/targets.py from LOLA GDR ldem_64"
+        },
+        "precip": {
+          "value": 0.0,
+          "value_kind": "fixed (no rainfall on the Moon)",
+          "status": "fixed",
+          "source": "No atmosphere or precipitation on the Moon"
+        },
+        "ndvi_max": {
+          "value": 0.0,
+          "value_kind": "fixed (no vegetation)",
+          "status": "fixed",
+          "source": "Contract rule: same fixed value for every target"
+        },
+        "lst_night_cold": {
+          "value": 95.0,
+          "value_kind": "Diviner equatorial pre-dawn minimum (end of lunar night; not 22:30 local); far below Earth p1 so scored as directional",
+          "status": "literature",
+          "source": "Williams Paige Greenhagen & Sefton-Nash 2017 Icarus 283:300-325 (doi:10.1016/j.icarus.2016.08.012)",
+          "source_url": "https://doi.org/10.1016/j.icarus.2016.08.012"
+        },
+        "emis_b29": {
+          "value": 0.96,
+          "value_kind": "PLACEHOLDER: basalt proxy; to be replaced by MOD11C3 Emis_29 median at an Earth basalt reference site (e.g. Holuhraun) so Earth and target use the same sensor",
+          "status": "literature",
+          "source": "Mare basalt plateau (Marius Hills volcanic complex); value from basalt range in docs/target-values-needed.md"
+        }
+      },
+      "weights": {
+        "terrain": 1,
+        "temperature": 1,
+        "vegetation": 1,
+        "aridity": 1,
+        "albedo": 1,
+        "ice": 1,
+        "dust": 1,
+        "geology": 1
+      },
+      "not_scored": {},
+      "limits": {}
+    }
+  ]
+}
