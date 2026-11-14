@@ -1,5 +1,7 @@
 # Hour-4 science spike: results
 
+> Snapshot with 5 Earth features (written before `albedo`, `snow_ice`, `aod`, `lst_day_warm`, `lst_range`, `relief` and `slope` existed). Re-run `python -m pipeline.spike` and update this note once B's target values for the ice-related features are in. A re-run with `relief` and `slope` added (7 features) gave the same picture: median percentile 0.73, p = 0.008 (0.73 and p = 0.013 without Antarctica), top-1% overlap 0.41-0.69, top cells still on Antarctica.
+
 Run with `~/mamba/envs/analogs/bin/python -m pipeline.spike`. Five Earth features (`roughness`, `lst_night_cold`, `ndvi_max`, `precip`, `emis_b29`; dimensions terrain, temperature, vegetation, aridity, geology) against three targets: Jezero, Arcadia, Marius Hills. Target values: B's literature rows in `data/targets_literature.csv`, with roughness (MOLA/LOLA) and the basalt emissivity computed by `pipeline/targets.py` into `data/targets_computed.csv`. The emissivity rule (target = mean `Emis_29` of two barren Earth basalt flows, Holuhraun and Black Point = 0.952) was proposed by B before any result existed; the first run used B's placeholder 0.96.
 
 ## Terrain computed for the targets (replaces B's placeholders)

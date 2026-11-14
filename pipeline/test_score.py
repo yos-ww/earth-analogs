@@ -88,10 +88,19 @@ def main():
     print("directional clamp: coldest Earth cell scores 1, Sahara", float(r3["feature_scores"][i0, jn]))
 
     # 4. n/a features are skipped; fewer than MIN_DIMENSIONS dimensions gives no score.
-    t4 = target_from_cell(grid, i0, na=("precip", "emis_b29", "ndvi_max"))
-    r4 = score_target(grid, t4)
-    assert np.isnan(r4["overall"]).all()  # only terrain + temperature left: 2 < 4
-    print("n/a skipping and the 4-dimension minimum behave")
+    by_dim = {}
+    for f in feats:
+        by_dim.setdefault(f["dimension"], []).append(f["id"])
+    dims = list(by_dim)
+    keep3, keep4 = dims[:MIN_DIMENSIONS - 1], dims[:MIN_DIMENSIONS]
+    na3 = [f for d in dims if d not in keep3 for f in by_dim[d]]
+    na4 = [f for d in dims if d not in keep4 for f in by_dim[d]]
+    r3_ = score_target(grid, target_from_cell(grid, i0, na=na3))
+    assert np.isnan(r3_["overall"]).all()  # 3 dimensions < 4: nothing is scored
+    r4_ = score_target(grid, target_from_cell(grid, i0, na=na4))
+    assert np.isfinite(r4_["overall"]).sum() > 0 and abs(r4_["overall"][i0] - 1.0) < 1e-5
+    print(f"n/a skipping and the {MIN_DIMENSIONS}-dimension minimum behave "
+          f"({len(keep3)} dims: no score, {len(keep4)} dims: {int(np.isfinite(r4_['overall']).sum())} cells scored)")
 
     # 5. Weights: a zero-weight dimension does not change the result.
     w = {d: 1 for d in grid["meta"]["dimensions"]}

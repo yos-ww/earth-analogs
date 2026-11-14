@@ -9,7 +9,7 @@
       "features": {
         "roughness": {
           "value": 280.4,
-          "value_kind": "std of elevation in a +-13.9 km window (992 px)",
+          "value_kind": "roughness in a +-13.9 km window after averaging to ~926 m (992 px)",
           "status": "computed",
           "source": "Computed by pipeline/targets.py from MOLA MEGDR 64 px/deg"
         },
@@ -37,6 +37,18 @@
           "value_kind": "basaltic surface as MODIS band 29 (8.55 um) sees Earth basalt: mean of two barren reference flows",
           "status": "computed",
           "source": "Computed by pipeline/targets.py from MOD11C3 Emis_29 median 2021-2023 at Holuhraun 0.955; Black Point lava flow 0.950; target surface is basaltic per B's source note"
+        },
+        "relief": {
+          "value": 1161.0,
+          "value_kind": "relief in a +-13.9 km window after averaging to ~926 m (992 px)",
+          "status": "computed",
+          "source": "Computed by pipeline/targets.py from MOLA MEGDR 64 px/deg"
+        },
+        "slope": {
+          "value": 2.69,
+          "value_kind": "slope in a +-13.9 km window after averaging to ~926 m (992 px)",
+          "status": "computed",
+          "source": "Computed by pipeline/targets.py from MOLA MEGDR 64 px/deg"
         }
       },
       "weights": {
@@ -61,7 +73,19 @@
       "features": {
         "roughness": {
           "value": 831.2,
-          "value_kind": "std of elevation in a +-13.9 km window (961 px)",
+          "value_kind": "roughness in a +-13.9 km window after averaging to ~926 m (961 px)",
+          "status": "computed",
+          "source": "Computed by pipeline/targets.py from MOLA MEGDR 64 px/deg"
+        },
+        "relief": {
+          "value": 4396.0,
+          "value_kind": "relief in a +-13.9 km window after averaging to ~926 m (961 px)",
+          "status": "computed",
+          "source": "Computed by pipeline/targets.py from MOLA MEGDR 64 px/deg"
+        },
+        "slope": {
+          "value": 5.05,
+          "value_kind": "slope in a +-13.9 km window after averaging to ~926 m (961 px)",
           "status": "computed",
           "source": "Computed by pipeline/targets.py from MOLA MEGDR 64 px/deg"
         }
@@ -88,7 +112,19 @@
       "features": {
         "roughness": {
           "value": 41.1,
-          "value_kind": "std of elevation in a +-13.9 km window (1054 px)",
+          "value_kind": "roughness in a +-13.9 km window after averaging to ~926 m (1054 px)",
+          "status": "computed",
+          "source": "Computed by pipeline/targets.py from MOLA MEGDR 64 px/deg"
+        },
+        "relief": {
+          "value": 177.0,
+          "value_kind": "relief in a +-13.9 km window after averaging to ~926 m (1054 px)",
+          "status": "computed",
+          "source": "Computed by pipeline/targets.py from MOLA MEGDR 64 px/deg"
+        },
+        "slope": {
+          "value": 0.39,
+          "value_kind": "slope in a +-13.9 km window after averaging to ~926 m (1054 px)",
           "status": "computed",
           "source": "Computed by pipeline/targets.py from MOLA MEGDR 64 px/deg"
         }
@@ -115,7 +151,7 @@
       "features": {
         "roughness": {
           "value": 157.5,
-          "value_kind": "std of elevation in a +-13.9 km window (1209 px)",
+          "value_kind": "roughness in a +-13.9 km window after averaging to ~926 m (1209 px)",
           "status": "computed",
           "source": "Computed by pipeline/targets.py from MOLA MEGDR 64 px/deg"
         },
@@ -143,6 +179,18 @@
           "value_kind": "basaltic surface as MODIS band 29 (8.55 um) sees Earth basalt: mean of two barren reference flows",
           "status": "computed",
           "source": "Computed by pipeline/targets.py from MOD11C3 Emis_29 median 2021-2023 at Holuhraun 0.955; Black Point lava flow 0.950; target surface is basaltic per B's source note"
+        },
+        "relief": {
+          "value": 854.0,
+          "value_kind": "relief in a +-13.9 km window after averaging to ~926 m (1209 px)",
+          "status": "computed",
+          "source": "Computed by pipeline/targets.py from MOLA MEGDR 64 px/deg"
+        },
+        "slope": {
+          "value": 2.13,
+          "value_kind": "slope in a +-13.9 km window after averaging to ~926 m (1209 px)",
+          "status": "computed",
+          "source": "Computed by pipeline/targets.py from MOLA MEGDR 64 px/deg"
         }
       },
       "weights": {
@@ -166,8 +214,20 @@
       "lon": -163.261,
       "features": {
         "roughness": {
-          "value": 1164.2,
-          "value_kind": "std of elevation in a +-13.9 km window (13689 px)",
+          "value": 1160.9,
+          "value_kind": "roughness in a +-13.9 km window after averaging to ~926 m (841 px)",
+          "status": "computed",
+          "source": "Computed by pipeline/targets.py from LOLA GDR ldem_75s_240m"
+        },
+        "relief": {
+          "value": 4741.2,
+          "value_kind": "relief in a +-13.9 km window after averaging to ~926 m (841 px)",
+          "status": "computed",
+          "source": "Computed by pipeline/targets.py from LOLA GDR ldem_75s_240m"
+        },
+        "slope": {
+          "value": 15.17,
+          "value_kind": "slope in a +-13.9 km window after averaging to ~926 m (841 px)",
           "status": "computed",
           "source": "Computed by pipeline/targets.py from LOLA GDR ldem_75s_240m"
         }
@@ -193,8 +253,8 @@
       "lon": -56.7701,
       "features": {
         "roughness": {
-          "value": 87.2,
-          "value_kind": "std of elevation in a +-13.9 km window (3660 px)",
+          "value": 83.9,
+          "value_kind": "roughness in a +-13.9 km window after averaging to ~926 m (900 px)",
           "status": "computed",
           "source": "Computed by pipeline/targets.py from LOLA GDR ldem_64"
         },
@@ -222,6 +282,18 @@
           "value_kind": "basaltic surface as MODIS band 29 (8.55 um) sees Earth basalt: mean of two barren reference flows",
           "status": "computed",
           "source": "Computed by pipeline/targets.py from MOD11C3 Emis_29 median 2021-2023 at Holuhraun 0.955; Black Point lava flow 0.950; target surface is basaltic per B's source note"
+        },
+        "relief": {
+          "value": 443.4,
+          "value_kind": "relief in a +-13.9 km window after averaging to ~926 m (900 px)",
+          "status": "computed",
+          "source": "Computed by pipeline/targets.py from LOLA GDR ldem_64"
+        },
+        "slope": {
+          "value": 1.22,
+          "value_kind": "slope in a +-13.9 km window after averaging to ~926 m (900 px)",
+          "status": "computed",
+          "source": "Computed by pipeline/targets.py from LOLA GDR ldem_64"
         }
       },
       "weights": {

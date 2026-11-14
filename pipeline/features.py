@@ -98,45 +98,73 @@ def build_ndvi_max():
 
 GM_PX_PER_CELL = 30  # GMTED 30 arc-second pixels per 0.25 deg
 GM_NCOLS = 43200
+GM_NROWS = 20880
 GM_TOP_ROW = 24  # GMTED starts at 84N = grid row 24 (cell rows 0-23 have no GMTED data)
 MIN_WINDOW_PX = 100  # land pixels needed in the window
+GM_DY_M = 6371008.8 * np.pi / 180 / 120  # ground length of one 30" pixel in latitude, 926.6 m
 
 
-def build_roughness():
-    """Standard deviation of GMTED elevation in a fixed window of about 28 x 28 km.
+def build_terrain():
+    """Terrain features from GMTED2010 mean elevation (30 arc-seconds, 84N-90S), in a fixed
+    window of about 28 x 28 km around each cell centre (review decision 2):
+      roughness = standard deviation of elevation in the window
+      relief    = maximum - minimum elevation in the window
+      slope     = mean slope in degrees
 
-    A cell's 30 GMTED rows (27.8 km north-south) are its latitude band. The east-west width
-    is 30 / cos(latitude) pixels, so the window is about 28 km wide on the ground at every
-    latitude (review decision 2). GMTED shows the ocean as 0 m, so ocean and inland-water
-    pixels are removed with the land mask. Cells north of 84N have no GMTED data (NaN).
+    A cell's 30 GMTED rows (27.8 km north-south) are its latitude band. The east-west width is
+    30 / cos(latitude) pixels, so the window is about 28 km wide on the ground at every latitude.
+    GMTED shows the ocean as 0 m, so ocean and inland-water pixels are removed with the land
+    mask. Slope is a central difference in ground metres: one pixel either side north-south
+    (about 1.9 km baseline) and round(1 / cos(lat)) pixels either side east-west, so the
+    east-west baseline is also about 1.9 km at any latitude. Only pixels whose four neighbours
+    are land get a slope. Cells north of 84N have no GMTED data (NaN).
     """
+    from scipy.ndimage import maximum_filter1d, minimum_filter1d
+
     land005 = _load("land005")
     ds = gdal.Open("/vsizip/" + str(RAW / "gmted" / "mn30_grd.zip") + "/mn30_grd")
     band = ds.GetRasterBand(1)
     lat = cell_lat()
-    out = np.full((NROWS, NCOLS), np.nan, np.float32)
+    shape = (NROWS, NCOLS)
+    rough, relief, slope = (np.full(shape, np.nan, np.float32) for _ in range(3))
     centres = np.arange(NCOLS) * GM_PX_PER_CELL + GM_PX_PER_CELL // 2
 
     for r in range(GM_TOP_ROW, NROWS):
         k0 = (r - GM_TOP_ROW) * GM_PX_PER_CELL
-        e = band.ReadAsArray(0, k0, GM_NCOLS, GM_PX_PER_CELL).astype(np.float64)
-        j0 = 120 + k0 // 6  # 0.05 deg row of this band (GMTED pixel = 1/6 of a 0.05 pixel)
-        m = np.repeat(np.repeat(land005[j0:j0 + 5], 6, axis=0), 6, axis=1)
-        m = m & (e > -32000)
+        want = np.clip(np.arange(k0 - 1, k0 + GM_PX_PER_CELL + 1), 0, GM_NROWS - 1)  # 1 row of margin
+        first, last = int(want.min()), int(want.max())
+        raw = band.ReadAsArray(0, first, GM_NCOLS, last - first + 1)
+        E = raw[want - first].astype(np.float64)  # (32, 43200); margin rows repeat at the edges
+        M = np.repeat(land005[120 + want // 6], 6, axis=1) & (E > -32000)
+        e, m = E[1:-1], M[1:-1]  # the 30 rows of this cell row
+
+        # --- window statistics (roughness, relief)
         s1 = (e * m).sum(axis=0)
         s2 = (e * e * m).sum(axis=0)
         cnt = m.sum(axis=0).astype(np.float64)
-
         w = 2 * int(round(15 / np.cos(np.radians(lat[r])))) + 1  # odd, >= 31
-        tot = [uniform_filter1d(x, size=w, mode="wrap") * w for x in (s1, s2, cnt)]
-        S1, S2, C = (t[centres] for t in tot)
+        S1, S2, C = (uniform_filter1d(x, size=w, mode="wrap")[centres] * w for x in (s1, s2, cnt))
         ok = C >= MIN_WINDOW_PX
         mean = np.where(ok, S1 / np.maximum(C, 1), 0.0)
-        var = np.where(ok, S2 / np.maximum(C, 1) - mean**2, np.nan)
-        out[r] = np.sqrt(np.maximum(var, 0.0))
+        rough[r] = np.where(ok, np.sqrt(np.maximum(S2 / np.maximum(C, 1) - mean**2, 0.0)), np.nan)
+        hi = maximum_filter1d(np.where(m, e, -np.inf).max(axis=0), size=w, mode="wrap")[centres]
+        lo = minimum_filter1d(np.where(m, e, np.inf).min(axis=0), size=w, mode="wrap")[centres]
+        relief[r] = np.where(ok, hi - lo, np.nan)
+
+        # --- slope in ground metres
+        kx = max(1, int(round(1 / np.cos(np.radians(lat[r])))))
+        dx = GM_DY_M * np.cos(np.radians(lat[r]))
+        gy = (E[2:] - E[:-2]) / (2 * GM_DY_M)
+        gx = (np.roll(e, -kx, axis=1) - np.roll(e, kx, axis=1)) / (2 * kx * dx)
+        sm = m & M[2:] & M[:-2] & np.roll(m, -kx, axis=1) & np.roll(m, kx, axis=1)
+        sl = np.degrees(np.arctan(np.hypot(gx, gy)))
+        T = [uniform_filter1d(x, size=w, mode="wrap")[centres] * w for x in ((sl * sm).sum(axis=0), sm.sum(axis=0).astype(np.float64))]
+        slope[r] = np.where(T[1] >= MIN_WINDOW_PX, np.maximum(T[0], 0.0) / np.maximum(T[1], 1), np.nan)  # clip float residue
         if r % 100 == 0:
-            print(f"roughness row {r}/{NROWS}")
-    _save("roughness", out)
+            print(f"terrain row {r}/{NROWS}")
+    _save("roughness", rough)
+    _save("relief", relief)
+    _save("slope", slope)
 
 
 # ----------------------------------------------------------- precipitation
@@ -183,31 +211,52 @@ def _modis_files(product):
     return by_month
 
 
-def build_lst_night_cold():
-    """Coldest-month night land-surface temperature (K).
+def build_lst():
+    """Temperature features from MOD11C3 monthly LST at 0.05 deg (2021-2023).
 
-    MOD11C3 gives monthly mean night LST at 0.05 deg. For each calendar month the available
-    years (2021-2023) are averaged, then the coldest of the 12 climatological months is taken
-    (monthly means, not single-night extremes, to match the planetary values). A pixel needs
-    at least MIN_CLIM_MONTHS months with data; winter months that are missing (polar night,
-    persistent cloud) bias the result warm, so high-latitude values are upper bounds.
+    For each calendar month the available years are averaged (climatology), giving 12 monthly
+    means for day and for night. Then:
+      lst_night_cold = coldest of the 12 night means      (monthly means, not single nights)
+      lst_day_warm   = warmest of the 12 day means
+      lst_range      = mean over months of (day mean - night mean), months where both exist
+    Each needs at least MIN_CLIM_MONTHS months with data. Terra passes at about 10:30 local
+    time (review decision 4: planetary day values are picked at the same local time). Winter
+    months that are missing (polar night, persistent cloud) bias coldest-night warm and the
+    range, so high-latitude values are bounds, not measurements.
     """
     land05 = _load("land005")
-    coldest = np.full((3600, 7200), np.inf, np.float32)
-    n_months = np.zeros((3600, 7200), np.uint8)
+    shape = (3600, 7200)
+    coldest = np.full(shape, np.inf, np.float32)
+    warmest = np.full(shape, -np.inf, np.float32)
+    n_night = np.zeros(shape, np.uint8)
+    n_day = np.zeros(shape, np.uint8)
+    diff_sum = np.zeros(shape, np.float32)
+    n_diff = np.zeros(shape, np.uint8)
     for month, files in _modis_files("MOD11C3").items():
-        s = np.zeros((3600, 7200), np.float32)
-        n = np.zeros((3600, 7200), np.uint8)
-        for f in files:
-            d = gdal.Open(_subdataset(f, "LST_Night_CMG")).ReadAsArray()
-            ok = d >= 7500  # valid_range 7500-65535, fill 0
-            s += np.where(ok, d * 0.02, 0.0)
-            n += ok
-        clim = np.where(n > 0, s / np.maximum(n, 1), np.inf)
-        coldest = np.minimum(coldest, clim)
-        n_months += n > 0
-    valid = (n_months >= MIN_CLIM_MONTHS) & np.isfinite(coldest) & land05
-    _save("lst_night_cold", to_cells(np.where(valid, coldest, 0.0), valid))
+        clim = {}
+        for key, name in (("day", "LST_Day_CMG"), ("night", "LST_Night_CMG")):
+            s_ = np.zeros(shape, np.float32)
+            n_ = np.zeros(shape, np.uint8)
+            for f in files:
+                d = gdal.Open(_subdataset(f, name)).ReadAsArray()
+                ok = d >= 7500  # valid_range 7500-65535, fill 0; scale 0.02 K
+                s_ += np.where(ok, d * 0.02, 0.0)
+                n_ += ok
+            clim[key] = (np.where(n_ > 0, s_ / np.maximum(n_, 1), np.nan), n_ > 0)
+        (day, day_ok), (night, night_ok) = clim["day"], clim["night"]
+        coldest = np.where(night_ok, np.minimum(coldest, night), coldest)
+        warmest = np.where(day_ok, np.maximum(warmest, day), warmest)
+        n_night += night_ok
+        n_day += day_ok
+        both = day_ok & night_ok
+        diff_sum += np.where(both, day - night, 0.0)
+        n_diff += both
+    v_night = (n_night >= MIN_CLIM_MONTHS) & land05
+    v_day = (n_day >= MIN_CLIM_MONTHS) & land05
+    v_rng = (n_diff >= MIN_CLIM_MONTHS) & land05
+    _save("lst_night_cold", to_cells(np.where(v_night, coldest, 0.0), v_night))
+    _save("lst_day_warm", to_cells(np.where(v_day, warmest, 0.0), v_day))
+    _save("lst_range", to_cells(np.where(v_rng, diff_sum / np.maximum(n_diff, 1), 0.0), v_rng))
 
 
 def build_emis_b29():
@@ -231,12 +280,94 @@ def build_emis_b29():
     _save("emis_b29", to_cells(np.where(valid, med * 0.002 + 0.49, 0.0), valid))
 
 
+# ------------------------------------------------------------------- albedo
+
+MIN_ALBEDO_DAYS = 4  # of the 12 sampled days
+
+
+def build_albedo():
+    """White-sky shortwave albedo (MCD43C3, the 15th of each month of 2023): per-pixel median
+    of the valid days, then the mean over the valid land sub-pixels of each cell. scale 0.001,
+    fill 32767 (polar night), valid 0-32766. The median limits the effect of seasonal snow;
+    days with no data (polar night) are left out, so polar values describe the sunlit season."""
+    land05 = _load("land005")
+    files = sorted(glob.glob(str(RAW / "MCD43C3" / "*.hdf")))
+    stack = np.full((len(files), 3600, 7200), 32767, np.int16)
+    for i, f in enumerate(files):
+        stack[i] = gdal.Open(_subdataset(f, "Albedo_WSA_shortwave")).ReadAsArray()
+    nvalid = (stack != 32767).sum(axis=0)
+    med = np.zeros((3600, 7200), np.float32)
+    for r0 in range(0, 3600, 300):  # sort in row chunks to keep memory low
+        chunk = np.sort(stack[:, r0:r0 + 300], axis=0)  # fill (32767) sorts last
+        n = nvalid[r0:r0 + 300]
+        lo = np.take_along_axis(chunk, (np.maximum(n - 1, 0) // 2)[None], axis=0)[0]
+        hi = np.take_along_axis(chunk, (n // 2)[None], axis=0)[0]
+        med[r0:r0 + 300] = (lo.astype(np.float32) + hi) / 2 * 0.001
+    valid = (nvalid >= MIN_ALBEDO_DAYS) & land05
+    _save("albedo", to_cells(np.where(valid, med, 0.0), valid))
+
+
+# ----------------------------------------------------------------- snow / ice
+
+def build_snow_ice():
+    """Snow/ice cover fraction (0-1) from MOD10CM monthly snow cover (2021-2023, 35 files).
+
+    Only codes 0-100 are snow data; 211 (night), 250 (cloud), 253, 254 and 255 are missing,
+    never zero. For each calendar month the available years are averaged, then the mean over
+    the months with data is taken; a pixel needs at least MIN_CLIM_MONTHS months. Polar-night
+    months are missing, so Arctic values describe the sunlit season and read low. This is
+    surface snow and ice only: subsurface ice is not seen (review decision 3)."""
+    land05 = _load("land005")
+    shape = (3600, 7200)
+    total = np.zeros(shape, np.float32)
+    n_months = np.zeros(shape, np.uint8)
+    for month, files in _modis_files("MOD10CM").items():
+        s_ = np.zeros(shape, np.float32)
+        n_ = np.zeros(shape, np.uint8)
+        for f in files:
+            d = gdal.Open(_subdataset(f, "Snow_Cover_Monthly_CMG")).ReadAsArray()
+            ok = d <= 100
+            s_ += np.where(ok, d, 0.0)
+            n_ += ok
+        total += np.where(n_ > 0, s_ / np.maximum(n_, 1), 0.0)
+        n_months += n_ > 0
+    valid = (n_months >= MIN_CLIM_MONTHS) & land05
+    frac = total / np.maximum(n_months, 1) / 100.0
+    _save("snow_ice", to_cells(np.where(valid, frac, 0.0), valid))
+
+
+# ----------------------------------------------------------------------- dust
+
+MIN_AOD_MONTHS = 4  # of the 12 months of 2023
+
+
+def build_aod():
+    """Deep Blue aerosol optical depth at 550 nm over land (MOD08_M3, 12 months of 2023, 1 deg):
+    mean of the monthly means, needing at least MIN_AOD_MONTHS months. raw * 0.001, fill -9999,
+    valid 0-5000. No retrieval over snow and ice. Each 1 deg pixel covers 4 x 4 cells."""
+    acc = np.zeros((180, 360))
+    cnt = np.zeros((180, 360))
+    for f in sorted(glob.glob(str(RAW / "MOD08_M3" / "*.hdf"))):
+        d = gdal.Open(_subdataset(f, "Deep_Blue_Aerosol_Optical_Depth_550_Land_Mean_Mean")).ReadAsArray()
+        ok = (d >= 0) & (d <= 5000)
+        acc += np.where(ok, d * 0.001, 0.0)
+        cnt += ok
+    mean = np.where(cnt >= MIN_AOD_MONTHS, acc / np.maximum(cnt, 1), np.nan)
+    _save("aod", np.repeat(np.repeat(mean, 4, axis=0), 4, axis=1).astype(np.float32))
+
+
 BUILDERS = {
-    "land": build_land, "ndvi_max": build_ndvi_max, "roughness": build_roughness,
-    "precip": build_precip, "lst_night_cold": build_lst_night_cold, "emis_b29": build_emis_b29,
+    "land": build_land, "ndvi_max": build_ndvi_max,
+    "roughness": build_terrain, "relief": build_terrain, "slope": build_terrain,  # one pass
+    "precip": build_precip, "emis_b29": build_emis_b29, "albedo": build_albedo,
+    "snow_ice": build_snow_ice, "aod": build_aod,
+    "lst_night_cold": build_lst, "lst_day_warm": build_lst, "lst_range": build_lst,  # one pass
 }
 
 if __name__ == "__main__":
     names = sys.argv[1:] or list(BUILDERS)
+    done = set()
     for n in names:
-        BUILDERS[n]()
+        if BUILDERS[n] not in done:  # build_lst serves three features
+            done.add(BUILDERS[n])
+            BUILDERS[n]()

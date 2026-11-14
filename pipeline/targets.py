@@ -49,15 +49,44 @@ def window_heights(stem, lat, lon):
     nodata = band.GetNoDataValue()
     if nodata is not None:
         dn = np.where(dn == nodata, np.nan, dn)
-    return dn * scale + offset, (scale, offset, px)
+    return dn * scale + offset, (scale, offset, px, polar)
 
 
-def target_roughness(body, lat, lon):
+TARGET_PX_M = 926.0  # the Earth grid (GMTED 30") and MOLA 64 px/deg are both about 926 m
+
+
+def block_mean(h, f):
+    """Average f x f blocks (about 1 km, as for an Earth cell); NaN-aware."""
+    ny, nx = (h.shape[0] // f) * f, (h.shape[1] // f) * f
+    return np.nanmean(h[:ny, :nx].reshape(ny // f, f, nx // f, f), axis=(1, 3))
+
+
+def terrain_stats(h, px, lat, polar):
+    """roughness (std), relief (max - min) and mean slope (degrees) of the heights h (m), after
+    averaging to about 926 m so Mars and the Moon match the Earth grid. Slope is a central
+    difference over one averaged pixel either side north-south, and round(1/cos(lat)) pixels
+    east-west in the equirectangular grids, so the baseline is about 1.9 km both ways, as in
+    pipeline/features.py. In the polar stereographic grid both spacings are px (review decision 6)."""
+    f = max(1, int(round(TARGET_PX_M / px)))
+    g = block_mean(h, f) if f > 1 else h
+    step = px * f
+    cosl = 1.0 if polar else max(np.cos(np.radians(lat)), 0.05)
+    kx = 1 if polar else max(1, int(round(1 / cosl)))
+    gy = (g[2:, 1:-1] - g[:-2, 1:-1]) / (2 * step)
+    gx = (g[1:-1, 2 * kx:] - g[1:-1, :-2 * kx]) / (2 * kx * step * cosl)
+    n = min(gx.shape[1], gy.shape[1])
+    off = (gy.shape[1] - n) // 2  # centre the two gradient grids on the same pixels
+    gx_c = gx[:, (gx.shape[1] - n) // 2:(gx.shape[1] - n) // 2 + n]
+    slope = np.degrees(np.arctan(np.hypot(gx_c, gy[:, off:off + n])))
+    return float(np.nanstd(g)), float(np.nanmax(g) - np.nanmin(g)), float(np.nanmean(slope)), f, g.size
+
+
+def target_terrain(body, lat, lon):
     for stem in (MARS_TILES if body == "mars" else MOON_GRIDS):
         out = window_heights(stem, lat, lon)
         if out is not None:
-            h, (scale, offset, px) = out
-            return float(np.nanstd(h)), stem.name, h.size, scale, px
+            h, (scale, offset, px, polar) = out
+            return terrain_stats(h, px, lat, polar), stem.name, px
     raise ValueError(f"no grid covers {body} {lat}, {lon}")
 
 
@@ -87,17 +116,20 @@ def basalt_emissivity_rows():
 
 def main():
     rows = basalt_emissivity_rows()
+    units = {"roughness": "m", "relief": "m", "slope": "degrees"}
     for t in csv.DictReader(open(ROOT / "data" / "targets.csv", newline="", encoding="utf-8")):
         lat, lon = float(t["lat"]), float(t["lon"])
-        value, grid, n, scale, px = target_roughness(t["body"], lat, lon)
-        print(f"{t['target_id']:13s} {t['body']:5s} {lat:8.3f} {lon:9.3f}  {grid:15s} "
-              f"{n:6d} px  scale {scale}  pixel {px:.0f} m  roughness {value:7.1f} m")
+        (rough, relief, slope, f, n), grid, px = target_terrain(t["body"], lat, lon)
+        print(f"{t['target_id']:13s} {t['body']:5s} {lat:8.3f} {lon:9.3f}  {grid:15s} pixel {px:4.0f} m x{f} avg  "
+              f"{n:5d} px  roughness {rough:7.1f} m  relief {relief:7.0f} m  slope {slope:5.2f} deg")
         src = "MOLA MEGDR 64 px/deg" if t["body"] == "mars" else "LOLA GDR " + grid
-        rows.append({
-            "target_id": t["target_id"], "feature_id": "roughness", "value": f"{value:.1f}", "unit": "m",
-            "value_kind": f"std of elevation in a +-{HALF_M / 1000:.1f} km window ({n} px)",
-            "source": f"Computed by pipeline/targets.py from {src}", "source_url": "", "status": "computed",
-        })
+        for fid, value in (("roughness", rough), ("relief", relief), ("slope", slope)):
+            rows.append({
+                "target_id": t["target_id"], "feature_id": fid, "value": f"{value:.2f}" if fid == "slope" else f"{value:.1f}",
+                "unit": units[fid],
+                "value_kind": f"{fid} in a +-{HALF_M / 1000:.1f} km window after averaging to ~926 m ({n} px)",
+                "source": f"Computed by pipeline/targets.py from {src}", "source_url": "", "status": "computed",
+            })
     out = ROOT / "data" / "targets_computed.csv"
     with open(out, "w", newline="", encoding="utf-8") as f:
         w = csv.DictWriter(f, fieldnames=list(rows[0]))

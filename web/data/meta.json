@@ -11,9 +11,24 @@
     "temperature",
     "vegetation",
     "aridity",
+    "albedo",
+    "ice",
+    "dust",
     "geology"
   ],
   "features": [
+    {
+      "id": "relief",
+      "label": "Relief",
+      "dimension": "terrain",
+      "unit": "m",
+      "transform": "log1p",
+      "min": 0.0,
+      "max": 8.782169,
+      "sigma": 1.448761,
+      "p1": 2.484907,
+      "p99": 7.899895
+    },
     {
       "id": "roughness",
       "label": "Roughness",
@@ -27,6 +42,30 @@
       "p99": 6.388574
     },
     {
+      "id": "slope",
+      "label": "Mean slope",
+      "dimension": "terrain",
+      "unit": "degrees",
+      "transform": "log1p",
+      "min": 0.0,
+      "max": 3.266279,
+      "sigma": 0.690535,
+      "p1": 0.038885,
+      "p99": 2.664243
+    },
+    {
+      "id": "lst_day_warm",
+      "label": "Warmest-month day temperature",
+      "dimension": "temperature",
+      "unit": "K",
+      "transform": "none",
+      "min": 234.053619,
+      "max": 336.005859,
+      "sigma": 14.002583,
+      "p1": 240.682076,
+      "p99": 327.113098
+    },
+    {
       "id": "lst_night_cold",
       "label": "Coldest-month night temperature",
       "dimension": "temperature",
@@ -37,6 +76,18 @@
       "sigma": 27.959486,
       "p1": 207.202137,
       "p99": 295.265407
+    },
+    {
+      "id": "lst_range",
+      "label": "Day-night range",
+      "dimension": "temperature",
+      "unit": "K",
+      "transform": "none",
+      "min": -1.351433,
+      "max": 38.35638,
+      "sigma": 7.103137,
+      "p1": 0.436038,
+      "p99": 25.265803
     },
     {
       "id": "ndvi_max",
@@ -61,6 +112,42 @@
       "sigma": 1.147895,
       "p1": 0.0,
       "p99": 8.144113
+    },
+    {
+      "id": "albedo",
+      "label": "Albedo",
+      "dimension": "albedo",
+      "unit": "-",
+      "transform": "none",
+      "min": 0.008432,
+      "max": 0.9055,
+      "sigma": 0.098563,
+      "p1": 0.1,
+      "p99": 0.83558
+    },
+    {
+      "id": "snow_ice",
+      "label": "Snow/ice cover",
+      "dimension": "ice",
+      "unit": "fraction",
+      "transform": "none",
+      "min": 0.0,
+      "max": 1.0,
+      "sigma": 0.351901,
+      "p1": 0.0,
+      "p99": 1.0
+    },
+    {
+      "id": "aod",
+      "label": "Aerosol optical depth",
+      "dimension": "dust",
+      "unit": "-",
+      "transform": "none",
+      "min": 0.0177,
+      "max": 1.0132,
+      "sigma": 0.122449,
+      "p1": 0.0215,
+      "p99": 0.6665
     },
     {
       "id": "emis_b29",

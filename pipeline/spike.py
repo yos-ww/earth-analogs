@@ -18,6 +18,7 @@ from .score import cell_index, load_grid, score_target
 TOP_FRAC = 0.01  # top 1% of scored land area
 BARREN_NDVI = 0.15
 SPIKE_DIMS = {"terrain", "temperature", "aridity", "ice", "dust"}
+SPIKE_TARGETS = ("jezero", "arcadia", "marius_hills")
 SEARCH_RADIUS = 3  # cells (0.75 deg) to look for the nearest land cell around a site
 
 
@@ -76,9 +77,12 @@ def main():
     cells = grid["cells"]
     w = cell_weights()[cells // NCOLS]
     targets = {t["id"]: t for t in json.loads((WEB_DATA / "targets.json").read_text())["targets"]}
-    fids = {f["id"] for f in meta["features"]}
-    ready = {k: t for k, t in targets.items() if fids <= set(t["features"])}
-    print(f"targets with all {len(fids)} features: {sorted(ready)}\n")
+    ready = {k: targets[k] for k in SPIKE_TARGETS}
+    shared = [f["id"] for f in meta["features"] if all(f["id"] in t["features"] for t in ready.values())]
+    # score only with the features every spike target has, so the three maps are comparable
+    for t in ready.values():
+        t["features"] = {k: v for k, v in t["features"].items() if k in shared}
+    print(f"spike targets {sorted(ready)} scored on {len(shared)} shared features: {shared}\n")
 
     res = {k: score_target(grid, t) for k, t in ready.items()}
     for k, r in res.items():

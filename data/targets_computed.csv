@@ -2,9 +2,21 @@ target_id,feature_id,value,unit,value_kind,source,source_url,status
 jezero,emis_b29,0.952,-,basaltic surface as MODIS band 29 (8.55 um) sees Earth basalt: mean of two barren reference flows,Computed by pipeline/targets.py from MOD11C3 Emis_29 median 2021-2023 at Holuhraun 0.955; Black Point lava flow 0.950; target surface is basaltic per B's source note,,computed
 arcadia,emis_b29,0.952,-,basaltic surface as MODIS band 29 (8.55 um) sees Earth basalt: mean of two barren reference flows,Computed by pipeline/targets.py from MOD11C3 Emis_29 median 2021-2023 at Holuhraun 0.955; Black Point lava flow 0.950; target surface is basaltic per B's source note,,computed
 marius_hills,emis_b29,0.952,-,basaltic surface as MODIS band 29 (8.55 um) sees Earth basalt: mean of two barren reference flows,Computed by pipeline/targets.py from MOD11C3 Emis_29 median 2021-2023 at Holuhraun 0.955; Black Point lava flow 0.950; target surface is basaltic per B's source note,,computed
-jezero,roughness,280.4,m,std of elevation in a +-13.9 km window (992 px),Computed by pipeline/targets.py from MOLA MEGDR 64 px/deg,,computed
-gale,roughness,831.2,m,std of elevation in a +-13.9 km window (961 px),Computed by pipeline/targets.py from MOLA MEGDR 64 px/deg,,computed
-utopia,roughness,41.1,m,std of elevation in a +-13.9 km window (1054 px),Computed by pipeline/targets.py from MOLA MEGDR 64 px/deg,,computed
-arcadia,roughness,157.5,m,std of elevation in a +-13.9 km window (1209 px),Computed by pipeline/targets.py from MOLA MEGDR 64 px/deg,,computed
-shackleton,roughness,1164.2,m,std of elevation in a +-13.9 km window (13689 px),Computed by pipeline/targets.py from LOLA GDR ldem_75s_240m,,computed
-marius_hills,roughness,87.2,m,std of elevation in a +-13.9 km window (3660 px),Computed by pipeline/targets.py from LOLA GDR ldem_64,,computed
+jezero,roughness,280.4,m,roughness in a +-13.9 km window after averaging to ~926 m (992 px),Computed by pipeline/targets.py from MOLA MEGDR 64 px/deg,,computed
+jezero,relief,1161.0,m,relief in a +-13.9 km window after averaging to ~926 m (992 px),Computed by pipeline/targets.py from MOLA MEGDR 64 px/deg,,computed
+jezero,slope,2.69,degrees,slope in a +-13.9 km window after averaging to ~926 m (992 px),Computed by pipeline/targets.py from MOLA MEGDR 64 px/deg,,computed
+gale,roughness,831.2,m,roughness in a +-13.9 km window after averaging to ~926 m (961 px),Computed by pipeline/targets.py from MOLA MEGDR 64 px/deg,,computed
+gale,relief,4396.0,m,relief in a +-13.9 km window after averaging to ~926 m (961 px),Computed by pipeline/targets.py from MOLA MEGDR 64 px/deg,,computed
+gale,slope,5.05,degrees,slope in a +-13.9 km window after averaging to ~926 m (961 px),Computed by pipeline/targets.py from MOLA MEGDR 64 px/deg,,computed
+utopia,roughness,41.1,m,roughness in a +-13.9 km window after averaging to ~926 m (1054 px),Computed by pipeline/targets.py from MOLA MEGDR 64 px/deg,,computed
+utopia,relief,177.0,m,relief in a +-13.9 km window after averaging to ~926 m (1054 px),Computed by pipeline/targets.py from MOLA MEGDR 64 px/deg,,computed
+utopia,slope,0.39,degrees,slope in a +-13.9 km window after averaging to ~926 m (1054 px),Computed by pipeline/targets.py from MOLA MEGDR 64 px/deg,,computed
+arcadia,roughness,157.5,m,roughness in a +-13.9 km window after averaging to ~926 m (1209 px),Computed by pipeline/targets.py from MOLA MEGDR 64 px/deg,,computed
+arcadia,relief,854.0,m,relief in a +-13.9 km window after averaging to ~926 m (1209 px),Computed by pipeline/targets.py from MOLA MEGDR 64 px/deg,,computed
+arcadia,slope,2.13,degrees,slope in a +-13.9 km window after averaging to ~926 m (1209 px),Computed by pipeline/targets.py from MOLA MEGDR 64 px/deg,,computed
+shackleton,roughness,1160.9,m,roughness in a +-13.9 km window after averaging to ~926 m (841 px),Computed by pipeline/targets.py from LOLA GDR ldem_75s_240m,,computed
+shackleton,relief,4741.2,m,relief in a +-13.9 km window after averaging to ~926 m (841 px),Computed by pipeline/targets.py from LOLA GDR ldem_75s_240m,,computed
+shackleton,slope,15.17,degrees,slope in a +-13.9 km window after averaging to ~926 m (841 px),Computed by pipeline/targets.py from LOLA GDR ldem_75s_240m,,computed
+marius_hills,roughness,83.9,m,roughness in a +-13.9 km window after averaging to ~926 m (900 px),Computed by pipeline/targets.py from LOLA GDR ldem_64,,computed
+marius_hills,relief,443.4,m,relief in a +-13.9 km window after averaging to ~926 m (900 px),Computed by pipeline/targets.py from LOLA GDR ldem_64,,computed
+marius_hills,slope,1.22,degrees,slope in a +-13.9 km window after averaging to ~926 m (900 px),Computed by pipeline/targets.py from LOLA GDR ldem_64,,computed
