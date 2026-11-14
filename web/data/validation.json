@@ -1,0 +1,372 @@
+{
+  "barren_ndvi_below": 0.15,
+  "n_permutations": 2000,
+  "targets": {
+    "jezero": {
+      "n_sites": 26,
+      "known_percentile_median": 0.866,
+      "random_land_median": 0.5,
+      "random_barren_median": 0.65,
+      "p_vs_barren": 0.0105,
+      "sites": {
+        "Atacama Yungay": 0.952,
+        "McMurdo Dry Valleys (Wright Valley)": 0.985,
+        "Haughton Crater (Devon Island)": 0.873,
+        "Holuhraun": 0.983,
+        "Rio Tinto": 0.58,
+        "Tirez Lagoon": 0.503,
+        "MDRS (Hanksville Utah)": 0.845,
+        "Svalbard Bockfjord Volcanic Complex": 0.86,
+        "Pilbara (Dresser Formation)": 0.778,
+        "Lanzarote (Timanfaya)": 0.762,
+        "Craters of the Moon": 0.819,
+        "Death Valley": 0.952,
+        "Mojave (Dumont Dunes)": 0.897,
+        "Qaidam Basin (Dalangtan)": 0.942,
+        "Ladakh (Tso Kar)": 0.877,
+        "Ibn Battuta field sites (Erfoud)": 0.66,
+        "Namib (Gobabeb)": 0.641,
+        "Dallol (Danakil Depression)": 0.734,
+        "Samail Ophiolite": 0.789,
+        "Lonar Crater": 0.192,
+        "El Tatio": 0.94,
+        "Licancabur": 0.917,
+        "Salar de Pajonales": 0.926,
+        "Lake Tyrrell": 0.119,
+        "Arkaroola": 0.901,
+        "Axel Heiberg (Gypsum Hill springs)": 0.896
+      },
+      "all_own_body": {
+        "n_sites": 29,
+        "known_percentile_median": 0.86,
+        "random_land_median": 0.5,
+        "random_barren_median": 0.65,
+        "p_vs_barren": 0.0145,
+        "sites": {
+          "Atacama Yungay": 0.952,
+          "McMurdo Dry Valleys (Wright Valley)": 0.985,
+          "Haughton Crater (Devon Island)": 0.873,
+          "Mauna Loa (HI-SEAS)": 0.876,
+          "Holuhraun": 0.983,
+          "Rio Tinto": 0.58,
+          "Tirez Lagoon": 0.503,
+          "MDRS (Hanksville Utah)": 0.845,
+          "Svalbard Bockfjord Volcanic Complex": 0.86,
+          "Pilbara (Dresser Formation)": 0.778,
+          "Lanzarote (Timanfaya)": 0.762,
+          "Craters of the Moon": 0.819,
+          "Lava Beds National Monument": 0.715,
+          "Death Valley": 0.952,
+          "Mojave (Dumont Dunes)": 0.897,
+          "Qaidam Basin (Dalangtan)": 0.942,
+          "Ladakh (Tso Kar)": 0.877,
+          "Ibn Battuta field sites (Erfoud)": 0.66,
+          "Namib (Gobabeb)": 0.641,
+          "Dallol (Danakil Depression)": 0.734,
+          "Samail Ophiolite": 0.789,
+          "Lonar Crater": 0.192,
+          "El Tatio": 0.94,
+          "Licancabur": 0.917,
+          "Salar de Pajonales": 0.926,
+          "Lake Tyrrell": 0.119,
+          "Arkaroola": 0.901,
+          "Axel Heiberg (Gypsum Hill springs)": 0.896,
+          "Pavilion Lake": 0.457
+        }
+      },
+      "not_visible_to_score": [
+        "Lava Beds National Monument",
+        "Mauna Loa (HI-SEAS)",
+        "Pavilion Lake"
+      ],
+      "directional": {
+        "lst_night_cold": "low"
+      },
+      "features_used": [
+        "emis_b29",
+        "lst_night_cold",
+        "ndvi_max",
+        "precip",
+        "relief",
+        "roughness",
+        "slope"
+      ],
+      "per_dimension": {
+        "terrain": {
+          "known": 0.83,
+          "barren": 0.414,
+          "n_sites": 10
+        },
+        "temperature": {
+          "known": 0.672,
+          "barren": 0.39,
+          "n_sites": 4
+        },
+        "aridity": {
+          "known": 0.869,
+          "barren": 0.854,
+          "n_sites": 7
+        },
+        "geology": {
+          "known": 0.575,
+          "barren": 0.072,
+          "n_sites": 15
+        }
+      }
+    },
+    "arcadia": {
+      "n_sites": 26,
+      "known_percentile_median": 0.84,
+      "random_land_median": 0.5,
+      "random_barren_median": 0.698,
+      "p_vs_barren": 0.047,
+      "sites": {
+        "Atacama Yungay": 0.964,
+        "McMurdo Dry Valleys (Wright Valley)": 0.945,
+        "Haughton Crater (Devon Island)": 0.896,
+        "Holuhraun": 0.991,
+        "Rio Tinto": 0.647,
+        "Tirez Lagoon": 0.539,
+        "MDRS (Hanksville Utah)": 0.874,
+        "Svalbard Bockfjord Volcanic Complex": 0.797,
+        "Pilbara (Dresser Formation)": 0.817,
+        "Lanzarote (Timanfaya)": 0.762,
+        "Craters of the Moon": 0.787,
+        "Death Valley": 0.927,
+        "Mojave (Dumont Dunes)": 0.876,
+        "Qaidam Basin (Dalangtan)": 0.938,
+        "Ladakh (Tso Kar)": 0.801,
+        "Ibn Battuta field sites (Erfoud)": 0.729,
+        "Namib (Gobabeb)": 0.716,
+        "Dallol (Danakil Depression)": 0.723,
+        "Samail Ophiolite": 0.831,
+        "Lonar Crater": 0.223,
+        "El Tatio": 0.913,
+        "Licancabur": 0.881,
+        "Salar de Pajonales": 0.916,
+        "Lake Tyrrell": 0.095,
+        "Arkaroola": 0.908,
+        "Axel Heiberg (Gypsum Hill springs)": 0.848
+      },
+      "all_own_body": {
+        "n_sites": 29,
+        "known_percentile_median": 0.817,
+        "random_land_median": 0.5,
+        "random_barren_median": 0.698,
+        "p_vs_barren": 0.113,
+        "sites": {
+          "Atacama Yungay": 0.964,
+          "McMurdo Dry Valleys (Wright Valley)": 0.945,
+          "Haughton Crater (Devon Island)": 0.896,
+          "Mauna Loa (HI-SEAS)": 0.776,
+          "Holuhraun": 0.991,
+          "Rio Tinto": 0.647,
+          "Tirez Lagoon": 0.539,
+          "MDRS (Hanksville Utah)": 0.874,
+          "Svalbard Bockfjord Volcanic Complex": 0.797,
+          "Pilbara (Dresser Formation)": 0.817,
+          "Lanzarote (Timanfaya)": 0.762,
+          "Craters of the Moon": 0.787,
+          "Lava Beds National Monument": 0.611,
+          "Death Valley": 0.927,
+          "Mojave (Dumont Dunes)": 0.876,
+          "Qaidam Basin (Dalangtan)": 0.938,
+          "Ladakh (Tso Kar)": 0.801,
+          "Ibn Battuta field sites (Erfoud)": 0.729,
+          "Namib (Gobabeb)": 0.716,
+          "Dallol (Danakil Depression)": 0.723,
+          "Samail Ophiolite": 0.831,
+          "Lonar Crater": 0.223,
+          "El Tatio": 0.913,
+          "Licancabur": 0.881,
+          "Salar de Pajonales": 0.916,
+          "Lake Tyrrell": 0.095,
+          "Arkaroola": 0.908,
+          "Axel Heiberg (Gypsum Hill springs)": 0.848,
+          "Pavilion Lake": 0.278
+        }
+      },
+      "not_visible_to_score": [
+        "Lava Beds National Monument",
+        "Mauna Loa (HI-SEAS)",
+        "Pavilion Lake"
+      ],
+      "directional": {
+        "lst_night_cold": "low"
+      },
+      "features_used": [
+        "emis_b29",
+        "lst_night_cold",
+        "ndvi_max",
+        "precip",
+        "relief",
+        "roughness",
+        "slope"
+      ],
+      "per_dimension": {
+        "terrain": {
+          "known": 0.924,
+          "barren": 0.416,
+          "n_sites": 10
+        },
+        "temperature": {
+          "known": 0.672,
+          "barren": 0.39,
+          "n_sites": 4
+        },
+        "aridity": {
+          "known": 0.869,
+          "barren": 0.854,
+          "n_sites": 7
+        },
+        "geology": {
+          "known": 0.575,
+          "barren": 0.072,
+          "n_sites": 15
+        }
+      }
+    },
+    "marius_hills": {
+      "n_sites": 12,
+      "known_percentile_median": 0.572,
+      "random_land_median": 0.5,
+      "random_barren_median": 0.753,
+      "p_vs_barren": 0.9175,
+      "sites": {
+        "Haughton Crater (Devon Island)": 0.9,
+        "Mauna Kea": 0.311,
+        "Askja": 0.927,
+        "Lanzarote (Timanfaya)": 0.625,
+        "Craters of the Moon": 0.558,
+        "Meteor Crater": 0.914,
+        "Cinder Lake Crater Field": 0.49,
+        "Black Point Lava Flow (SP Crater area)": 0.945,
+        "Ries Crater": 0.398,
+        "Sudbury": 0.396,
+        "Kilbourne Hole": 0.586,
+        "Lonar Crater": 0.377
+      },
+      "all_own_body": {
+        "n_sites": 13,
+        "known_percentile_median": 0.558,
+        "random_land_median": 0.5,
+        "random_barren_median": 0.753,
+        "p_vs_barren": 0.939,
+        "sites": {
+          "Haughton Crater (Devon Island)": 0.9,
+          "Mauna Kea": 0.311,
+          "Askja": 0.927,
+          "Lanzarote (Timanfaya)": 0.625,
+          "Craters of the Moon": 0.558,
+          "Lava Beds National Monument": 0.249,
+          "Meteor Crater": 0.914,
+          "Cinder Lake Crater Field": 0.49,
+          "Black Point Lava Flow (SP Crater area)": 0.945,
+          "Ries Crater": 0.398,
+          "Sudbury": 0.396,
+          "Kilbourne Hole": 0.586,
+          "Lonar Crater": 0.377
+        }
+      },
+      "not_visible_to_score": [
+        "Lava Beds National Monument"
+      ],
+      "directional": {
+        "lst_night_cold": "low"
+      },
+      "features_used": [
+        "emis_b29",
+        "lst_night_cold",
+        "ndvi_max",
+        "precip",
+        "relief",
+        "roughness",
+        "slope"
+      ],
+      "per_dimension": {
+        "terrain": {
+          "known": 0.721,
+          "barren": 0.457,
+          "n_sites": 11
+        },
+        "geology": {
+          "known": 0.449,
+          "barren": 0.072,
+          "n_sites": 4
+        }
+      }
+    }
+  },
+  "bodies": {
+    "mars": {
+      "targets": [
+        "jezero",
+        "arcadia"
+      ],
+      "n_sites": 26,
+      "known_percentile_median": 0.861,
+      "random_land_median": 0.5,
+      "random_barren_median": 0.689,
+      "p_vs_barren": 0.0165,
+      "sites": {
+        "Atacama Yungay": 0.962,
+        "McMurdo Dry Valleys (Wright Valley)": 0.975,
+        "Haughton Crater (Devon Island)": 0.891,
+        "Holuhraun": 0.991,
+        "Rio Tinto": 0.635,
+        "Tirez Lagoon": 0.522,
+        "MDRS (Hanksville Utah)": 0.868,
+        "Svalbard Bockfjord Volcanic Complex": 0.831,
+        "Pilbara (Dresser Formation)": 0.809,
+        "Lanzarote (Timanfaya)": 0.752,
+        "Craters of the Moon": 0.782,
+        "Death Valley": 0.943,
+        "Mojave (Dumont Dunes)": 0.882,
+        "Qaidam Basin (Dalangtan)": 0.935,
+        "Ladakh (Tso Kar)": 0.855,
+        "Ibn Battuta field sites (Erfoud)": 0.718,
+        "Namib (Gobabeb)": 0.705,
+        "Dallol (Danakil Depression)": 0.713,
+        "Samail Ophiolite": 0.824,
+        "Lonar Crater": 0.213,
+        "El Tatio": 0.931,
+        "Licancabur": 0.906,
+        "Salar de Pajonales": 0.916,
+        "Lake Tyrrell": 0.093,
+        "Arkaroola": 0.904,
+        "Axel Heiberg (Gypsum Hill springs)": 0.882
+      }
+    },
+    "moon": {
+      "targets": [
+        "marius_hills"
+      ],
+      "n_sites": 12,
+      "known_percentile_median": 0.572,
+      "random_land_median": 0.5,
+      "random_barren_median": 0.753,
+      "p_vs_barren": 0.9225,
+      "sites": {
+        "Haughton Crater (Devon Island)": 0.9,
+        "Mauna Kea": 0.311,
+        "Askja": 0.927,
+        "Lanzarote (Timanfaya)": 0.625,
+        "Craters of the Moon": 0.558,
+        "Meteor Crater": 0.914,
+        "Cinder Lake Crater Field": 0.49,
+        "Black Point Lava Flow (SP Crater area)": 0.945,
+        "Ries Crater": 0.398,
+        "Sudbury": 0.396,
+        "Kilbourne Hole": 0.586,
+        "Lonar Crater": 0.377
+      }
+    }
+  },
+  "skipped": {
+    "gale": "fewer than 4 dimensions have target values",
+    "utopia": "fewer than 4 dimensions have target values",
+    "shackleton": "fewer than 4 dimensions have target values"
+  },
+  "n_sites_total": 37,
+  "n_sites_without_land_cell": 0
+}

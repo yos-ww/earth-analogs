@@ -7,7 +7,8 @@ The browser implements the same rules; both must give the same number.
     res = score_target(grid, target)        # target = one entry of web/data/targets.json
 
 Command line (needs web/data/targets.json):
-    ~/mamba/envs/analogs/bin/python -m pipeline.score jezero
+    ~/mamba/envs/analogs/bin/python -m pipeline.score jezero     # top cells for one target
+    ~/mamba/envs/analogs/bin/python -m pipeline.score --validate  # writes web/data/validation.json
 """
 import json
 import sys
@@ -105,6 +106,10 @@ def cell_index(grid, lat, lon):
 
 
 if __name__ == "__main__":
+    if "--validate" in sys.argv:  # known analogs vs random land and barren land -> validation.json
+        from .validate import main as validate_main
+        validate_main()
+        sys.exit(0)
     grid = load_grid()
     targets = {t["id"]: t for t in json.loads((WEB_DATA / "targets.json").read_text())["targets"]}
     t = targets[sys.argv[1]]

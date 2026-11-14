@@ -150,22 +150,40 @@ A `FeatureCollection` of `Point`s at the region's best cell. Properties:
 
 ## `validation.json` (optional)
 
-Written by `score.py --validate`. The app shows the "Does it work?" panel from it and must keep working if the file is missing. All numbers below are placeholders.
+Written by `pipeline/validate.py` (`python -m pipeline.score --validate`). The app shows the "Does it work?" panel from it and must keep working if the file is missing.
 
 ```json
 {
+  "barren_ndvi_below": 0.15, "n_permutations": 2000,
   "targets": {
     "jezero": {
-      "known_percentile_median": 0.91,
+      "n_sites": 26,
+      "known_percentile_median": 0.87,
       "random_land_median": 0.50,
-      "random_barren_median": 0.72,
-      "per_dimension": { "terrain": { "known": 0.8, "barren": 0.6 } }
+      "random_barren_median": 0.65,
+      "p_vs_barren": 0.011,
+      "sites": { "Holuhraun": 0.98 },
+      "all_own_body": { "...": "same keys, counting every site of the body" },
+      "not_visible_to_score": ["Lava Beds National Monument"],
+      "directional": { "lst_night_cold": "low" },
+      "features_used": ["albedo", "roughness"],
+      "per_dimension": { "terrain": { "known": 0.83, "barren": 0.41, "n_sites": 21 } }
     }
-  }
+  },
+  "bodies": { "mars": { "targets": ["jezero", "arcadia"], "n_sites": 26, "known_percentile_median": 0.86 } },
+  "skipped": { "gale": "fewer than 4 dimensions have target values" }
 }
 ```
 
-Percentiles are area-weighted and use the review-notes baseline rule (best of the same target set for sites and baselines).
+The numbers above are examples. Meaning:
+
+- Every percentile is area-weighted and is a position among all scored land cells for the same score (so `random_land_median` is about 0.5 by construction and works as a check).
+- `known_percentile_median`: median percentile of the known sites of the target's body that are tagged with at least one scored dimension (`mineralogy` counts as `geology`). Each site is scored against this target alone. `all_own_body` counts every site of that body; `not_visible_to_score` lists the sites tagged only `biology`, `operations` or `subsurface`.
+- `random_barren_median`: median percentile of random barren land cells (`ndvi_max` < `barren_ndvi_below`). The claim to support is `known_percentile_median` clearly above `random_barren_median`.
+- `p_vs_barren`: share of `n_permutations` same-size random barren sets (area-weighted draws) whose median percentile is at least the observed one.
+- `per_dimension[d]`: `known` = median percentile of the dimension-`d` score for sites tagged `d`; `barren` = the same for random barren cells.
+- `bodies[mars|moon]`: each site scored by the best of that body's targets, with the random baseline taking the best of the same set (review decision 1).
+- `skipped`: targets without enough values to score yet.
 
 ## Changes to this contract
 
