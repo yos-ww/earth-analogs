@@ -1,0 +1,39 @@
+{
+  "contract_version": 1,
+  "grid": {
+    "res_deg": 0.25,
+    "ncols": 1440,
+    "nrows": 720
+  },
+  "n_cells": 344354,
+  "dimensions": [
+    "terrain",
+    "vegetation"
+  ],
+  "features": [
+    {
+      "id": "roughness",
+      "label": "Roughness",
+      "dimension": "terrain",
+      "unit": "m",
+      "transform": "log1p",
+      "min": 0.0,
+      "max": 7.207067,
+      "sigma": 1.406518,
+      "p1": 1.060901,
+      "p99": 6.388574
+    },
+    {
+      "id": "ndvi_max",
+      "label": "Yearly max NDVI",
+      "dimension": "vegetation",
+      "unit": "-",
+      "transform": "none",
+      "min": 0.0,
+      "max": 0.927945,
+      "sigma": 0.335777,
+      "p1": 0.0,
+      "p99": 0.893262
+    }
+  ]
+}

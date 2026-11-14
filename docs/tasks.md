@@ -21,8 +21,8 @@ Ordered by the timeline in `plan.md`. Tick a box in the same commit that finishe
 ## Person A: data and science
 
 Hours 1–3
-- [ ] `pipeline/features.py`: land mask, `cells.bin`, and two features (`roughness`, `ndvi_max`)
-- [ ] `pipeline/export.py`: write `web/data/cells.bin`, `features.bin`, `meta.json` in the contract format
+- [x] `pipeline/features.py`: land mask, `cells.bin`, and two features (`roughness`, `ndvi_max`)
+- [x] `pipeline/export.py`: write `web/data/cells.bin`, `features.bin`, `meta.json` in the contract format
 - [ ] `pipeline/export.py`: also write a literature-only `web/data/targets.json` from `data/targets.csv` and `data/targets_literature.csv` (see contract), so B can swap the mock targets for real ones
 - [ ] **Checkpoint 0 (hour 3):** these two features render on B's globe
 
