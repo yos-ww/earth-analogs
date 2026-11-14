@@ -1,0 +1,38 @@
+name,country,lat,lon,body,dimensions,why_analog,reference,source_url
+Atacama Yungay,Chile,-24.08,-70.00,Mars,aridity|biology,Hyperarid soils near the dry limit of life; Viking-style experiments,Navarro-Gonzalez et al. 2003 Science,
+McMurdo Dry Valleys (Wright Valley),Antarctica,-77.52,161.60,Mars,temperature|ice|aridity,Cold-desert landforms; ground ice; Mars-like microclimate zones,Marchant & Head 2007 Icarus,
+Haughton Crater (Devon Island),Canada,75.38,-89.68,Mars|Moon,terrain|ice|operations,Polar-desert impact crater; HMP and FMARS field operations,Osinski et al. 2005 Meteoritics & Planetary Science,
+Mauna Kea,USA,19.82,-155.47,Moon,mineralogy|operations,Basaltic tephra used for lunar ISRU field tests (RESOLVE 2008; ILSO 2010),Sanders & Larson 2011 (ISRU field analogs; NASA JSC/KSC),https://ntrs.nasa.gov/citations/20100021362
+Mauna Loa (HI-SEAS),USA,19.60,-155.48,Mars,operations,Long-duration Mars habitat simulation on barren lava (2013-2018),HI-SEAS program (Univ. of Hawaii; NASA Human Research Program),https://www.hi-seas.org/about-hi-seas
+Holuhraun,Iceland,64.87,-16.83,Mars,terrain|mineralogy,2014-15 flood-basalt flow; analog for young Elysium Planitia lavas,Voigt et al. 2025 Planetary Science Journal (doi:10.3847/PSJ/adb5f1),https://www.usgs.gov/publications/2014-2015-holuhraun-lava-flow-field-iceland-a-planetary-analog-young-volcanic-terrains
+Askja,Iceland,65.05,-16.75,Moon,terrain,Apollo geology training (July 1965 and July 1967),Apollo program training (NASA rosters; Exploration Museum Husavik),https://en.wikipedia.org/wiki/Apollo_program_training
+Rio Tinto,Spain,37.72,-6.55,Mars,mineralogy|biology,Acidic iron- and sulfate-rich river (jarosite) like Meridiani,Fernandez-Remolar et al. 2005 EPSL,
+Tirez Lagoon,Spain,39.55,-3.36,Mars,mineralogy|biology,Sulfate-rich hypersaline lagoon; wet-to-dry transition analog,Fairen et al. 2023 Scientific Reports (doi:10.1038/s41598-023-28327-3),
+MDRS (Hanksville Utah),USA,38.41,-110.79,Mars,terrain|operations,Mars Society analog station; inverted channels and layered badlands,Clarke & Stoker 2011 International Journal of Astrobiology (doi:10.1017/S1473550411000048),
+Svalbard Bockfjord Volcanic Complex,Norway,79.45,13.33,Mars,mineralogy|biology,Carbonate globules like ALH84001; AMASE expeditions,Treiman et al. 2002 EPSL,
+Pilbara (Dresser Formation),Australia,-21.15,119.42,Mars,biology|mineralogy,3.5 Ga stromatolites; hematite-altered like Mars targets,Hickman-Lewis et al. 2023 Geology 51(1) (doi:10.1130/G50390.1),
+Lanzarote (Timanfaya),Spain,29.00,-13.75,Mars|Moon,terrain|mineralogy,Basaltic volcanic terrain; ESA PANGAEA astronaut training,Sauro et al. 2024 IAC (ESA PANGAEA),https://iafastro.directory/iac/paper/id/86963/abstract-pdf/IAC-24%2CB3%2CIP%2C10%2Cx86963.brief.pdf
+Craters of the Moon,USA,43.42,-113.52,Moon|Mars,terrain|subsurface,Basaltic lava flows and tubes; NASA BASALT and FINESSE,Lim et al. 2019 Astrobiology (BASALT),
+Lava Beds National Monument,USA,41.71,-121.51,Mars|Moon,subsurface|biology,Lava tubes; NASA BRAILLE cave-robotics and biosignature project,BRAILLE project (GSA 2022 abstract),https://gsa.confex.com/gsa/2022CD/webprogram/Paper374238.html
+Meteor Crater,USA,35.03,-111.02,Moon,terrain,Simple impact crater; Apollo training,Shoemaker 1960,
+Cinder Lake Crater Field,USA,35.31,-111.53,Moon,terrain,Artificial crater field (1967) copying Apollo landing sites,USGS Astrogeology,https://www.usgs.gov/media/images/astronaut-field-training-cinder-lake
+Black Point Lava Flow (SP Crater area),USA,35.68,-111.48,Moon,terrain|operations,NASA Desert RATS rover and EVA tests; BP-1 lunar simulant source,NASA Desert RATS / BP-1 simulant report,https://ntrs.nasa.gov/api/citations/20100036344/downloads/20100036344.pdf
+Death Valley,USA,36.46,-116.87,Mars,aridity|temperature|terrain,Hot desert; playas; alluvial fans,challenge.md (organizer example),
+Mojave (Dumont Dunes),USA,35.68,-116.22,Mars,terrain|dust,Curiosity mobility tests on dunes (Scarecrow rover 2012),NASA JPL 2012,https://www.jpl.nasa.gov/news/mojave-desert-tests-prepare-for-nasa-mars-roving/
+Ries Crater,Germany,48.88,10.57,Moon,terrain,Complex impact crater; Apollo 14 training (August 1970),NASA Apollo 14 Lunar Surface Journal,https://www.nasa.gov/history/alsj/a14/a14ries-News3.html
+Sudbury,Canada,46.60,-81.20,Moon,terrain|mineralogy,Large impact structure; Apollo 16 (1971) and 17 (1972) training,CBC 2021 (Apollo astronauts trained in Sudbury),https://amp.cbc.ca/news/canada/sudbury/apollo-asronauts-trained-sudbury-50-years-ago-1.6096556
+Kilbourne Hole,USA,31.97,-106.97,Moon,terrain,Maar crater; Apollo 12-17 training; NASA Goddard instrument tests,BLM 2021,https://www-26.blm.gov/blog/2021-08-04/when-public-land-new-mexico-stood-moon
+Qaidam Basin (Dalangtan),China,38.60,91.50,Mars,aridity|mineralogy|dust,Cold high-altitude salt playas and yardangs,Xiao et al. 2017 Earth-Science Reviews,
+Ladakh (Tso Kar),India,33.30,78.00,Mars,aridity|temperature|mineralogy,Cold high-altitude desert with salt lakes and hot springs,Pandey et al. 2020 International Journal of Astrobiology 19(1) (doi:10.1017/S1473550419000119),
+Ibn Battuta field sites (Erfoud),Morocco,31.43,-4.23,Mars,terrain|aridity,Sahara-margin field area; ExoMars rover tests; OeWF MARS2013,Ibn Battuta Centre; 2018 Astrobiology paper (authors TODO),https://core.ac.uk/download/163102078.pdf
+Namib (Gobabeb),Namibia,-23.56,15.04,Mars,aridity|dust|biology,Fog-fed hyperarid desert; linear dunes; hypolith microbes,Lorenz & Radebaugh 2016 Communications of the Geological Survey of Namibia 17,
+Dallol (Danakil Depression),Ethiopia,14.24,40.30,Mars,biology|mineralogy,Hyperacidic hypersaline hydrothermal field,Cavalazzi et al. 2019 Astrobiology,
+Samail Ophiolite,Oman,22.90,58.20,Mars,mineralogy,Serpentine and carbonate like Jezero/Nili Fossae,Leask et al. 2021 Earth and Space Science (doi:10.1029/2021EA001637),
+Lonar Crater,India,19.98,76.51,Mars|Moon,terrain|mineralogy,Impact crater in basalt,Maloof et al. 2010 GSA Bulletin,
+El Tatio,Chile,-22.33,-68.01,Mars,mineralogy|biology,Silica sinter like Spirit's Home Plate,Ruff & Farmer 2016 Nature Communications,
+Licancabur,Chile/Bolivia,-22.83,-67.88,Mars,biology|temperature,Summit lake: low pressure; high UV; Martian paleolake analog,Cabrol et al. (NASA High Lakes Project),https://ntrs.nasa.gov/citations/20030110696
+Salar de Pajonales,Chile,-25.15,-68.82,Mars,mineralogy|biology,High-altitude Ca-sulfate (gypsum) salar,Hinman et al. 2022 Frontiers in Astronomy and Space Sciences (doi:10.3389/fspas.2021.797591),
+Lake Tyrrell,Australia,-35.32,142.80,Mars,mineralogy,Acid hypersaline groundwater (lake water near-neutral),Applied Geochemistry 2009 24(2):285-296 (authors TODO),
+Arkaroola,Australia,-30.31,139.33,Mars,terrain|mineralogy,Mars Society Australia prime analog region (Flinders Ranges),Mann Murphy Stoker & Clarke 2004 IAU Symposium 213,https://ui.adsabs.harvard.edu/abs/2004IAUS..213..553L/abstract
+Axel Heiberg (Gypsum Hill springs),Canada,79.40,-90.75,Mars,ice|biology,Perennial cold saline springs through 600 m permafrost,Andersen Pollard McKay & Heldmann 2002 JGR,
+Pavilion Lake,Canada,50.87,-121.74,Mars,biology,Freshwater microbialites; NASA/CSA Pavilion Lake Research Project,Lim & McKay 2004 (NASA conference paper),https://ntrs.nasa.gov/citations/20040191853
