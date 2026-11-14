@@ -6,6 +6,31 @@ Claude Code sessions: read this file after every `git pull`, together with `CLAU
 
 ---
 
+## 2026-11-14 · A → B · data checked independently (accurate); novelty wording for the pitch hook; licence; what is left
+
+**Open for you: items 2, 3 and 4. No `web/data/` or contract change.**
+
+1. **The data is accurate.** I checked it against the outside world, not only against itself (`python -m pipeline.test_landmarks`, new):
+   - MOLA elevations at the Perseverance, Curiosity and Zhurong landing sites, read with plain array maths, are within 4 m of the published values. The two LOLA polar grids give the same Shackleton terrain.
+   - The raw MODIS aerosol and temperature files are not flipped or shifted. Landmarks look right: Amazon NDVI 0.74, Dome C snow 1.0, Everest relief 5.5 km, Bodélé AOD 0.57.
+   - An independent implementation of the contract's scoring reproduces all 55 candidate scores (difference < 0.001). The validation headline recomputes to the same numbers.
+   - Gale #1 is 356 km from Doha (26.88 N 54.62 E; Doha at 25.285 N 51.531 E), so "about 355 km" is fine.
+   - Three caveats are now in the write-up (my sections): the basalt emissivity references are also validation sites (effect negligible, numbers given); Gale's 28 km window reaches onto Mount Sharp's flank; max-NDVI gives bare sand a noise floor of 0.09–0.13.
+2. **Novelty wording for Hormozgan (the pitch hook) needs softening.** A quick web search found:
+   - A 2006 EGU conference abstract by P. Aftabi (Geological Survey of Iran) that compares the shape and strain of Martian salt sheets with Iranian salt structures (https://www.meetings.copernicus.org/www.cosis.net/abstracts/EGU06/00849/EGU06-J-00849-5.pdf). Salt glaciers on Mars are a known topic.
+   - Suggested wording: "Salt glaciers like these have been compared with Mars in conference work, but our first-pass search found no field analog study at this site."
+   - Where it shows: the tour's step 5 caption (Gale near Doha), the panel's "Is it new?" for Gale #1 and Shackleton #4, and slide 1.
+   - For Makran: Skinner & Mazzini 2009 (https://pubs.usgs.gov/publication/70037153) compares Earth's mud-volcano provinces with Mars. Please check in the Scholar/ADS pass whether it uses Makran before we call Makran new.
+3. **Stale text in your write-up section** ("What the score cannot see … and Earth's limits (B)"): it still says "Mars 3.71 m/s²" and "`limits` in `web/data/targets.json` is still empty". Use 3.73 m/s²; the limits are filled.
+4. **Licence (shared files, Yosif's choice; please confirm here):** MIT for the code (`LICENSE`), CC BY 4.0 for the write-up, docs, figures and `web/data/`; third-party data keeps its own terms (README section "Licence"). Copyright reads "yos-ww and birbaskagezgin". Say if you want it changed.
+
+**What is left, by points per hour (from the rubric review):**
+- **B:** slides (7; my drafts for slides 3–5 are below) → write-up (B) sections, Summary first → Scholar/ADS pass, `data/candidate_notes.csv`, Makran–Chagai deep dive → fingerprint radar chart and About panel → second-laptop WebGL test → the two "TODO" references in `data/known_analogs.csv`. Tour mode is done (thanks; your entry below); the video is postponed, and `?tour=1` is ready for it.
+- **A:** PDF export of the write-up once your sections are in; the fingerprint unit check once the radar chart exists.
+- **Both:** who checks the Space Apps submission form; end-to-end check on the live URL; proofread and submit early.
+
+---
+
 ## 2026-11-14 · B → A · guided tour (your rubric item 4) is live
 
 **FYI; `web/` only, no data or contract change.** "▶ Tour" in the panel header, or open the site with `?tour=1` to start it automatically (for screen recording). Eight steps, 6.5 s each, about 50 s. Controls: ◀ ▶ ⏸ ✕ and arrow keys, space and Esc. The story lives in `web/tour.js` and steers the app through a small API in `app.js`.

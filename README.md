@@ -45,8 +45,14 @@ python -m pipeline.score --validate         # -> web/data/validation.json
 python -m pipeline.candidates               # -> web/data/candidates.geojson
 ```
 
-Checks: `python -m pipeline.test_score`, `python -m pipeline.test_terrain`, `python -m pipeline.test_candidates`.
+Checks: `python -m pipeline.test_score`, `python -m pipeline.test_terrain`, `python -m pipeline.test_candidates`, `python -m pipeline.test_export`, and `python -m pipeline.test_landmarks` (independent checks against published landing-site elevations, raw-file orientation and Earth landmarks; needs `data/raw/`).
 `python -m pipeline.spike` prints the early science check described in `docs/spike-results.md`.
 `python -m pipeline.figures` draws the write-up figures into `docs/figures/` and stops if a number disagrees with `validation.json`.
 `python -m pipeline.sensitivity` re-runs the validation under changed choices (barren threshold, left-out sites, dropped dimensions, σ scale); results are in `docs/writeup.md`.
 Rebuilding all features from the raw data gives bit-identical arrays (checked 2026-11-14).
+
+## Licence
+
+- **Code** (`pipeline/`, `setup/`, `web/` except `web/data/`): MIT, see [`LICENSE`](LICENSE).
+- **Write-up, docs, figures and the generated data in `web/data/`:** [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/). Reuse them freely, with credit to the Analog Atlas team.
+- **Third-party data keeps its own terms.** NASA and USGS data (MODIS, GPM IMERG, GMTED2010, MOLA, TES, LOLA, Diviner, Blue Marble) and Natural Earth are public domain or free to use with credit. Values taken from the Mars Climate Database and from published papers are cited where they are used (`data/targets_literature.csv`). The globe library (globe.gl, MIT) loads from a CDN and is not part of this repo.
