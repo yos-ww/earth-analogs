@@ -4,37 +4,60 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Analog Atlas</title>
-  <meta name="description" content="Find the places on Earth that are most like Mars or the Moon.">
+  <meta name="description" content="Find the places on Earth most like Mars or the Moon.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <div id="globe" aria-label="3D globe: places on Earth that are similar to the chosen Mars or Moon site glow"></div>
+  <div id="vignette" aria-hidden="true"></div>
 
   <div id="loader" role="status">
     <div class="spinner"></div>
-    <p>Loading Earth, Mars and Moon data…</p>
+    <p>Loading Earth, Mars and Moon data</p>
   </div>
 
   <aside id="panel">
     <header>
-      <div class="title-row"><h1>Analog Atlas</h1><button id="tour-btn" type="button" title="A 50-second guided tour">▶ Tour</button></div>
+      <div class="title-row">
+        <div>
+          <h1>Analog Atlas</h1>
+          <p class="kicker">Earth ↔ Mars · Moon</p>
+        </div>
+        <button id="tour-btn" type="button" title="A 50-second guided tour">
+          <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M5 3.5v9l7-4.5z"/></svg> Tour</button>
+      </div>
       <p class="tagline">Find the places on Earth most like Mars or the Moon.</p>
     </header>
 
-    <!-- The simple view: pick a site, read the map, click a place. -->
     <section class="main">
+      <p class="sec-label"><span>01</span> Target</p>
       <select id="target" aria-label="Mars or Moon site"></select>
       <p id="target-blurb" class="blurb"></p>
       <p class="key"><span class="ramp-mini"></span> similar &nbsp; <span class="dot new"></span> new find &nbsp; <span class="dot under"></span> little studied</p>
     </section>
 
+    <section class="ask">
+      <p class="sec-label"><span>02</span> Your place</p>
+      <form id="ask-form" class="ask-row" autocomplete="off">
+        <input id="ask-input" list="ask-list" placeholder="How Mars-like is… e.g. Qatar, Cairo" aria-label="Country or city">
+        <datalist id="ask-list"></datalist>
+        <button type="submit" aria-label="Show">→</button>
+      </form>
+      <p class="ask-quick"><button type="button" class="chip-btn" data-ask="Qatar">Qatar</button>
+        <button type="button" class="chip-btn" data-ask="Egypt">Egypt</button>
+        <button type="button" class="chip-btn" data-ask="Saudi Arabia">Saudi Arabia</button></p>
+    </section>
+
     <section id="place" hidden>
+      <p class="sec-label"><span>03</span> <span id="place-label">Place</span></p>
       <div id="place-body"></div>
     </section>
 
-    <p id="hint" class="hint">👆 Click a green dot or any land.</p>
+    <p id="hint" class="hint">Click a green point or any land.</p>
 
-    <!-- Everything else, one click away. -->
     <details id="site-more" class="fold">
       <summary id="site-more-title">About this site</summary>
       <div id="site-counts" class="note"></div>
@@ -57,16 +80,21 @@
         <span class="dot mars"></span><span class="dot moon"></span> Places scientists already use</label>
       <label class="check" title="Antarctica, inner Greenland and ice caps. On by default for Mars sites, which have no ice on the surface."><input id="hide-ice" type="checkbox">
         Hide ice sheets</label>
+      <label class="check"><input id="day-night" type="checkbox" checked> Day and night</label>
       <div class="legend"><span>less</span><div class="ramp"></div><span>more similar</span></div>
-      <h3 class="opt-title">What matters most?</h3>
+      <p class="opt-title">What matters most?</p>
       <p class="note">0 = ignore, 2 = count double.</p>
       <div id="sliders"></div>
       <button id="reset" type="button">Reset</button>
     </details>
 
-    <p id="status" class="note credit"></p>
-    <p class="note credit">Earth imagery: NASA Blue Marble. Data: NASA MODIS, GPM IMERG, USGS GMTED2010, MGS MOLA/TES, LRO LOLA/Diviner, Mars Climate Database.</p>
+    <footer>
+      <p id="status" class="note credit"></p>
+      <p class="note credit">Imagery: NASA Blue Marble and Black Marble. Data: NASA MODIS, GPM IMERG, USGS GMTED2010, MGS MOLA/TES, LRO LOLA/Diviner, Mars Climate Database.</p>
+    </footer>
   </aside>
+
+  <div id="hud" class="hud" aria-hidden="true"></div>
 
   <div id="tour" hidden role="dialog" aria-label="Guided tour">
     <div class="tour-card">

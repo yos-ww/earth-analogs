@@ -6,6 +6,34 @@ Claude Code sessions: read this file after every `git pull`, together with `CLAU
 
 ---
 
+## 2026-11-14 · B → A · UI upgrade: instrument look, day/night, contours, arcs, fingerprint radar, "How Mars-like is…"
+
+**FYI, plus one thing for you (item 4). `web/` only; no `web/data/`, scoring or contract change. Golden check still 306/306.**
+
+1. **New look** (the user asked for a less "generated" look with more effect, without losing smoothness):
+   - Panel docked to the left edge with hairline borders and numbered sections (`01 TARGET`, `02 YOUR PLACE`, `03 …`).
+   - Fonts: Barlow Condensed for headings, IBM Plex Sans for text, IBM Plex Mono for every number (Google Fonts).
+   - One accent colour (Mars rust #e2683c). Finds: green #3ddc84 = new, yellow #f2c14e = little studied, grey = known area.
+   - Drawn icons instead of emoji.
+2. **Globe effects:**
+   - Star-field background (`web/img/night-sky.jpg`).
+   - **Day/night with NASA Black Marble city lights** (`web/img/earth-night.jpg`, 2880 × 1440 like the day image): a few lines added to the globe material's fragment shader with `onBeforeCompile`. The sun is fixed relative to the camera, so the side in view is always lit; no per-frame JavaScript. It can be turned off ("Map options → Day and night").
+   - **Contour lines at 0.5 / 0.6 / 0.7** over a slightly softer fill (max alpha 205, was 235): one pass over the grid, about 7 ms per repaint, only on slider or target changes.
+   - **Arc from a selected find to the nearest known site**, with a "N km to nearest known site" label. It uses the same nearest-site distance logic over `known_analogs.geojson`; for Gale #1 it gives Samail Ophiolite, consistent with your `nearest_known_km`.
+   - Cinematic camera (long jumps rise, then descend); a bottom-right readout of coordinates and score under the cursor.
+3. **Fingerprint radar (your unit check):** in the place panel next to the score, an SVG radar.
+   - One axis per `meta.dimensions` entry, radius = the unweighted dimension score from `dimensionScores` (same numbers as the bars and `cellScores`), target = dashed outer ring.
+   - Aridity axis greyed (rubric decision); a missing dimension is a dashed axis drawn at 0.
+   - So "fingerprint axes for a known site equal the per-dimension scores `score.py` prints for that site" holds by construction. You can tick that check if you agree.
+4. **New: "How Mars-like is…" (section 02).** A country (approximate bounding box) or city from a fixed list in `web/places.js`, computed in the browser; no geocoding service.
+   - Countries: best cell, area-weighted country average, and the best cell's area percentile. Cities: nearest land cell.
+   - Pitch line for Doha: **compared with Jezero, Qatar's most similar spot is 55/100, more similar than 98% of Earth's land** (best cell 25.63 N, 50.88 E, western Qatar; Qatar average 36/100), with equal weights on the frozen data.
+   - **For you:** if you want this in the write-up or on slide 1, please check it with your pipeline. Note the Qatar box (24.5–26.2 N, 50.75–51.65 E) can touch a sliver of Saudi Arabia's coast.
+5. Tour: unchanged steps; it now uses the new camera flights and shows the arc at the Makran and Gale finds.
+6. **Not verifiable from B's side:** the frame rate of the day/night shader on other GPUs. The second-laptop test (still open) should include it; if it stutters, untick "Day and night".
+
+---
+
 ## 2026-11-14 · B → A · licence confirmed
 
 **Done.** The user (B) agrees with the licence as set: MIT for the code (`LICENSE`), CC BY 4.0 for the write-up, docs, figures and `web/data/`, third-party data under its own terms, copyright "yos-ww and birbaskagezgin". No change needed.

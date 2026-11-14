@@ -4,30 +4,48 @@ import { decodeGrid, dimensionScores, overallScores, cellScores, cellIndex, targ
 import { regionOf, VERDICT_TEXT } from "./regions.js";
 import { MISSIONS, USE } from "./missions.js";
 import { initTour } from "./tour.js";
+import { COUNTRIES, CITIES } from "./places.js";
 
 const DATA_DIR = "data"; // "mock" to test against web/mock/*
-const IMG = { earth: "img/earth-blue-marble.jpg", bump: "img/earth-topology.png" };
+const IMG = {
+  earth: "img/earth-blue-marble.jpg", bump: "img/earth-topology.png",
+  night: "img/earth-night.jpg", sky: "img/night-sky.jpg",
+};
 
-// Look: weak matches stay transparent (real Earth shows), strong matches glow warm.
+// Look: weak matches stay transparent (real Earth shows), strong matches glow warm, with thin
+// contour lines at 50 / 60 / 70 so the map reads like a scientific chart rather than a blob.
 const RAMP_STOPS = ["#ffe66d", "#ffb02e", "#ff6a1a", "#e8202a", "#a3004f"]; // low -> high match
 const SHOW_FROM = 0.35;         // scores below this are fully transparent
-const MAX_ALPHA = 235;          // 0-255 opacity of a perfect match
+const MAX_ALPHA = 205;          // 0-255 opacity of a perfect match
+const CONTOURS = [0.5, 0.6, 0.7];
+// Sun direction in camera space: light from the upper left and slightly in front, so the side you
+// look at is always lit and the night side (with city lights) shows on the right-hand limb.
+const SUN_VIEW = (() => { const v = [-0.78, 0.32, 0.54], n = Math.hypot(...v); return { x: v[0] / n, y: v[1] / n, z: v[2] / n }; })();
 const TEX_SCALE = 2;            // texture = 2x the score grid (2880 x 1440), smoothed
 const FADE_MS = 550;            // cross-fade when the target changes
 const RESUME_ROTATE_MS = 2500;  // auto-rotation resumes this long after the user lets go
 const ICE_SHEET_FROM = 0.9;     // snow_ice fraction from which a cell counts as permanent ice sheet
-const COLOURS = { mars: "#ff7a45", moon: "#f2f5fa", click: "255,179,71" };
+const COLOURS = { mars: "#e2683c", moon: "#dfe6f0", click: "226,104,60" };
 // Candidates are styled by their literature verdict (web/regions.js), so real discoveries stand out
 // from places where our search only re-found an area scientists already use.
 const CAND_STYLE = {
-  none:      { colour: "#39ff88", rgb: "57,255,136",  radius: 0.55, alt: 0.035, pulse: 0.75, heading: "New find",
+  none:      { colour: "#3ddc84", rgb: "61,220,132",  radius: 0.55, alt: 0.035, pulse: 0.75, heading: "New find",
                tag: "new find", group: "finds" },
-  under:     { colour: "#ffd23f", rgb: "255,210,63",  radius: 0.5,  alt: 0.03,  pulse: 0.45, heading: "Little-studied find",
+  under:     { colour: "#f2c14e", rgb: "242,193,78",  radius: 0.5,  alt: 0.03,  pulse: 0.45, heading: "Little-studied find",
                tag: "little-studied find", group: "finds" },
   unchecked: { colour: "#7fb2ff", rgb: "127,178,255", radius: 0.32, alt: 0.015, pulse: 0,    heading: "Candidate (not checked yet)",
                tag: "candidate, not checked yet", group: "finds" },
-  known:     { colour: "#9aa4b8", rgb: "154,164,184", radius: 0.3,  alt: 0.015, pulse: 0,    heading: "Known area our search found too",
+  known:     { colour: "#8b93a5", rgb: "139,147,165", radius: 0.3,  alt: 0.015, pulse: 0,    heading: "Known area our search found too",
                tag: "known area", group: "confirms" },
+};
+// Short axis names for the fingerprint radar.
+const DIM_SHORT = {
+  terrain: "Terrain", temperature: "Temp", vegetation: "Plants", aridity: "Rain",
+  albedo: "Bright", ice: "Ice", dust: "Dust", geology: "Rock",
+};
+const ICON = {
+  good: `<svg viewBox="0 0 16 16" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8.5l3.2 3L13 4.5"/></svg>`,
+  bad: `<svg viewBox="0 0 16 16" fill="none" stroke-width="2" stroke-linecap="round"><path d="M4 4l8 8M12 4l-8 8"/></svg>`,
 };
 
 // Everyday words for visitors.
@@ -57,7 +75,7 @@ const state = {
   grid: null, targets: [], target: null, dims: null, weights: [],
   overall: null, shown: null, fade: null, clicked: null,
   analogs: [], candidates: [], showAnalogs: true, showCandidates: true, showConfirms: true,
-  iceSheet: null, hideIce: false, cellWeight: null,
+  iceSheet: null, hideIce: false, cellWeight: null, arc: null,
 };
 
 // ---------- colours ----------
@@ -79,6 +97,8 @@ const scoreCanvas = document.createElement("canvas");
 const scoreCtx = scoreCanvas.getContext("2d");
 const texCanvas = document.createElement("canvas");
 const texCtx = texCanvas.getContext("2d");
+const contourCanvas = document.createElement("canvas");
+const contourCtx = contourCanvas.getContext("2d");
 let scoreImage = null, earthPhoto = null;
 
 function loadImage(src) {
@@ -102,7 +122,9 @@ function findIceSheets(grid) {
 
 // ---------- globe ----------
 const globe = new Globe($("globe"))
-  .backgroundColor("#05070d")
+  .width($("globe").clientWidth).height($("globe").clientHeight)
+  .backgroundColor("#03050a")
+  .backgroundImageUrl(IMG.sky)       // star field
   .globeImageUrl(IMG.earth)          // the photo first; replaced by the composite once loaded
   .bumpImageUrl(IMG.bump)
   .showAtmosphere(true)
@@ -122,7 +144,13 @@ const globe = new Globe($("globe"))
   .ringMaxRadius((d) => d.maxR).ringPropagationSpeed((d) => d.speed).ringRepeatPeriod((d) => d.period)
   // text labels (used by the guided tour, e.g. to mark Doha)
   .labelLat((d) => d.lat).labelLng((d) => d.lng).labelText((d) => d.text)
-  .labelSize(1.1).labelDotRadius(0.45).labelColor(() => "#ffffff").labelResolution(2).labelAltitude(0.02);
+  .labelSize((d) => d.size || 1.1).labelDotRadius((d) => (d.dot === false ? 0 : 0.45))
+  .labelColor((d) => d.colour || "#ffffff").labelResolution(2).labelAltitude(0.02)
+  // arc from a selected find to the nearest place scientists already use
+  .arcStartLat((d) => d.sLat).arcStartLng((d) => d.sLng).arcEndLat((d) => d.eLat).arcEndLng((d) => d.eLng)
+  .arcColor(() => ["rgba(61,220,132,0.95)", "rgba(226,104,60,0.95)"])
+  .arcStroke(0.45).arcAltitudeAutoScale(0.35)
+  .arcDashLength(0.35).arcDashGap(0.12).arcDashInitialGap(1).arcDashAnimateTime(2200);
 
 const controls = globe.controls();
 controls.autoRotate = true;
@@ -138,13 +166,29 @@ function resumeRotationSoon(extraMs = 0) {
 controls.addEventListener("start", holdRotation);
 controls.addEventListener("end", () => resumeRotationSoon());
 
-function flyTo(lat, lng) {
+// Cinematic camera: for long jumps rise first (a "flight"), then descend onto the target.
+let flightTimer = 0;
+function flyTo(lat, lng, altitude = null, ms = 1100) {
   holdRotation();
-  globe.pointOfView({ lat, lng, altitude: Math.min(globe.pointOfView().altitude, 1.8) }, 1000);
-  resumeRotationSoon(1000);
+  clearTimeout(flightTimer);
+  const pov = globe.pointOfView();
+  const end = { lat, lng, altitude: altitude ?? Math.min(pov.altitude, 1.8) };
+  const far = distanceKm(pov.lat, pov.lng, lat, lng) > 3000;
+  if (far) {
+    const mid = { lat: (pov.lat + lat) / 2, lng: pov.lng + (((lng - pov.lng + 540) % 360) - 180) / 2, altitude: Math.max(pov.altitude, end.altitude) + 0.6 };
+    globe.pointOfView(mid, ms * 0.55);
+    flightTimer = setTimeout(() => globe.pointOfView(end, ms * 0.75), ms * 0.55);
+  } else {
+    globe.pointOfView(end, ms);
+  }
+  resumeRotationSoon(far ? ms * 1.3 : ms);
 }
 
-window.addEventListener("resize", () => globe.width(window.innerWidth).height(window.innerHeight));
+window.addEventListener("resize", () => globe.width($("globe").clientWidth).height($("globe").clientHeight));
+
+// Labels shown on the globe: tour labels (e.g. Doha) plus the distance label of the selected find.
+const labelSets = { tour: [], arc: [] };
+function applyLabels() { globe.labelsData([...labelSets.tour, ...labelSets.arc]); }
 
 // Points and rings shown for the current target and toggles.
 function targetCandidates() {
@@ -159,31 +203,95 @@ function updateLayers() {
   }));
   if (state.clicked) rings.push({ lat: state.clicked[0], lng: state.clicked[1], rgb: COLOURS.click, strength: 1, maxR: 3, speed: 2.2, period: 1100 });
   globe.ringsData(rings);
+  // arc from a selected find to the nearest known site, with the distance at its middle
+  const arc = state.arc;
+  globe.arcsData(arc ? [arc] : []);
+  labelSets.arc = arc ? [{
+    lat: (arc.sLat + arc.eLat) / 2, lng: arc.sLng + (((arc.eLng - arc.sLng + 540) % 360) - 180) / 2,
+    text: `${arc.km.toLocaleString("en-US")} km to nearest known site`, size: 0.7, dot: false, colour: "#f4e7dc",
+  }] : [];
+  applyLabels();
 }
 
 // ---------- painting ----------
+let raster = null;       // displayed score per grid pixel (NaN = not shown), for the contours
+let contourImage = null; // contour lines at grid resolution, drawn 2x with smoothing
 function paintScores(values) {
   const { grid } = state;
   const px = scoreImage.data;
+  const ncols = grid.meta.grid.ncols, nrows = grid.meta.grid.nrows;
   px.fill(0);
+  raster.fill(NaN);
   for (let i = 0; i < grid.n; i++) {
     const s = values[i];
     if (Number.isNaN(s) || s <= SHOW_FROM) continue;          // weak match: real Earth shows
     if (state.hideIce && state.iceSheet[i]) continue;         // ice sheet hidden for this target
     const v = (Math.min(s, 1) - SHOW_FROM) / (1 - SHOW_FROM);
-    const p = grid.cells[i] * 4, k = Math.round(v * 255) * 3;
+    const cell = grid.cells[i], p = cell * 4, k = Math.round(v * 255) * 3;
     px[p] = LUT[k]; px[p + 1] = LUT[k + 1]; px[p + 2] = LUT[k + 2];
     px[p + 3] = Math.round(MAX_ALPHA * Math.pow(v, 0.8));
+    raster[cell] = s;
   }
   scoreCtx.putImageData(scoreImage, 0, 0);
+
+  // Contours: a pixel is on a line where its band (below 50 / 50-60 / 60-70 / 70+) differs from
+  // the pixel to its right or below. One pass over the grid, a few milliseconds.
+  const band = (s) => (Number.isNaN(s) ? -1 : s >= CONTOURS[2] ? 3 : s >= CONTOURS[1] ? 2 : s >= CONTOURS[0] ? 1 : 0);
+  const cp = contourImage.data;
+  cp.fill(0);
+  for (let r = 0; r < nrows - 1; r++) {
+    for (let c = 0; c < ncols; c++) {
+      const k = r * ncols + c, b = band(raster[k]);
+      const br = band(raster[r * ncols + ((c + 1) % ncols)]), bd = band(raster[k + ncols]);
+      const top = Math.max(b, br, bd);
+      if (top >= 1 && (b !== br || b !== bd)) {
+        const o = k * 4;
+        cp[o] = 255; cp[o + 1] = 244; cp[o + 2] = 228; cp[o + 3] = top === 3 ? 200 : top === 2 ? 140 : 90;
+      }
+    }
+  }
+  contourCtx.putImageData(contourImage, 0, 0);
+
   texCtx.drawImage(earthPhoto, 0, 0, texCanvas.width, texCanvas.height);
   texCtx.imageSmoothingEnabled = true;
   texCtx.imageSmoothingQuality = "high";
   texCtx.drawImage(scoreCanvas, 0, 0, texCanvas.width, texCanvas.height);
+  texCtx.drawImage(contourCanvas, 0, 0, texCanvas.width, texCanvas.height);
   const map = globe.globeMaterial().map;
-  if (map) { map.image = texCanvas; map.needsUpdate = true; }
+  if (map) { map.image = texCanvas; map.needsUpdate = true; setupDayNight(map); }
   else requestAnimationFrame(() => paintScores(values)); // photo texture not created yet
 }
+
+// Day and night: extend the globe's own material with a few lines of GPU code. The night side is
+// dimmed and shows NASA's Black Marble city lights. The sun is fixed relative to the camera, so the
+// side you look at is always lit (no per-frame work in JavaScript).
+let nightPhoto = null, dayNightShader = null, dayNightReady = false;
+function setupDayNight(map) {
+  if (dayNightReady || !nightPhoto) return;
+  dayNightReady = true;
+  const nightTex = map.clone();                              // same Texture class, no separate three.js needed
+  nightTex.source = new map.source.constructor(nightPhoto);  // its own image (clone shares the source)
+  nightTex.needsUpdate = true;
+  const mat = globe.globeMaterial();
+  mat.onBeforeCompile = (shader) => {
+    shader.uniforms.nightMap = { value: nightTex };
+    shader.uniforms.sunView = { value: SUN_VIEW };
+    shader.uniforms.dayNight = { value: $("day-night").checked ? 1 : 0 };
+    shader.fragmentShader = shader.fragmentShader
+      .replace("#include <common>", "#include <common>\nuniform sampler2D nightMap;\nuniform vec3 sunView;\nuniform float dayNight;")
+      .replace("#include <dithering_fragment>", `#include <dithering_fragment>
+        float sunDot = dot(normalize(vNormal), normalize(sunView));
+        float dayMix = mix(1.0, smoothstep(-0.20, 0.25, sunDot), dayNight);
+        vec3 lights = texture2D(nightMap, vMapUv).rgb;
+        vec3 nightCol = gl_FragColor.rgb * 0.40 + lights * vec3(1.0, 0.82, 0.55) * 1.15;
+        gl_FragColor.rgb = mix(nightCol, gl_FragColor.rgb, dayMix);`);
+    dayNightShader = shader;
+  };
+  mat.needsUpdate = true;
+}
+$("day-night").addEventListener("change", (e) => {
+  if (dayNightShader) dayNightShader.uniforms.dayNight.value = e.target.checked ? 1 : 0;
+});
 
 function startFade(from, to) {
   if (!from) { state.shown = to; paintScores(to); return; }
@@ -450,17 +558,60 @@ function detailsBlock(i) {
     <h4>Similarity to every Mars and Moon site</h4>${all}</details>`;
 }
 
-// Fill the panel for a clicked place, known analog or candidate (`point`).
-// Simple view first (name, badge, score, good for, different in); everything else under "More details".
+// Fingerprint radar: one axis per dimension, the target is the dashed outer ring (a perfect match),
+// the place is the filled shape. Rain is greyed (satellite estimate); missing data is a dashed axis.
+function fingerprintSVG(i) {
+  const dims = state.grid.meta.dimensions, n = dims.length, cx = 56, cy = 56, R = 38;
+  const pt = (k, r) => {
+    const a = -Math.PI / 2 + (2 * Math.PI * k) / n;
+    return [cx + r * Math.cos(a), cy + r * Math.sin(a)];
+  };
+  const val = (k) => state.dims.dimScores[i * state.dims.nd + k];
+  let svg = `<svg class="fp" viewBox="0 0 112 112" role="img" aria-label="Fingerprint: similarity per property">`;
+  for (const f of [0.5, 1]) svg += `<polygon class="ring${f === 1 ? " outer" : ""}" points="${dims.map((_, k) => pt(k, R * f).join(",")).join(" ")}"/>`;
+  dims.forEach((d, k) => {
+    const off = d === "aridity" || Number.isNaN(val(k));
+    const [x, y] = pt(k, R), [lx, ly] = pt(k, R + 11);
+    svg += `<line class="axis${off ? " off" : ""}" x1="${cx}" y1="${cy}" x2="${x}" y2="${y}"/>`;
+    svg += `<text class="${off ? "off" : ""}" x="${lx}" y="${ly}">${DIM_SHORT[d] || d}</text>`;
+  });
+  const shape = dims.map((_, k) => pt(k, R * Math.max(0.04, Number.isNaN(val(k)) ? 0 : val(k))).join(",")).join(" ");
+  svg += `<polygon class="shape" points="${shape}"/></svg>`;
+  return svg;
+}
+
+// The nearest place scientists already use, for the arc drawn from a selected find.
+function nearestAnalog(lat, lng) {
+  let best = null;
+  for (const a of state.analogs) {
+    const d = distanceKm(lat, lng, a.lat, a.lng);
+    if (!best || d < best.d) best = { a, d };
+  }
+  return best;
+}
+
+// Fill the panel for a clicked place, known analog, candidate or "your place" search (`point`).
+// Simple view first (name, badge, score + fingerprint, good for, different in); the rest under "More details".
 function showPlace(lat, lng, { quiet = false, point = null } = {}) {
   state.clicked = [lat, lng, point];
-  if (!quiet) updateLayers(); // moves the click pulse
+  // arc + distance label from a selected find to the nearest known site
+  state.arc = null;
+  if (point?.kind === "candidate") {
+    const near = nearestAnalog(lat, lng);
+    if (near) state.arc = { sLat: lat, sLng: lng, eLat: near.a.lat, eLng: near.a.lng, km: Math.round(near.d), name: near.a.name };
+  }
+  if (!quiet) updateLayers(); // moves the click pulse, draws the arc
   const t = state.target, i = cellIndex(state.grid, lat, lng), tn = esc(shortName(t));
   const reg = regionOf(lat, lng);
   let simple = "", more = "";
+  $("place-label").textContent = point?.kind === "candidate" ? point.style.heading
+    : point?.kind === "analog" ? "Already used" : point?.kind === "ask" ? "Your place" : "Place";
 
   // --- name and one badge ---
-  if (point?.kind === "analog") {
+  if (point?.kind === "ask") {
+    simple += `<h3>${esc(point.name)}</h3>${point.summary ? `<p class="ask-note">${point.summary}</p>` : ""}`;
+    more += `<p class="note">${fmtLatLon(lat, lng)}${point.note ? ` · ${esc(point.note)}` : ""}</p>`;
+  } else if (point?.kind === "analog") {
     simple += `<h3>${esc(point.name)}</h3><p class="badge-line"><span class="tag ${point.bodyKey}">Already used for ${point.bodies}</span></p>`;
     const ref = point.url ? `<a href="${esc(point.url)}" target="_blank" rel="noopener">${esc(point.reference)}</a>` : esc(point.reference);
     more += `<p>${esc(point.why)}</p><p class="note">${esc(point.country)} · ${fmtLatLon(lat, lng)} · Source: ${ref}</p>`;
@@ -468,6 +619,7 @@ function showPlace(lat, lng, { quiet = false, point = null } = {}) {
     const v = VERDICT_TEXT[reg.verdict], st = point.style;
     simple += `<h3>${esc(reg.name || "Candidate place")}</h3>
       <p class="badge-line"><span class="tag" style="background:${st.colour}">${st.heading}</span></p>`;
+    if (state.arc) simple += `<p class="note">${state.arc.km.toLocaleString("en-US")} km from the nearest place scientists already use (${esc(state.arc.name)}).</p>`;
     more += `<div class="newness ${v.tone}"><b>Is it new? ${v.label}.</b> ${esc(reg.note || v.text)}</div>
       <p class="note">${fmtLatLon(lat, lng)} · #${point.rank} for ${tn} · area about ${Math.round(point.area_km2).toLocaleString("en-US")} km² ·
         ${Math.round(point.nearest_known_km)} km from the nearest place scientists already use ·
@@ -492,17 +644,18 @@ function showPlace(lat, lng, { quiet = false, point = null } = {}) {
     let bad = scored.filter((x) => x.s < 0.4).reverse();
     if (!bad.length && scored.length) bad = [scored[scored.length - 1]]; // always name the weakest one
 
-    simple += `<div class="score-big"><strong>${Math.round(s * 100)}<small>/100</small></strong><span>similar to ${tn}</span></div>`;
+    simple += `<div class="place-top"><div class="score-big"><strong>${Math.round(s * 100)}<small>/100</small></strong>
+      <span>similar to ${tn}</span></div><div>${fingerprintSVG(i)}<p class="fp-note">dashed ring = ${tn}</p></div></div>`;
     const uses = good.filter((x) => USE[x.d]).slice(0, 2).map((x) => USE[x.d]);
-    if (s >= 0.5 && uses.length) simple += `<p class="line good">✔ <b>Good for practising:</b> ${andList(uses)}</p>`;
+    if (s >= 0.5 && uses.length) simple += `<p class="line good">${ICON.good}<span><b>Good for practising</b> ${andList(uses)}</span></p>`;
     else if (s < 0.5) simple += `<p class="line muted">Too different from ${tn} to be a useful practice site.</p>`;
-    if (bad.length) simple += `<p class="line bad">✖ <b>Different in:</b> ${andList(bad.slice(0, 2).map((x) => dimName(x.d).toLowerCase()))}</p>`;
+    if (bad.length) simple += `<p class="line bad">${ICON.bad}<span><b>Different in</b> ${andList(bad.slice(0, 2).map((x) => dimName(x.d).toLowerCase()))}</span></p>`;
     if (state.hideIce && state.iceSheet[i]) simple += `<p class="note">Ice sheet: not coloured for a Mars site.</p>`;
 
     more += `<p class="note">More similar to ${tn} than ${Math.round(pct * 100)}% of Earth's land.</p>`;
-    if (good.length) more += `<h4>✔ What is similar</h4><ul class="why good">${good.map((x) =>
+    if (good.length) more += `<h4>What is similar</h4><ul class="why good">${good.map((x) =>
       `<li><b>${dimName(x.d)}</b> (${verdictWord(x.s)}): ${describe(x.d, i)}</li>`).join("")}</ul>`;
-    if (bad.length) more += `<h4>✖ Where it breaks down</h4><ul class="why bad">${bad.map((x) =>
+    if (bad.length) more += `<h4>Where it breaks down</h4><ul class="why bad">${bad.map((x) =>
       `<li><b>${dimName(x.d)}</b> (${verdictWord(x.s)}): ${describe(x.d, i)}</li>`).join("")}</ul>`;
     if (!Number.isNaN(state.dims.dimScores[i * state.dims.nd + state.grid.meta.dimensions.indexOf("aridity")])) {
       more += `<p class="note"><b>Rainfall:</b> the rain satellite estimates ${fmtValue("precip", "mm/yr", cellValue(i, "precip"))} here.
@@ -538,7 +691,87 @@ function refreshPanel() {
     showPlace(lat, lng, { quiet: true });
     return;
   }
+  if (point?.kind === "ask") { askPlace(point.query, { fly: false }); return; } // recompute for the new target/weights
   showPlace(lat, lng, { quiet: true, point });
+}
+
+// ---------- HUD: coordinates and score under the cursor ----------
+function setupHud() {
+  const el = $("globe"), hud = $("hud");
+  let pending = null, frame = 0;
+  el.addEventListener("mousemove", (e) => {
+    const r = el.getBoundingClientRect();
+    pending = [e.clientX - r.left, e.clientY - r.top];
+    if (frame) return;
+    frame = requestAnimationFrame(() => {
+      frame = 0;
+      const c = globe.toGlobeCoords(...pending);
+      if (!c) { hud.classList.remove("on"); return; }
+      const i = cellIndex(state.grid, c.lat, c.lng);
+      const s = i >= 0 ? state.overall[i] : NaN;
+      hud.innerHTML = `${fmtLatLon(c.lat, c.lng)} · ${esc(shortName(state.target))} <b>${Number.isNaN(s) ? "—" : Math.round(s * 100)}</b>`;
+      hud.classList.add("on");
+    });
+  });
+  el.addEventListener("mouseleave", () => hud.classList.remove("on"));
+}
+
+// ---------- "How Mars-like is…" a country or city ----------
+function nearestLandCell(lat, lng) {
+  for (let r = 0; r <= 3; r++) {          // search up to 0.75° away (coastal cities can sit in a sea cell)
+    let best = -1, bestD = Infinity;
+    for (let dy = -r; dy <= r; dy++) for (let dx = -r; dx <= r; dx++) {
+      const la = lat + dy * 0.25, lo = lng + dx * 0.25, i = cellIndex(state.grid, la, lo);
+      if (i >= 0) { const d = dx * dx + dy * dy; if (d < bestD) { bestD = d; best = i; } }
+    }
+    if (best >= 0) return best;
+  }
+  return -1;
+}
+const cellLatLng = (i) => {
+  const c = state.grid.cells[i], nc = state.grid.meta.grid.ncols, res = state.grid.meta.grid.res_deg;
+  return [90 - (Math.floor(c / nc) + 0.5) * res, -180 + ((c % nc) + 0.5) * res];
+};
+
+function askPlace(query, { fly = true } = {}) {
+  const q = query.trim().toLowerCase();
+  const body = state.target.body === "moon" ? "Moon" : "Mars";
+  const name = Object.keys(COUNTRIES).find((k) => k.toLowerCase() === q) || Object.keys(CITIES).find((k) => k.toLowerCase() === q)
+    || Object.keys(COUNTRIES).find((k) => k.toLowerCase().startsWith(q)) || Object.keys(CITIES).find((k) => k.toLowerCase().startsWith(q));
+  if (!name) { $("ask-input").value = ""; $("ask-input").placeholder = "Not in our list. Try a country or big city"; return; }
+  $("ask-input").value = name;
+  const tn = shortName(state.target);
+  if (COUNTRIES[name]) {
+    const [s, n, w, e] = COUNTRIES[name];
+    let best = -1, sum = 0, wsum = 0;
+    for (let i = 0; i < state.grid.n; i++) {
+      const v = state.overall[i];
+      if (Number.isNaN(v)) continue;
+      const [la, lo] = cellLatLng(i);
+      if (la < s || la > n || lo < w || lo > e) continue;
+      sum += v * state.cellWeight[i]; wsum += state.cellWeight[i];
+      if (best < 0 || v > state.overall[best]) best = i;
+    }
+    if (best < 0) return;
+    const [la, lo] = cellLatLng(best), avg = sum / wsum, pct = areaPercentile(state.overall[best]);
+    showPlace(la, lo, { quiet: !fly, point: { kind: "ask", query: name, name: `How ${body}-like is ${name}?`,
+      summary: `Compared with ${esc(tn)}: its most similar spot scores <b>${Math.round(state.overall[best] * 100)}/100</b>, more similar than ${Math.round(pct * 100)}% of Earth's land. Average across ${esc(name)}: ${Math.round(avg * 100)}/100.`,
+      note: "country area is approximate" } });
+    if (fly) flyTo(la, lo, 1.2);
+  } else {
+    const [la0, lo0] = CITIES[name], i = nearestLandCell(la0, lo0);
+    if (i < 0) return;
+    const [la, lo] = cellLatLng(i), v = state.overall[i];
+    showPlace(la, lo, { quiet: !fly, point: { kind: "ask", query: name, name: `How ${body}-like is ${name}?`,
+      summary: Number.isNaN(v) ? "" : `Compared with ${esc(tn)}: more similar than ${Math.round(areaPercentile(v) * 100)}% of Earth's land.` } });
+    if (fly) flyTo(la, lo, 1.2);
+  }
+}
+
+function setupAsk() {
+  $("ask-list").innerHTML = [...Object.keys(COUNTRIES), ...Object.keys(CITIES)].sort().map((k) => `<option value="${esc(k)}">`).join("");
+  $("ask-form").addEventListener("submit", (e) => { e.preventDefault(); askPlace($("ask-input").value); });
+  document.querySelectorAll("[data-ask]").forEach((b) => b.addEventListener("click", () => askPlace(b.dataset.ask)));
 }
 
 // ---------- load ----------
@@ -566,8 +799,13 @@ async function main() {
     state.cellWeight[i] = Math.cos(((90 - (row + 0.5) * meta.grid.res_deg) * Math.PI) / 180);
   }
   earthPhoto = photo;
+  loadImage(IMG.night).then((im) => { nightPhoto = im; const m = globe.globeMaterial().map; if (m) setupDayNight(m); })
+    .catch(() => { $("day-night").closest("label").hidden = true; }); // optional effect
   scoreCanvas.width = meta.grid.ncols; scoreCanvas.height = meta.grid.nrows;
   scoreImage = scoreCtx.createImageData(scoreCanvas.width, scoreCanvas.height);
+  contourCanvas.width = meta.grid.ncols; contourCanvas.height = meta.grid.nrows;
+  contourImage = contourCtx.createImageData(contourCanvas.width, contourCanvas.height);
+  raster = new Float32Array(meta.grid.ncols * meta.grid.nrows);
   texCanvas.width = meta.grid.ncols * TEX_SCALE; texCanvas.height = meta.grid.nrows * TEX_SCALE;
 
   state.analogs = analogs.features.map((f) => {
@@ -607,15 +845,18 @@ async function main() {
   status(`${meta.n_cells.toLocaleString("en-US")} places on Earth compared, each about 28 km across.`);
   $("loader").classList.add("done");
 
+  setupHud();
+  setupAsk();
+
   // A small "remote control" for the guided tour (web/tour.js): it can only steer the app, not change data.
   initTour({
     selectTarget(id) { $("target").value = id; selectTarget(id); },
-    flyTo(lat, lng, altitude = 1.6, ms = 1800) { holdRotation(); globe.pointOfView({ lat, lng, altitude }, ms); },
+    flyTo(lat, lng, altitude = 1.6, ms = 1800) { flyTo(lat, lng, altitude, ms); clearTimeout(resumeTimer); },
     rotate(on) { clearTimeout(resumeTimer); controls.autoRotate = on; },
     candidate: (targetId, rank) => state.candidates.find((c) => c.target_id === targetId && c.rank === rank),
     showCandidate(c) { if (c) showPlace(c.lat, c.lng, { point: c, quiet: false }); },
     closePlace() {
-      state.clicked = null; $("place").hidden = true; $("hint").hidden = false; updateLayers();
+      state.clicked = null; state.arc = null; $("place").hidden = true; $("hint").hidden = false; updateLayers();
     },
     openFold(id, open = true) {
       const el = $(id);
@@ -624,7 +865,7 @@ async function main() {
       if (open) el.scrollIntoView({ behavior: "smooth", block: "nearest" });
     },
     closeFolds() { for (const id of ["site-more", "trust", "options"]) $(id).open = false; },
-    labels(list) { globe.labelsData(list || []); },
+    labels(list) { labelSets.tour = list || []; applyLabels(); },
     validation: () => state.validation,
     target: (id) => state.targets.find((t) => t.id === id),
     landCount: () => meta.n_cells,
