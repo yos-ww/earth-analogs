@@ -44,3 +44,20 @@ That is about 22 values. Likely sources: rover weather stations (Curiosity REMS 
 ## Next step
 
 Collect the values into `data/targets_literature.csv` (one row per target and value: value, unit, value type, source), which becomes the first version of `targets.json`.
+
+## Review (2026-11-14)
+
+Checked against `plan.md`, `prep.md` and the contents of `data/raw/`. The line references, the on-disk table and the target and feature lists are correct. Two points need fixing and five are missing.
+
+### Corrections
+
+- **The count is 30, not "about 22".** Four Mars targets × 6 values = 24, plus Shackleton 2, plus Marius Hills 4. If the day–night range is derived from the day and night temperatures instead of cited, it is 25.
+- **Terrain still needs first-draft values.** `plan.md` line 76 says the hours 1–3 `targets.json` uses literature values only, and Person A replaces terrain later with computed numbers. So the first version needs placeholder or literature values for relief, roughness and slope at all 6 targets, or scoring cannot run in the first hours. Move terrain from "Values that need no lookup" to "must be cited (temporary)".
+
+### Missing
+
+1. **Earth limits card** (`plan.md` line 53): gravity, surface pressure and radiation dose for each body or site. Not scored, but they still need sources (for example Curiosity RAD at Gale, Chang'e-4 LND on the Moon).
+2. **Ice at Marius Hills** is not listed anywhere. Add it to "Values that need no lookup" as directional zero, like precipitation.
+3. **Ice values don't match.** The Earth feature is surface snow/ice *cover fraction*. Arcadia's ice is *subsurface* (SHARAD, neutron data), so it is not surface cover. Decide how to translate it: seasonal CO₂ frost cover, or a stated proxy.
+4. **Dust values don't match.** Earth uses AOD at 550 nm. Mars dust opacity is usually reported at about 9 µm (TES) or 880 nm (rover cameras). Add a rule under "Rules for each cited value": record the wavelength and convert to 550 nm, or note the conversion factor used.
+5. **Shackleton–de Gerlache has no exact point.** `prep.md` gives only "~89.5°S" with no longitude. Add it next to the Arcadia note.
