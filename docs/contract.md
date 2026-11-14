@@ -1,0 +1,129 @@
+# Interface contract: `web/data/*`
+
+Version 1. Person A's `pipeline/export.py` writes these files; Person B's app reads them. B's mock files in `web/mock/` use the same names and formats. To change anything here, edit this file in the same commit as the code and tell the other person.
+
+## Grid
+
+- 0.25° global, 1440 columns × 720 rows.
+- Row 0 is the northernmost row, column 0 the westernmost.
+- Cell centre: `lat = 90 − (row + 0.5) × 0.25`, `lon = −180 + (col + 0.5) × 0.25`.
+- Flat index: `row × 1440 + col`.
+
+## Features
+
+Fixed order. This is the column order in `features.bin`.
+
+| # | `id` | Dimension | Unit | Transform |
+|---|---|---|---|---|
+| 0 | `relief` | `terrain` | m | `log1p` |
+| 1 | `roughness` | `terrain` | m | `log1p` |
+| 2 | `slope` | `terrain` | degrees | `log1p` |
+| 3 | `lst_day_warm` | `temperature` | K | `none` |
+| 4 | `lst_night_cold` | `temperature` | K | `none` |
+| 5 | `lst_range` | `temperature` | K | `none` |
+| 6 | `ndvi_max` | `vegetation` | – | `none` |
+| 7 | `precip` | `aridity` | mm/yr | `log1p` |
+| 8 | `albedo` | `albedo` | – | `none` |
+| 9 | `snow_ice` | `ice` | fraction 0–1 | `none` |
+| 10 | `aod` | `dust` | – | `none` |
+
+Dimension order (slider order): `terrain`, `temperature`, `vegetation`, `aridity`, `albedo`, `ice`, `dust`.
+
+If a feature is dropped, it is removed from `meta.json` and from `features.bin` together. The app must read the feature list from `meta.json`, not hardcode it.
+
+## `cells.bin`
+
+Little-endian `Uint32`, one value per land cell: the flat grid index. Length = `n_cells`. Sorted ascending.
+
+## `features.bin`
+
+`Uint8`, `n_cells × n_features`, row-major (all features of cell 0, then cell 1, …). Cell order matches `cells.bin`.
+
+- `255` = no data.
+- `0–254` encode the transformed value: `x = min + (code / 254) × (max − min)`, where `x` is in **transformed space** (`log1p(value)` for `log1p` features, the value itself for `none`).
+
+## `meta.json`
+
+```json
+{
+  "contract_version": 1,
+  "grid": { "res_deg": 0.25, "ncols": 1440, "nrows": 720 },
+  "n_cells": 300000,
+  "dimensions": ["terrain", "temperature", "vegetation", "aridity", "albedo", "ice", "dust"],
+  "features": [
+    { "id": "relief", "label": "Relief", "dimension": "terrain", "unit": "m",
+      "transform": "log1p", "min": 0.0, "max": 8.5, "sigma": 1.2, "p1": 0.7, "p99": 7.9 }
+  ]
+}
+```
+
+`min`, `max`, `sigma`, `p1` and `p99` are all in transformed space. `p1` and `p99` are area-weighted Earth land percentiles.
+
+## `targets.json`
+
+```json
+{
+  "targets": [
+    {
+      "id": "jezero", "name": "Jezero Crater", "body": "mars",
+      "lat": 18.4, "lon": 77.6,
+      "features": {
+        "relief":  { "value": 420, "status": "literature", "source": "…", "source_url": "…" },
+        "albedo":  { "value": 0.16, "value_kind": "TES bolometric", "status": "literature", "source": "…", "source_url": "…" },
+        "precip":  { "value": 0, "status": "fixed", "source": "No rainfall on Mars" },
+        "aod":     { "na": true }
+      },
+      "weights": { "terrain": 1, "temperature": 1, "vegetation": 1, "aridity": 1, "albedo": 1, "ice": 1, "dust": 1 },
+      "not_scored": { "thermal_inertia": { "value": 300, "unit": "J m⁻² K⁻¹ s⁻½", "source": "…" } },
+      "limits": {
+        "gravity_ms2": { "value": 3.71, "source": "…" },
+        "pressure_pa": { "value": 700, "source": "…" },
+        "radiation_msv_day": { "value": 0.67, "source": "…" }
+      }
+    }
+  ]
+}
+```
+
+- `body` is `mars` or `moon`. `lat`/`lon` are planetocentric degrees, east-positive, `lon` in −180…180.
+- `value` is in **physical units** (the Unit column above), not transformed. The app applies the feature's transform before scoring.
+- `status` is `literature`, `computed` or `fixed`.
+- `na: true` means the feature has no meaning for this target; it is skipped.
+- Directional is **not stored**. Both sides derive it: a feature is directional when the transformed target value lies outside `[p1, p99]` from `meta.json`.
+- The numbers in the example are placeholders, not real values.
+
+The hand-edited source for this file is `data/targets_literature.csv` (owner: B), with columns `target_id, feature_id, value, unit, value_kind, source, source_url`. Terrain rows are placeholders until A replaces them with values computed from MOLA and LOLA.
+
+## Scoring (must give the same number in Python and in the browser)
+
+For one target and one cell, in transformed space, with `f` = cell value, `t` = target value, `σ` = `sigma`:
+
+1. Skip the feature if the cell code is `255` or the target has `na: true`.
+2. Like-for-like (`p1 ≤ t ≤ p99`): `s = exp(−((f − t) / σ)²)`.
+3. Directional:
+   - `t < p1`: `s = 1` if `f ≤ p1`, else `exp(−((f − p1) / σ)²)`.
+   - `t > p99`: `s = 1` if `f ≥ p99`, else `exp(−((f − p99) / σ)²)`.
+4. Dimension score = mean of its features that were not skipped. A dimension with no such feature is missing.
+5. Overall score = `Σ w_d × s_d / Σ w_d` over dimensions that are not missing.
+6. A cell is scored only if at least 4 dimensions are not missing. Otherwise it has no score and is drawn as no-data.
+
+## `known_analogs.geojson`
+
+Generated from `data/known_analogs.csv` (owner: B). A `FeatureCollection` of `Point`s. Properties: `name`, `country`, `body` (array of `mars` / `moon`), `dimensions` (array), `why_analog`, `reference`, `source_url`.
+
+## `candidates.geojson`
+
+A `FeatureCollection` of `Point`s at the region's best cell. Properties:
+
+| Property | Type | Meaning |
+|---|---|---|
+| `id` | string | Stable slug, e.g. `jezero-af-1` |
+| `name` | string | Place name |
+| `target_id` | string | Matches `targets.json` |
+| `score` | number 0–1 | Overall score at default weights |
+| `robustness` | number 0–1 | Share of random weight changes in which the region stays in the top 50 |
+| `dim_scores` | object | Dimension → score 0–1; missing dimensions are left out |
+| `area_km2` | number | Region area |
+| `nearest_known_km` | number | Distance to the nearest known analog |
+| `novelty` | string | `under-studied` or `unrecognized` (set by B after the literature check) |
+| `dossier` | string or null | Path to the site page, e.g. `sites/xyz.md` |

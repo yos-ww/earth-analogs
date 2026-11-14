@@ -7,7 +7,7 @@ Hackathon challenge (`challenge.md`): use open Earth, Moon and Mars data to find
 - **Team:** 2 people, each with Claude Pro in a terminal.
 - **Time:** about 25 h of wall-clock time.
 - **Submission:** a write-up, a link to the code/data, and a demo of at most 7 slides or a 30-second video, in English.
-- **Repo today:** git repo on `main` with a GitHub remote (`origin`). It holds `challenge.md`, `data-sources.md`, `prep.md`, this plan and `setup/download_earthdata.py`. No project code yet.
+- **Repo today:** git repo on `main` with a GitHub remote (`origin`). Besides this plan it holds the working agreement (`CLAUDE.md`), the file-format contract (`docs/contract.md`), the task split (`docs/tasks.md`) and the known-analog list (`data/known_analogs.csv`). No project code yet.
 - **Data:** all 15 GB is in `data/raw/` (gitignored) and every dataset was opened with GDAL on 2026-11-14. Exact contents and quirks are in "Data on disk" below.
 - **Machine (Person A):** Apple Silicon, 24 GB RAM. Python env is micromamba `analogs` (py3.12, conda-forge GDAL with HDF4/HDF5/netCDF/PDS); binaries are in `~/mamba/envs/analogs/bin/`.
 
@@ -76,7 +76,7 @@ docs/ writeup.md, sites/*.md, slides/
 - A **first version of `targets.json` with literature values only** is written by B in hours 1–3, so the app and the scoring run on real targets from the start. A later replaces the terrain numbers with computed ones.
 
 ### Validation + novelty (the scientific spine)
-- `known_analogs.geojson` holds **about 40 published analog sites**, each tagged with the body (Mars or Moon) and the dimension it is known for. Start from: Atacama Yungay, McMurdo Dry Valleys, Haughton/Devon Island, Mauna Kea, Holuhraun, Rio Tinto, MDRS Utah, Svalbard Bockfjord, Pilbara, Lanzarote, Craters of the Moon, Meteor Crater, Death Valley, Qaidam Basin, Ibn Battuta; add others from the literature (for example Namib, Mojave, Dhofar, Danakil, Tibet, Ladakh, Lake Tyrrell, Arkaroola, Kilbourne Hole, Askja).
+- `known_analogs.geojson` (exported from `data/known_analogs.csv`, 37 sites so far) holds **about 40 published analog sites**, each tagged with the body (Mars or Moon) and the dimension it is known for. Start from: Atacama Yungay, McMurdo Dry Valleys, Haughton/Devon Island, Mauna Kea, Holuhraun, Rio Tinto, MDRS Utah, Svalbard Bockfjord, Pilbara, Lanzarote, Craters of the Moon, Meteor Crater, Death Valley, Qaidam Basin, Ibn Battuta; add others from the literature (for example Namib, Mojave, Dhofar, Danakil, Tibet, Ladakh, Lake Tyrrell, Arkaroola, Kilbourne Hole, Askja).
 - **What we report (no pass/fail on a fixed number):**
   - The area-weighted percentile of each known site, for its best-matching target, next to two baselines: random land cells, and random **barren** cells (max NDVI < 0.15). The claim to support is "known analogs score clearly above random barren land", which shows the score does more than find deserts.
   - The same per dimension. Sites picked for mineralogy or biology (Rio Tinto, Pilbara) are expected to score low; the write-up says so, as proof of what the score cannot see.
@@ -86,7 +86,7 @@ docs/ writeup.md, sites/*.md, slides/
 
 ---
 
-## Roles and interface contract (agreed in hour 1, written into `CLAUDE.md`)
+## Roles and interface contract (written into `CLAUDE.md` and `docs/contract.md`)
 
 - **Person A (data and science):** `features.py`, `targets.py`, `score.py`, validation, candidate extraction.
 - **Person B (app and story):** `web/` app built first against **mock data** in the contract format, the literature `targets.json` and known-analog list, then the deep-dive research, write-up, and slides.
@@ -105,8 +105,8 @@ docs/ writeup.md, sites/*.md, slides/
 
 | Hours | Person A | Person B |
 |---|---|---|
-| 0–1 | **Together:** `CLAUDE.md` with the contract and decisions; add B as repo collaborator; 5-minute data check from `prep.md` §5; download the three globe images if not done. | same |
-| 1–3 | **Thin slice first:** land mask + `cells.bin` + two features (terrain roughness, NDVI) exported in the contract format | Globe with score texture and sliders on mock data; literature `targets.json`; known-analog list (~40 sites) |
+| 0–1 | **Together:** confirm the proposed defaults in `CLAUDE.md` and the formats in `docs/contract.md`; make the repo public so GitHub Pages works; 5-minute data check from `prep.md` §5; download the three globe images if not done. | same |
+| 1–3 | **Thin slice first:** land mask + `cells.bin` + two features (terrain roughness, NDVI) exported in the contract format | Globe with score texture and sliders on mock data; literature target values (`data/targets_literature.csv`); finish the known-analog list |
 | 3 | **Checkpoint 0:** A's two real features render on B's globe, and the page is live on GitHub Pages. | |
 | 3–7 | Remaining 9 features → full `features.bin`; first `score.py` with the missing-data and directional rules | Target picker, Earth / Mars / Moon switch, click-to-fly with per-dimension bars, "directional" badges |
 | 7 | **Checkpoint 1 (go/no-go):** all features render, and slider drags re-color the globe smoothly on a normal laptop. Drop any dataset not ready; if the globe is too slow, fall back to the flat map. | |
