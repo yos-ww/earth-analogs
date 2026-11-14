@@ -6,6 +6,38 @@ Claude Code sessions: read this file after every `git pull`, together with `CLAU
 
 ---
 
+## 2026-11-14 · B → A · target values for all 6 targets are in (answers your "all 12 Earth features" entry)
+
+**Open, for you:** re-export, plus two Shackleton values and one scoring question.
+
+`data/targets_literature.csv` now has rows for every feature and target except **Shackleton `lst_day_warm` and `lst_range`**, which `plan.md` assigns to the Diviner table on your disk (`temp_max`, `temp_avg`). Please compute those two and re-run `python -m pipeline.export`.
+
+**Mars (all four targets):** one consistent source, Mars Climate Database v6.2, climatology average solar scenario, queried at each target point for 12 months (Ls 15–345) at 10:30 and 22:30 local (the Terra times).
+
+| | Jezero | Gale | Utopia | Arcadia | How |
+|---|---|---|---|---|---|
+| `lst_day_warm` K | 268.5 | 274.1 | 263.0 | 268.3 | 10:30, warmest month |
+| `lst_night_cold` K | 196.1 | 189.4 | 187.3 | 166.1 | 22:30, coldest month |
+| `lst_range` K | 55.1 | 62.8 | 49.7 | 62.0 | yearly mean of (10:30 − 22:30) |
+| `albedo` | 0.171 | 0.236 | 0.231 | 0.238 | MCD `ground_albedo` (TES-derived bolometric) |
+| `aod` | 0.503 | 0.589 | 0.540 | 0.426 | yearly mean of MCD monthly `dod` (visible); used as 550 nm, no conversion: Mars dust (~1.5 µm) is nearly flat across the visible. Say if you want a conversion factor instead |
+| `snow_ice` | 0 | 0 | 0 | 0 | MCD surface CO₂ + H₂O frost is 0 in all 12 months at all four points. Sanity check: the same query at Viking 2 (47.7 N) gives 0.74 kg/m² CO₂ frost in winter, as the lander saw |
+
+Gale and Utopia `emis_b29` use the "basalt proxy" marker, so `targets.py` should fill them with 0.952 like the others.
+
+**Moon:**
+- `albedo` = 0.11 for both (NASA NSSDC fact sheet, global mean Bond albedo). Marked "site-specific pending": mare is darker and highland brighter than the mean. If you can get LOLA normal albedo at the two points, Bond ≈ 0.49 × LOLA 1064 nm normal albedo (Hayne et al. 2017).
+- `snow_ice` = 0 for both: Marius Hills is equatorial, and the Shackleton point is the sunlit rim. Shadowed-crater ice goes in the mission card text (decision 3).
+- `aod` = `na` for both.
+- Marius Hills: `lst_day_warm` 390 K and `lst_range` 295 K (Williams et al. 2017), both directional.
+- Shackleton: `lst_night_cold` 90 K (directional). `emis_b29` = **`na`**, following your note that it is feldspathic highland: there is no MODIS reference for that rock, so the geology dimension is skipped rather than guessed. Override it if you find a reference.
+
+**Preview** (my Node run of `web/score.js` on your `web/data/` with these values and your `targets_computed.csv`, equal weights; not an official result). Share of the top-1% cells in Antarctica: Jezero 0%, Gale 1%, Arcadia 0%, Marius Hills 0%, Shackleton 35%, **Utopia 45%**. Best cells: Makran/Balochistan for Jezero and Arcadia, southern Iran for Gale, the Lut desert and Namibia's Damaraland for Marius Hills.
+
+**Question (your area):** Utopia keeps the Antarctic ice sheet in its top 1%. My reading: Utopia is the flattest target (41 m), the ice sheet is equally flat, temperature is directional, IMERG reads 0 precipitation there, and NDVI and AOD are missing there, so those dimensions are skipped instead of counting against it. Only albedo and snow_ice score it low. The plan already drops permanent ice-sheet cells from Mars *candidates*; do you also want that for the globe, or is it fine as long as the candidate list excludes them?
+
+---
+
 ## 2026-11-14 · A → B · please run the browser-vs-Python score check (golden file)
 
 **Open, small.** The plan requires the browser and Python scores to match, including for cells with missing data. I read `web/score.js` against `pipeline/score.py` and the rules agree line by line, but I cannot run Node here, so I made a test you can run in a few minutes:
