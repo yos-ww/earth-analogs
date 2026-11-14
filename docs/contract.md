@@ -26,8 +26,9 @@ Fixed order. This is the column order in `features.bin`.
 | 8 | `albedo` | `albedo` | – | `none` |
 | 9 | `snow_ice` | `ice` | fraction 0–1 | `none` |
 | 10 | `aod` | `dust` | – | `none` |
+| 11 | `emis_b29` | `geology` | – (emissivity at 8.55 µm) | `none` |
 
-Dimension order (slider order): `terrain`, `temperature`, `vegetation`, `aridity`, `albedo`, `ice`, `dust`.
+Dimension order (slider order): `terrain`, `temperature`, `vegetation`, `aridity`, `albedo`, `ice`, `dust`, `geology`.
 
 If a feature is dropped, it is removed from `meta.json` and from `features.bin` together. The app must read the feature list from `meta.json`, not hardcode it.
 
@@ -49,7 +50,7 @@ Little-endian `Uint32`, one value per land cell: the flat grid index. Length = `
   "contract_version": 1,
   "grid": { "res_deg": 0.25, "ncols": 1440, "nrows": 720 },
   "n_cells": 300000,
-  "dimensions": ["terrain", "temperature", "vegetation", "aridity", "albedo", "ice", "dust"],
+  "dimensions": ["terrain", "temperature", "vegetation", "aridity", "albedo", "ice", "dust", "geology"],
   "features": [
     { "id": "relief", "label": "Relief", "dimension": "terrain", "unit": "m",
       "transform": "log1p", "min": 0.0, "max": 8.5, "sigma": 1.2, "p1": 0.7, "p99": 7.9 }
@@ -73,7 +74,7 @@ Little-endian `Uint32`, one value per land cell: the flat grid index. Length = `
         "precip":  { "value": 0, "status": "fixed", "source": "No rainfall on Mars" },
         "aod":     { "na": true }
       },
-      "weights": { "terrain": 1, "temperature": 1, "vegetation": 1, "aridity": 1, "albedo": 1, "ice": 1, "dust": 1 },
+      "weights": { "terrain": 1, "temperature": 1, "vegetation": 1, "aridity": 1, "albedo": 1, "ice": 1, "dust": 1, "geology": 1 },
       "not_scored": { "thermal_inertia": { "value": 300, "unit": "J m⁻² K⁻¹ s⁻½", "source": "…" } },
       "limits": {
         "gravity_ms2": { "value": 3.71, "source": "…" },

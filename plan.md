@@ -11,7 +11,7 @@ Hackathon challenge (`challenge.md`): use open Earth, Moon and Mars data to find
 - **Data:** all 15 GB is in `data/raw/` (gitignored) and every dataset was opened with GDAL on 2026-11-14. Exact contents and quirks are in "Data on disk" below.
 - **Machine (Person A):** Apple Silicon, 24 GB RAM. Python env is micromamba `analogs` (py3.12, conda-forge GDAL with HDF4/HDF5/netCDF/PDS); binaries are in `~/mamba/envs/analogs/bin/`.
 
-**Pitch (what wins):** most teams will pick one place and say it "looks like Mars". We instead build a **global, data-driven search engine**. It scores every land cell on Earth against real Moon and Mars landing-site profiles, one dimension at a time (terrain, temperature, aridity, albedo, ice, dust, vegetation). It shows *why* a place matches and *where it breaks down*. It is **validated** against known analogs and against a "just pick barren land" baseline. It then surfaces **under-studied** sites, which become 2–3 written deep dives.
+**Pitch (what wins):** most teams will pick one place and say it "looks like Mars". We instead build a **global, data-driven search engine**. It scores every land cell on Earth against real Moon and Mars landing-site profiles, one dimension at a time (terrain, temperature, aridity, albedo, ice, dust, vegetation, geology). It shows *why* a place matches and *where it breaks down*. It is **validated** against known analogs and against a "just pick barren land" baseline. It then surfaces **under-studied** sites, which become 2–3 written deep dives.
 
 Scope follows the agreed rule: a **core that gives a complete demo by hour 17** (Checkpoint 2), then write-up and slides, with everything else as ordered stretch tiers.
 
@@ -24,7 +24,7 @@ pipeline/ (Python)                          web/ (static, GitHub Pages)
  features.py    -> 0.25° land grid           index.html + app.js (3D globe: globe.gl / three.js via CDN)
  targets.py     -> planetary profiles        loads web/data/*:
  score.py       -> validation + candidates     cells.bin     (Uint32, one flat grid index per land cell)
- export.py      -> web/data/*                  features.bin  (Uint8, cells × 11 features, 255 = no data)
+ export.py      -> web/data/*                  features.bin  (Uint8, cells × 12 features, 255 = no data)
                                                meta.json     (grid, feature names, dimension of each feature,
                                                               transform + min/max, σ, Earth p1/p99)
                                                targets.json  (per target: values, sources, default weights,
@@ -33,12 +33,12 @@ pipeline/ (Python)                          web/ (static, GitHub Pages)
 docs/ writeup.md, sites/*.md, slides/
 ```
 
-- **Grid:** 0.25° global (1440 × 720), land only, about 300k cells. `cells.bin` gives each land cell's index `row*1440 + col` (row 0 = 90°N, col 0 = 180°W). 11 features as Uint8 is about 3.5 MB, small enough for the browser to **re-score live**.
-- **Features vs. dimensions:** there are **11 features in 7 dimensions** (table below). The app has one weight slider per *dimension*; features inside a dimension are averaged first. This stops terrain and temperature (3 features each) from counting three times.
+- **Grid:** 0.25° global (1440 × 720), land only, about 300k cells. `cells.bin` gives each land cell's index `row*1440 + col` (row 0 = 90°N, col 0 = 180°W). 12 features as Uint8 is about 3.6 MB, small enough for the browser to **re-score live**.
+- **Features vs. dimensions:** there are **12 features in 8 dimensions** (table below). The app has one weight slider per *dimension*; features inside a dimension are averaged first. This stops terrain and temperature (3 features each) from counting three times.
 - **Scoring per feature:** `s = exp(-((f - t)/σ)²)`, where σ is a robust Earth-wide spread (IQR/1.35, with a floor so features that are mostly zero, like snow, don't get σ = 0). Overall score = weighted mean of the dimension scores.
   - **Missing data:** a feature with no data in a cell (255) is skipped and the weights are renormalized. A cell needs at least 4 dimensions to be scored. Dust has no values over ice sheets and NDVI/LST have polar gaps, so this matters.
   - **Skewed features** (precipitation, relief, roughness, slope) are log-scaled before the Uint8 step; `meta.json` records the transform.
-  - **Speed:** when the target changes, compute the 11 per-feature scores once and cache them; a slider move is then just a weighted sum over 300k cells.
+  - **Speed:** when the target changes, compute the 12 per-feature scores once and cache them; a slider move is then just a weighted sum over 300k cells.
 - **Like-for-like vs. directional (decided per target and per feature, by a rule):**
   - If the target value lies inside Earth's p1–p99 range, the feature is **like-for-like** and scored as above. Terrain and albedo are always in this group, and some temperatures are too (a Jezero summer afternoon is within Earth's range).
   - If the target lies outside that range (Mars night cold, lunar noon heat, zero rainfall), it is clamped to the nearest end (p1 or p99), scored **one-sided** (anything at or beyond the clamp scores 1), and flagged **directional** in the UI: "Earth can only point in this direction."
@@ -52,7 +52,21 @@ docs/ writeup.md, sites/*.md, slides/
   - A flat-map fallback (Leaflet) is used only if WebGL is unavailable, so B builds the globe first and the fallback last.
 - **Earth limits card on every target:** gravity, vacuum or thin CO₂ atmosphere, radiation. These are stated, not scored.
 
-### Earth features (11 features in 7 dimensions; each is optional, so if one fails it is dropped)
+### How the app presents a match (ideas 1 and 2 from B's creative-ideas proposal, agreed 2026-11-14)
+Both are app-only (Person B, `web/`): no new data, no contract change, no work for Person A. Fuller UI detail is in `docs/presentation-plan.md`.
+
+**1. Mission context: why a match matters and how it could be used.** The target picker and one slider per dimension stay the main controls; nothing is preset. The mission context only *explains* each match, which answers the challenge's third question ("how could the analog help prepare for exploration") inside the app. All of it is hand-written text in `web/missions.js`:
+- **Mission card per target** (Target panel): what is planned or happening there, and what still has to be tested on Earth. For example, Jezero: rover driving and sample caching on delta terrain; Arcadia Planitia: drilling and water extraction from shallow ice (the card states that this ice is below the surface while the Earth match is surface snow/ice, review decision 3); Shackleton–de Gerlache: operations in extreme cold, low sun and long shadows; Marius Hills: a lava-tube base site (the tube itself is not scored).
+- **What each dimension is good for**, one sentence per dimension: terrain → landing hazards, rover mobility, EVA walking; temperature → testing equipment and batteries in cold or large day–night swings; aridity → dry limit of life, preservation of organics; vegetation → bare ground with no false biology signal; albedo → camera, navigation and thermal behaviour; ice → drilling and water extraction (ISRU); dust → dust on panels, seals and optics; geology → instruments and sample selection on the same kind of rock (basaltic vs. silica-rich).
+- **"Why this place matters"** in the Place, Candidate and Dossier panels: one sentence built from the place's strongest and weakest dimensions plus the target's mission card. It names the weak dimensions too, so it also says where the analogy breaks down. Example: *"Strong terrain and dust match with Jezero: a good place to test rover driving and dust protection. Weak on temperature: cold tests belong elsewhere."*
+
+**2. Fingerprint chart for every place.** A small radar chart with one axis per dimension: 8 axes today, read from `meta.json` `dimensions` so a dropped feature removes its axis.
+- The axes are the per-dimension scores (0–1) the app already computes. The target is the outer ring (a perfect match); the Earth place is the filled shape inside it. Long arms show what matches; short arms show where the analogy breaks down.
+- Axes for dimensions with no data in the cell are dashed, n/a axes for the target are greyed out, and directional axes get a small arrow ("Earth can only point this way").
+- Dimension scores are unweighted, so the shape does not change when sliders move; only the overall score does.
+- Drawn as inline SVG. It appears in the Place, Candidate and Dossier panels and in the tour captions, and is saved as an image for the slides and the write-up.
+
+### Earth features (12 features in 8 dimensions; each is optional, so if one fails it is dropped)
 | Dimension | Features | Dataset on disk | Notes |
 |---|---|---|---|
 | Terrain | Relief (max − min), roughness (std of elevation), mean slope | GMTED2010 30″ mean elevation (`mn30_grd.zip`, an Esri grid; unzip first) | Do not use `sd30`: it stops at 56°S |
@@ -62,12 +76,13 @@ docs/ writeup.md, sites/*.md, slides/
 | Albedo | White-sky shortwave albedo, median of valid months | MCD43C3, the 15th of each month in 2023 | Median limits the effect of seasonal snow |
 | Ice | Mean snow/ice cover fraction | MOD10CM, 35 months (October 2022 is missing; fine for a mean) | |
 | Dust | Deep Blue AOD at 550 nm over land (`Deep_Blue_Aerosol_Optical_Depth_550_Land_Mean_Mean`) | MOD08_M3, 12 months of 2023, 1° | No data over snow and ice |
+| Geology | Emissivity at 8.55 µm (`Emis_29`), median of valid months | MOD11C3, the same 36 files as temperature | Low = quartz-rich (sand seas about 0.75), high = basalt and other low-silica rock (about 0.97). Vegetation is also high, so read it together with NDVI. It separates deserts from each other; it is a silica index, not a mineral map. Checked on disk 2026-11-14: value = code × 0.002 + 0.49, 0 = no data, about 18% valid in a single January file |
 
 ### Planetary targets (hand-curated `targets.json`, every value cites its source)
 - **Mars:** Jezero Crater, Gale Crater, Arcadia Planitia (shallow-ice human landing candidate), Utopia Planitia (Zhurong site).
   - Terrain computed from MOLA MEGDR (`megt*`, on disk).
   - Albedo: **cited literature values per site.** There is no Mars albedo map on disk (the TES volume holds thermal inertia only). TES thermal inertia is shown in the panel but not scored, since Earth has no matching global map.
-  - Temperatures, dust opacity and ice from published rover / Mars Climate Database / orbital-radar values.
+  - Temperatures, dust opacity and ice from published rover / Mars Climate Database / orbital-radar values. Emissivity at 8.55 µm (geology) from TES or a cited spectral library, for the Moon targets too.
 - **Moon:** a south-pole ridge region (Shackleton–de Gerlache, Artemis III area), and a mare region with a lava-tube pit (Marius Hills).
   - Terrain computed from LOLA: `ldem_75s_240m` for the pole, `ldem_64` for Marius Hills.
   - South-pole temperatures and ice from the Diviner polar table on disk (`dlre_prp_south.tab`: 2.88 million rows south of about 76°S with `temp_avg`, `temp_max`, `ice_depth`). It is a table, not a raster, so select rows by lat/lon. It has no minimum temperature; cite that from the literature.
@@ -106,9 +121,11 @@ docs/ writeup.md, sites/*.md, slides/
 | Hours | Person A | Person B |
 |---|---|---|
 | 0–1 | **Together:** confirm the proposed defaults in `CLAUDE.md` and the formats in `docs/contract.md`; make the repo public so GitHub Pages works; 5-minute data check from `prep.md` §5; download the three globe images if not done. | same |
-| 1–3 | **Thin slice first:** land mask + `cells.bin` + two features (terrain roughness, NDVI) exported in the contract format | Globe with score texture and sliders on mock data; literature target values (`data/targets_literature.csv`); finish the known-analog list |
+| 1–3 | **Thin slice first:** land mask + `cells.bin` + two features (terrain roughness, NDVI) exported in the contract format | Globe with score texture and sliders on mock data; literature target values (`data/targets_literature.csv`), **Jezero, Arcadia and Marius Hills first** for the spike; finish the known-analog list |
 | 3 | **Checkpoint 0:** A's two real features render on B's globe, and the page is live on GitHub Pages. | |
-| 3–7 | Remaining 9 features → full `features.bin`; first `score.py` with the missing-data and directional rules | Target picker, Earth / Mars / Moon switch, click-to-fly with per-dimension bars, "directional" badges |
+| 3–4 | **Science spike (no app):** add the quick regrid features (precipitation, coldest-month night LST, 8.55 µm emissivity) to the two from the thin slice; score Jezero, Arcadia and Marius Hills with B's literature values | (continues below) |
+| 4 | **Spike check (early warning for the hour-11 science check):** (1) how much do the top-1% maps of the three targets overlap? (2) where do the known sites tagged terrain / temperature / aridity / ice / dust rank against random barren land? If the maps are nearly the same, or known sites do not stand out, act now: see "result is weak" under risks. | |
+| 4–7 | Remaining features → full `features.bin`; first `score.py` with the missing-data and directional rules | Target picker, Earth / Mars / Moon switch, click-to-fly with per-dimension bars and the **fingerprint chart**, "directional" badges; **mission cards and "why this place matters" text** |
 | 7 | **Checkpoint 1 (go/no-go):** all features render, and slider drags re-color the globe smoothly on a normal laptop. Drop any dataset not ready; if the globe is too slow, fall back to the flat map. | |
 | 7–11 | MOLA/LOLA terrain and Diviner values → final `targets.json`; validation against known analogs and the two baselines | Known-analog layer, candidate list panel, Earth-limits card, About/method panel |
 | 11 | **Science check:** do known analogs beat random barren land? If not, see "result is weak" under risks. | |
@@ -125,7 +142,7 @@ docs/ writeup.md, sites/*.md, slides/
 3. Method: dimensions × Earth / Moon / Mars data, with the like-for-like vs. directional split.
 4. Validation: known analogs vs. random barren land, and the dimensions the score cannot see.
 5. Discovery: map of under-studied candidates, plus the robustness scores.
-6. Deep dive: one site, covering what matches, where it breaks down, and how it helps exploration.
+6. Deep dive: one site with its fingerprint chart over the target's outer ring, covering what matches, where it breaks down, and how it helps exploration.
 7. Try it: live app link and QR code; Earth's limits; next steps.
 
 ---
@@ -135,13 +152,13 @@ docs/ writeup.md, sites/*.md, slides/
 2. **Twin 3D terrain view for the deep-dive sites (about 2–3 h):** MapLibre GL with tilted 3D terrain, the Earth site next to its Mars or Moon match, both from the same elevation data the scores use. A exports trimmed elevation tiles for those sites, so B needs no raw data.
 3. **Mars albedo map:** download the USGS TES albedo mosaic and replace the per-site literature albedo with computed values.
 4. **Radar dimension at the deep-dive sites:** Sentinel-1 (Copernicus) or RCM/RADARSAT-1 backscatter vs. LRO Mini-RF. This is the one measurement type that exists on both bodies (see `data-sources.md`).
-5. **Mineralogy:** ASTER GED emissivity mafic/silica index → a basalt-likeness feature vs. TES surface type.
+5. **Finer mineralogy:** the core already has a silica index (8.55 µm emissivity). Stretch: ASTER GED multi-band emissivity → a mafic index at the deep-dive sites vs. TES surface type.
 6. **Reverse search:** click anywhere on the Mars or Moon globe to get its Earth analogs.
 7. Feature-space UMAP showing Earth cells and planetary targets together.
 8. JAXA GSMaP / G-Portal snow products as multi-agency alternatives.
 
 ## Key risks and mitigations
-- **The result is weak or obvious** (top cells are just Sahara and Antarctica, or known analogs don't beat barren land): this is the main risk. Mitigations, in order: rank per target rather than one global score; the per-continent cap; lean on the like-for-like dimensions (terrain, albedo), which separate deserts from each other. If it still fails at the hour-11 check, change the story, not the tool: "a quantitative audit of the famous analogs: which dimensions each one really matches, and better-matching neighbours for each". The app, dossiers and slides stay the same.
+- **The result is weak or obvious** (top cells are just Sahara and Antarctica, or known analogs don't beat barren land): this is the main risk. Vegetation and aridity have the same target for every site, so terrain, temperature, albedo and geology are what tell targets apart. The hour-4 spike tests this early. Mitigations, in order: rank per target rather than one global score; the per-continent cap; lean on the like-for-like dimensions (terrain, albedo), which separate deserts from each other. If it still fails at the hour-11 check, change the story, not the tool: "a quantitative audit of the famous analogs: which dimensions each one really matches, and better-matching neighbours for each". The app, dossiers and slides stay the same.
 - **Over-claiming novelty:** a site 200 km from our list can still be published. The literature check in hours 14–17 is required before the word "unrecognized" is used.
 - **File-format surprises:** all datasets opened with GDAL on 2026-11-14. Known quirks are listed in "Data on disk". `pyhdf` is the fallback reader for MODIS.
 - **Planetary values taking too long:** the literature `targets.json` from hours 1–3 is already a working fallback; only terrain needs computing.
@@ -152,7 +169,7 @@ docs/ writeup.md, sites/*.md, slides/
 ## Data on disk (`data/raw/`, checked 2026-11-14)
 | Folder | Contents | Quirk |
 |---|---|---|
-| `MOD11C3` | 36 monthly files, 2021–2023 | HDF4 |
+| `MOD11C3` | 36 monthly files, 2021–2023 | HDF4; also holds `Emis_29` for the geology feature |
 | `MOD13C2` | 24 monthly files, 2022–2023 | HDF4 |
 | `MCD43C3` | 12 daily files (15th of each month, 2023) | HDF4; polar-night fill values |
 | `MOD10CM` | 35 monthly files, 2021–2023 | October 2022 missing |
@@ -169,6 +186,7 @@ docs/ writeup.md, sites/*.md, slides/
 - Unit checks:
   - roughness and slope computed identically on a synthetic DEM for Earth, Mars and Moon inputs;
   - the feature range in `meta.json` matches the decoded `features.bin`, and `cells.bin` has the same number of cells;
-  - a cell with missing features gets the same score in Python and in the browser.
+  - a cell with missing features gets the same score in Python and in the browser;
+  - the fingerprint axes for a known site equal the per-dimension scores `score.py` prints for that site.
 - The app works from `python -m http.server` in `web/` and from the GitHub Pages URL. Moving sliders re-colors the globe in under 200 ms, the Earth / Mars / Moon switch works, and every candidate panel shows its per-dimension bars plus the directional flags. Also load it once with WebGL disabled to confirm the flat-map fallback.
 - A dry-run submission at hour 21: the write-up link, repo link and slides all open in a private browser window.

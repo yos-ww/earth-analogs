@@ -33,13 +33,16 @@ Shared files (`CLAUDE.md`, `plan.md`, `docs/contract.md`, `docs/tasks.md`, `READ
 
 ## Decisions already made (do not reopen)
 
-- 0.25° global land grid, 11 features in 7 dimensions, one slider per dimension.
+- 0.25° global land grid, 12 features in 8 dimensions, one slider per dimension. The eighth, geology, is 8.55 µm emissivity (`Emis_29` in the MOD11C3 files already on disk).
 - Score: `exp(-((f - t)/σ)²)` per feature, mean within a dimension, weighted mean across dimensions. Exact rules in `docs/contract.md`.
 - Like-for-like vs. directional vs. n/a is decided per target and per feature by the p1–p99 rule.
 - 3D globe (`globe.gl` from a CDN, no build step) is the main view; the Leaflet flat map is a fallback built last.
 - Area weighting by cos(latitude) for every percentile, validation and ranking.
 - No tuning to the answer: σ from the data rule, equal default weights.
+- A science spike at hour 4 tests the result on five quick features before the full pipeline is built (`plan.md` timeline).
 - Nothing from the stretch tiers starts before Checkpoint 2.
+- Sliders stay the main control (no weight presets). Mission context only explains why a match matters and how the place could be used: a mission card per target, one sentence per dimension, and a "why this place matters" line, all text in `web/missions.js`, not in the contract.
+- Every place gets a fingerprint radar chart: one axis per dimension from `meta.json`, unweighted dimension scores, target = outer ring.
 
 ## Decisions from the review (`docs/review-notes.md`), proposed defaults
 

@@ -1,6 +1,6 @@
 # Analog Atlas
 
-A global, data-driven search for places on Earth that resemble Moon and Mars landing sites. Every land cell on Earth is scored against real planetary site profiles, one dimension at a time (terrain, temperature, vegetation, aridity, albedo, ice, dust), so the app can show why a place matches and where the analogy breaks down.
+A global, data-driven search for places on Earth that resemble Moon and Mars landing sites. Every land cell on Earth is scored against real planetary site profiles, one dimension at a time (terrain, temperature, vegetation, aridity, albedo, ice, dust, geology), so the app can show why a place matches and where the analogy breaks down.
 
 Built for the "Earth Analogs for Lunar and Martian Exploration" hackathon challenge (`challenge.md`).
 
