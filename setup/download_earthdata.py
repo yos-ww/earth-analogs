@@ -28,7 +28,10 @@ def in_range(granule, temporal):
     """NASA's search returns every file whose time window overlaps the range:
     each daily albedo file spans 16 days, and the Dec-2022 monthly file touches
     2023-01-01. Keep only MODIS files whose own date (".AYYYYDDD.") is inside."""
-    m = re.search(r"\.A(\d{4})(\d{3})\.", granule.data_links()[0])
+    links = granule.data_links()
+    if not links:
+        return False  # nothing to download
+    m = re.search(r"\.A(\d{4})(\d{3})\.", links[0])
     if not m:
         return True  # IMERG and others: no MODIS date stamp, keep
     d = date(int(m[1]), 1, 1) + timedelta(days=int(m[2]) - 1)

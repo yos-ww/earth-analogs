@@ -87,7 +87,7 @@ GDAL reads the PDS3 `.img` files directly when the `.lbl` sits next to them, so 
 - [ ] **Target coordinates** (double-check each):
   - **Mars:** Jezero (18.4°N, 77.6°E), Gale (5.4°S, 137.8°E), Zhurong / Utopia Planitia (25.1°N, 109.9°E), Arcadia Planitia ice region (~40–50°N, ~190–200°E).
   - **Moon:** Shackleton–de Gerlache ridge (~89.5°S), Marius Hills pit (14.1°N, 303.2°E).
-- [ ] **Known-analog list** with coordinates (~15 sites; the list is in `plan.md`). This is needed for validation and the novelty filter.
+- [x] **Known-analog list** with coordinates: `data/known_analogs.csv` (37 sites). This is needed for validation and the novelty filter.
 - [ ] **Literature values per target:** temperature range, albedo, ice evidence. Save the source URL for each value.
 - [ ] **Globe textures** for the 3D view: NASA Blue Marble (Earth), a USGS Mars color mosaic, and an LROC WAC mosaic (Moon), as equirectangular images of about 4–8k px.
 - [ ] Decide who is Person A (data) and Person B (app + story).
