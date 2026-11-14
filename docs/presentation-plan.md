@@ -1,6 +1,6 @@
 # Presentation plan: one 3D globe that shows everything, plus the written report
 
-Status: **agreed by both people, 2026-11-14.** It builds on `plan.md`, `docs/contract.md` and `docs/tasks.md`; it changes the order of a few tasks and adds three small items, listed under "Changes to the existing plan".
+Status: **agreed by both people, 2026-11-14.** It builds on `plan.md`, `docs/contract.md` and `docs/tasks.md`; it changes the order of a few tasks and adds four small items, listed under "Changes to the existing plan".
 
 ## Goal
 
@@ -18,7 +18,7 @@ The 30-second video and the 7 slides are cut from the globe (screen capture), so
 | Piece | Why it's feasible |
 |---|---|
 | 3D globe | `globe.gl` (three.js) from a CDN, no build step. Points, labels, rings and a custom surface texture are built in. |
-| Live re-scoring | 300k cells × 11 features is about 3.3 M operations per slider move: tens of milliseconds in plain JavaScript. |
+| Live re-scoring | 300k cells × 12 features is about 3.6 M operations per slider move: tens of milliseconds in plain JavaScript. |
 | Colouring the globe | Paint scores into a 1440×720 canvas, use it as a `THREE.CanvasTexture`, set `needsUpdate = true`. |
 | Fly-to | `globe.pointOfView({ lat, lng, altitude }, ms)`. |
 | Mars and Moon globes | Same globe with a different image (4k JPEG, a few MB each). |
@@ -33,7 +33,7 @@ The 30-second video and the 7 slides are cut from the globe (screen capture), so
 
 ### Mission context: why a match matters
 
-The target picker and the seven sliders stay as the main controls. What is added is an explanation, for every match, of **why it is important for a mission and how the place could be used**. This answers the challenge's third question ("how could studying or using your Earth analog help prepare for exploration") inside the app, not only in the report.
+The target picker and the eight sliders stay as the main controls. What is added is an explanation, for every match, of **why it is important for a mission and how the place could be used**. This answers the challenge's third question ("how could studying or using your Earth analog help prepare for exploration") inside the app, not only in the report.
 
 It has three parts, all hand-written text in the app (`web/missions.js`), so the contract does not change:
 
@@ -52,6 +52,7 @@ It has three parts, all hand-written text in the app (`web/missions.js`), so the
    | Albedo | Camera, navigation and thermal behaviour of a similar bright or dark surface |
    | Ice | Drilling, ice prospecting and water extraction (ISRU) |
    | Dust | Dust on solar panels, seals and optics; landing plume tests |
+| Geology | Instruments and sample selection on the same kind of rock (basaltic vs. silica-rich) |
 
 3. **"Why this place matters" in the Place, Candidate and Dossier panels.** Built automatically from the place's strongest dimensions plus the target's mission card. Example: *"Strong terrain and dust match with Jezero: a good place to test rover driving and dust protection for Perseverance-type missions. Weak on temperature: cold-related tests should be done elsewhere."* The weak dimensions are named too, so the text also says where the analogy breaks down.
 
@@ -60,7 +61,7 @@ It has three parts, all hand-written text in the app (`web/missions.js`), so the
 
 ### Fingerprint chart
 
-Every place gets a small seven-sided radar chart, one axis per dimension (terrain, temperature, vegetation, aridity, albedo, ice, dust).
+Every place gets a small eight-sided radar chart, one axis per dimension (terrain, temperature, vegetation, aridity, albedo, ice, dust, geology), read from `meta.json` `dimensions`.
 
 - The **Earth place** is a filled shape of its dimension scores (0–1); the outer ring is a perfect match with the target.
 - Axes with no data are drawn dashed; axes marked n/a for the target are greyed out; directional axes get a small arrow.
