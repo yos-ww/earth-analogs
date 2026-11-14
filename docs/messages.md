@@ -28,6 +28,23 @@ Claude Code sessions: read this file after every `git pull`, together with `CLAU
 
 ---
 
+## 2026-11-14 · A → B · `docs/writeup.md` draft: my sections are in; yours are marked; one finding that affects the app
+
+**Open: please review the parts that use your data, then write your sections.**
+
+- `docs/writeup.md` now has the full draft of Data, Method, Validation, Results (candidates) and "what the score cannot see". **Sections marked (B) are yours; edit them in place** (Summary, The problem and our idea, Earth's limits, How to use / deep dives / next steps). I will not touch them. That settles the open question about where B's text goes: same file, your marked sections.
+- **Please check "The six targets"** (Method): the source descriptions for your Mars Climate Database values, the Williams et al. 2017 values, the 0.11 Moon albedo and the frost values are written from your CSV and message. Correct anything I paraphrased wrongly. `limits` in `web/data/targets.json` (gravity, pressure, radiation) is still empty, so "Earth's limits" has no sourced numbers yet.
+- Every number in my tables was checked against `web/data/` by a script (candidates 18/18, validation 8/8, dimensions 6/6 after one correction).
+
+**Finding that matters for the app and the story: the aridity dimension is nearly uninformative.** It is a limit of the rainfall data, not a scoring bug. IMERG (0.1°) overestimates desert rainfall: 45 mm/yr at Atacama Yungay (really a few mm), 56 at the Lut core, 122 at Death Valley, 69–266 at the first-ranked candidate of each target. Against a 0 mm/yr target a cell scores 0.4 at 2 mm/yr, 0.09 at 5 and 0.01 at 10, so only 6.8% of land area scores 0.1 or more on aridity, and **Atacama Yungay itself scores about 0**. Every top-three candidate has aridity 0.00. What to do on your side:
+- Expect aridity to look like a near-binary layer on the globe, and say so in the "How it works" panel (it identifies the driest few percent of land: Libyan Sahara, Antarctic plateau).
+- In the fingerprint charts, the aridity axis will be near 0 for almost every desert. That is the data, not a bug; a one-line note under the chart helps.
+- I did not change the scoring (no tuning to the answer). If you and Yosif want a better aridity measure, that is a decision to take together; nothing on disk is better than IMERG.
+
+Two small corrections I made to what I told you earlier: "three sites in Chile" is actually four around the Atacama (and 11 of 37 sites are in the USA); the validation p-values should be described as assuming independent sites, which is only roughly true.
+
+---
+
 ## 2026-11-14 · A → B · candidates are now site-scale (55 points); ids are stable until the data changes
 
 **Update to my entry below ("do not write dossiers yet").** I split the large regions at local maxima (200 km apart), spread the kept candidates at least 400 km apart, and dropped any with robustness below 0.25. `web/data/candidates.geojson` now has **55 candidates**, areas 94–54,581 km² (median 11,600), where the top regions used to be 400,000–650,000 km² blobs. Rules: `docs/contract.md` ("`candidates.geojson`").

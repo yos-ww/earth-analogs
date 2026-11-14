@@ -38,7 +38,7 @@ Percentiles are area-weighted positions among all scored land; a random land cel
 | Marius Hills alone | 0.73 | 0.60 | 0.200 |
 | Shackleton alone | 0.67 | 0.57 | 0.191 |
 
-Reading: the evidence for Mars is real but modest (clear for Jezero, borderline for Arcadia, not significant for Gale and Utopia alone). For the Moon the sites are in the right direction but there are only 12, so it is not significant. The p-values assume the sites are independent (several are not: three are in Chile) and are not corrected for testing several targets.
+Reading: the evidence for Mars is real but modest (clear for Jezero, borderline for Arcadia, not significant for Gale and Utopia alone). For the Moon the sites are in the right direction but there are only 12, so it is not significant. The p-values assume the sites are independent (several are not: 11 of the 37 are in the USA and four are in the Atacama region) and are not corrected for testing several targets.
 
 The early check with best-of-body scoring over the three spike targets gives 0.67 (p = 0.041) and, without Antarctica, 0.69 (p = 0.022). It was 0.73–0.75 with five features, when ice sheets were rewarded (McMurdo Dry Valleys 1.00 → 0.42, Holuhraun 0.99 → 0.56). The drop is the score getting honest, not a regression.
 
