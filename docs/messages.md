@@ -6,6 +6,33 @@ Claude Code sessions: read this file after every `git pull`, together with `CLAU
 
 ---
 
+## 2026-11-15 · A → B · Yosif's feedback after your UI pass
+
+**Open for you: your call on each item.** These are Yosif's own ideas from using the live app. Claude added notes on how each one fits what's already built. None of them touches `web/data/` or the contract, and item 1 doesn't need a change to `score.js` either.
+
+Yosif likes the six site cards (Jezero etc.) as buttons.
+
+1. **"Compare only…" mode under the site cards.** Today every place gets one overall score from all 8 dimensions. This mode would let you tick one or more dimensions (e.g. only Dust, or Dust + Temperature) and list the **top 10 places** most like the site on just those.
+   - The scoring already supports it. A weight of 0 drops a dimension from the weighted mean, so ticked = 1 and unticked = 0 is just another setting of the existing sliders. The difference is that the control sits up front instead of being hidden in "Map options".
+   - It works per dimension (8, one per slider), not per feature (12). Temperature has three features inside it, and splitting them would change the contract's within-dimension mean rule.
+   - The top 10 needs a live ranking over all cells, because the current "Top finds" uses the precomputed candidates. With only one or two dimensions, many neighbouring cells tie near 100. The list should keep places at least ~200 km apart, as the candidates do, or it will show ten cells of the same desert.
+   - This takes the "one-dimension view" in `docs/presentation-plan.md` (accepted, not built yet) and extends it to several dimensions. It isn't a weight preset, because the user picks the dimensions.
+2. **Glow in red instead of copper.** This means the similarity glow on the globe (the ramp from the site's top 20% to its top 1%), not the accent colour of the buttons and headings. Yosif would like it red rather than the current copper/orange.
+3. **Two dot colours instead of five.** Today the globe has green (new find), yellow (little studied), blue (not checked yet), grey (known area our search found too), and rust / grey-blue for the known Mars / Moon sites. Yosif would like just two:
+   - **White:** well-known analog sites (the known Mars and Moon sites, and "known area our search found too").
+   - **Green:** our finds that aren't well known (new, little studied, not checked yet).
+   - Claude's note: the finer verdict ("No analog study found yet" vs "little studied") should stay in the result panel text. The pitch relies on the careful wording, even if the dot no longer shows it.
+4. **"by Team Sol"** under the "Analog Atlas" title.
+5. **Remove the country search** ("How Mars-like is your place?"). Nothing in the tour depends on it. The Qatar line (55/100) can still be said in the pitch, and Qatar can still be clicked on the globe.
+6. **Simple location info on click.** Clicking any place should show its coordinates and its present-day country up front, not only under "More details".
+   - Coordinates: `fmtLatLon` already exists, so this just means moving it under the heading.
+   - Country: there's no lookup for arbitrary clicks today. The boxes in `places.js` overlap and cover only a few countries. One option is a small public-domain country-outline file (Natural Earth 1:110m, about 100 KB as TopoJSON from a CDN) with a point-in-polygon check in the browser, so no geocoding service is needed. Borders are de facto and approximate. Antarctica and the ocean get no country.
+7. **Remove the floating map key**, the "Glows where Earth is like …" box over the globe. Yosif likes the glow itself but not the floating box with the colour bar. Suggested default: move what it carries into the side panel instead of dropping it. That would be a thin red ramp line, the two dot colours from item 3 (short enough to fit now), and the "What does the glow mean?" fold-out.
+
+**Checks if you build any of it:** golden 306/306 unchanged; the tour runs start to finish with `?tour=1`; Gale #1 and the Makran finds still show green.
+
+---
+
 ## 2026-11-14 · B → A · UI pass for the judges: glow, 8K Earth, site cards, Top finds, welcome
 
 **Open for you: items 5 and 6 only. Everything else is FYI. `web/` only; no `web/data/`, scoring or contract change. Golden check still 306/306; the tour runs start to finish with `?tour=1`.**
