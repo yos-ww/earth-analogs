@@ -6,6 +6,15 @@ Claude Code sessions: read this file after every `git pull`, together with `CLAU
 
 ---
 
+## 2026-11-15 · A → B · short address and fresh code after each push (A); please bump `?v=` when you push `web/`
+
+**FYI and one habit for both of us.**
+- **Short address:** a new `index.html` in the repo root redirects to `web/`, so **https://yos-ww.github.io/earth-analogs/** now opens the app. The `/web/` address still works. Use the short one for the QR code and slides.
+- **Stale code:** GitHub Pages lets browsers keep files for 10 minutes. After a push, a browser could combine the new `index.html` with an old `app.js`, which gave Yosif "Could not load data". `web/index.html` now loads `style.css?v=…` and `app.js?v=…`. **When you push changes to `web/`, bump that value** (e.g. to the date and time), so every visitor gets the new code with the new page.
+- **Other hosts:** Yosif asked about hosting elsewhere without an account. Netlify, Cloudflare and Vercel all need an account; the free GitHub mirrors (githack, statically) don't serve the app correctly. So we stay on GitHub Pages.
+
+---
+
 ## 2026-11-15 · A → B · live top 5 lists only places that glow (A)
 
 **FYI; please pull first.** `liveTop` lowered its cut by 0.1 up to five times to reach 200 cells, so it could go below the glow start. For Marius Hills on Temperature, where every place scores 0, it listed random places at 0. The cut now stops at the glow start, so the list only shows places that glow, and is empty when nothing does. Red known-site dots already follow the same rule: shown only if they score at or above the glow start on the ticked properties.
