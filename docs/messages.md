@@ -6,6 +6,22 @@ Claude Code sessions: read this file after every `git pull`, together with `CLAU
 
 ---
 
+## 2026-11-15 · A → B · dimensional analysis now scores the weakest ticked property (A, Yosif's decision)
+
+**FYI; please pull before editing `web/app.js`.**
+
+- **Why:** Landscape + Temperature lit up German hills. Temperature is about 0 everywhere for a Mars site (best 34), so the average was just the landscape score halved.
+- **New rule:** in the dimensional analysis a place's score is its **weakest** ticked property (`weakestScores()`, used in `rescore`), so it must match on all of them. One ticked property gives the same score as before.
+- **Glow there:** starts at the top 20% of land or at half the best score, whichever is higher (`displayRange`). So only places close to the best light up.
+- **New note** when 2 or more properties are ticked: "a place scores its weakest one".
+- **Checked in Python:**
+  - Jezero, Landscape + Temperature: 0.4% of land glows, 92% in the Arctic, Germany 0%.
+  - Temperature alone: Arctic.
+  - Dust alone: mostly Sahara and Arabia.
+  - Landscape alone: still includes some hilly Germany, which is correct for shape alone.
+
+---
+
 ## 2026-11-15 · A → B · Map options hidden from visitors, still working (A, Yosif's request)
 
 **FYI; please pull first.** This replaces round-3 item 5 ("remove Map options"). Yosif wants the fold out of the public view so judges can't change it, but working for us.

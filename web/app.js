@@ -299,21 +299,28 @@ function updateLayers() {
 // over the land being shown (one histogram pass, ~2 ms), never below SHOW_FLOOR.
 function displayRange(values) {
   const BINS = 1000, hist = new Float64Array(BINS), w = state.cellWeight;
-  let total = 0;
+  let total = 0, best = 0;
   for (let i = 0; i < values.length; i++) {
     const s = values[i];
     if (Number.isNaN(s) || (state.hideIce && state.iceSheet[i])) continue;
     hist[Math.min(BINS - 1, Math.max(0, Math.floor(s * BINS)))] += w[i];
     total += w[i];
+    if (s > best) best = s;
   }
   const quantile = (q) => {
     let acc = 0;
     for (let b = 0; b < BINS; b++) { acc += hist[b]; if (acc >= q * total) return (b + 0.5) / BINS; }
     return 1;
   };
-  // In the dimensional analysis the best places glow even when their scores are low (no place on Earth
-  // reaches Mars temperatures: the best is about 35); a small floor keeps all-zero sites dark.
-  const lo = Math.max(state.compare.size ? 0.02 : SHOW_FLOOR, quantile(1 - SHOW_TOP));
+  if (state.compare.size) {
+    // Dimensional analysis: the best places glow even when their scores are low (no place on Earth reaches
+    // Mars temperatures: the best is about 35). The glow starts at the top 20% of land or at half the best
+    // score, whichever is higher, so only places close to the best light up; a small floor keeps
+    // all-zero sites dark.
+    const lo = Math.max(0.02, quantile(1 - SHOW_TOP), 0.5 * best);
+    return { lo, hi: Math.max(lo + 0.02, quantile(1 - FULL_TOP), lo + 0.5 * (best - lo)) };
+  }
+  const lo = Math.max(SHOW_FLOOR, quantile(1 - SHOW_TOP));
   return { lo, hi: Math.max(lo + 0.02, quantile(1 - FULL_TOP)) };
 }
 function updateMapKey(lo, hi) {
@@ -511,7 +518,7 @@ function rescore({ fade = false } = {}) {
   const previous = fade && state.shown ? Float32Array.from(state.shown) : null;
   frame = requestAnimationFrame(() => {
     frame = 0;
-    state.overall = overallScores(state.dims.dimScores, state.dims.nd, state.weights);
+    state.overall = state.compare.size ? weakestScores() : overallScores(state.dims.dimScores, state.dims.nd, state.weights);
     if (fade) startFade(previous, state.overall);
     else { state.fade = null; state.shown = state.overall; paintScores(state.overall); }
     refreshPanel();
@@ -1049,10 +1056,26 @@ function syncCompareUI() {
   if (state.compare.has("aridity")) {
     notes.push("Rainfall: the satellite estimate is too high in deserts and close to 0 over ice sheets, so this ranking is rough.");
   }
+  if (state.compare.size > 1) {
+    notes.push("With several properties ticked, a place scores its weakest one: it has to match on all of them.");
+  }
   $("compare-note").innerHTML = notes.join("<br>");
   $("compare-note").hidden = !notes.length;
 }
 function clearCompare() { state.compare.clear(); if (state.grid) syncCompareUI(); }
+
+// Dimensional analysis score: the weakest of the ticked dimensions, so a place must match on all of them
+// (an average let a good landscape hide a temperature of 0). NaN where a ticked dimension has no data.
+function weakestScores() {
+  const { dimScores, nd } = state.dims, ks = state.grid.meta.dimensions.map((d, k) => (state.compare.has(d) ? k : -1)).filter((k) => k >= 0);
+  const n = dimScores.length / nd, out = new Float32Array(n);
+  for (let i = 0; i < n; i++) {
+    let m = Infinity;
+    for (const k of ks) { const v = dimScores[i * nd + k]; if (Number.isNaN(v)) { m = NaN; break; } if (v < m) m = v; }
+    out[i] = m === Infinity ? NaN : m;
+  }
+  return out;
+}
 
 // Score on all dimensions with the site's default weights (cached per site), for tie-breaking.
 let fullCache = { id: null, s: null };
