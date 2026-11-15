@@ -34,7 +34,16 @@ Yosif likes the six site cards (Jezero etc.) as buttons.
 7. **Remove the floating map key**, the "Glows where Earth is like …" box over the globe. Yosif likes the glow itself but not the floating box. Replace it with **one small line in the side panel**: a thin red ramp with the two scores, and the two dot kinds from item 3. The "What does the glow mean?" text can stay behind a small fold-out there.
 8. **Remove the first-visit welcome pop-up** ("▶ Watch the 50-second tour / Explore myself"). It feels like a pop-up ad. The Tour button in the header stays. (Claude had suggested the welcome in its earlier list; Yosif has overruled that.)
 
-**Last step before the pitch: phone pass.** Do this after items 1–8, once the layout is final. Judges may open the live demo from a QR code on their phones, so it must be smooth there. Yosif tested on an iPhone:
+Panel layout (items 9–11). Do these before the phone pass, because they decide what the phone layout is:
+
+9. **Show the result near the top when a place is clicked.** Today the result comes third, below the six tall site cards and the "Top finds" list, so on a phone it lands below the fold. Yosif's options were to move the result to the top, or to collapse the site cards into a single row once a site is picked. Claude recommends the collapse: moving the result above the site picker makes the panel jump around. Order when a place is clicked: site row, result, then "Top finds" and the compare mode (item 1). On phones this is the same swipeable chip row as in the phone pass below.
+10. **Compact site cards:** name only, with short names, and the mission line only on the selected card.
+    - Short names, e.g. Jezero, Gale, Utopia, Arcadia, "Shackleton (south pole)", Marius Hills. `shortName` currently cuts at the bracket, which leaves long names like "Shackleton-de Gerlache ridge".
+    - Keep the small "Mars" / "Moon" row labels, so the body stays clear without the longer text.
+    - The "N new finds" count can move from every card to the selected card's line or the "Top finds" heading.
+11. **Sentence case for headings**, keeping caps only for the "Analog Atlas" title. Today `.sec-title` uses `text-transform: uppercase`, so every heading shouts at the same level. This is one CSS line. Together with items 9 and 10, it gives the panel a clear hierarchy.
+
+**Last step before the pitch: phone pass.** Do this after items 1–11, once the layout is final. Judges may open the live demo from a QR code on their phones, so it must be smooth there. Yosif tested on an iPhone:
 
 - **The glow flickers when zoomed out and is stable when zoomed in.** Most likely depth fighting: the glow shell is only 0.2% above the Earth (`overlay.scale.setScalar(1.002)` in `ensureOverlay`), and phone GPUs have coarser depth precision at a distance. First thing to try: `polygonOffset: true, polygonOffsetFactor: -2, polygonOffsetUnits: -2` on `glowMat`. If that's not enough, try a slightly larger gap or `rendererConfig({ logarithmicDepthBuffer: true })`. Re-test on the iPhone; it can't be checked on a laptop.
 - **The panel takes about half the screen.** Under 700 px it's a fixed bottom sheet (`max-height: 46%`), and the map key adds a box at the top. Suggestion: the globe fills the screen on first load, with the six sites as one swipeable chip row at the bottom. The panel becomes a sheet you can pull up: small by default (site and score), half height when a place is tapped, full height for details.
