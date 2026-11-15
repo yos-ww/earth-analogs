@@ -42,13 +42,13 @@ const COLOURS = { click: "255,255,255" };
 const FIND = { colour: "#2ee8ff", rgb: "46,232,255" };
 const RING = { outline: "#0b0e14", ring: "#eef2f7" };
 const CAND_STYLE = {
-  none:      { ...FIND, radius: 0.5, alt: 0.012, pulse: 0.75, heading: "New find", group: "finds" },
-  under:     { ...FIND, radius: 0.5, alt: 0.012, pulse: 0.75, heading: "Little-studied find", group: "finds" },
-  unchecked: { ...FIND, radius: 0.5, alt: 0.012, pulse: 0.75, heading: "Candidate (not checked yet)", group: "finds" },
+  none:      { ...FIND, radius: 1.0, alt: 0.012, pulse: 0.75, heading: "New find", group: "finds" },
+  under:     { ...FIND, radius: 1.0, alt: 0.012, pulse: 0.75, heading: "Little-studied find", group: "finds" },
+  unchecked: { ...FIND, radius: 1.0, alt: 0.012, pulse: 0.75, heading: "Candidate (not checked yet)", group: "finds" },
   known:     { ...RING, heading: "Known area our search found too", group: "confirms" },
 };
 // A hollow ring from three stacked discs (globe.gl points have no outline): dark rim, light ring, dark centre.
-function ringDiscs(d, size = 1) {
+function ringDiscs(d, size = 1.6) {   // 1.6: big enough to read as a ring when zoomed out
   return [
     { ...d, colour: RING.outline, radius: 0.36 * size, alt: 0.003 },
     { ...d, colour: RING.ring,    radius: 0.29 * size, alt: 0.0045 },
@@ -70,14 +70,6 @@ const DIM_NAME = {
   terrain: "Landscape shape", temperature: "Temperature", vegetation: "Plants", aridity: "Rainfall",
   albedo: "Ground brightness", ice: "Ice & snow", dust: "Dust in the air", geology: "Rock type",
 };
-const TARGET_BLURB = {
-  jezero: "Where NASA's Perseverance rover landed in 2021: an ancient lake bed with a dried-up river delta.",
-  gale: "Where NASA's Curiosity rover landed in 2012: plains at the foot of a 5 km high mountain.",
-  utopia: "Where China's Zhurong rover landed in 2021: wide, flat northern plains.",
-  arcadia: "A candidate landing site for the first human crews: flat plains with ice just below the surface.",
-  shackleton: "The rim of Shackleton crater at the Moon's south pole, in NASA's Artemis landing region: almost constant sunlight next to dark, icy craters.",
-  marius_hills: "A hole into an underground lava tube on the Moon: a possible natural shelter for a future base.",
-};
 
 const $ = (id) => document.getElementById(id);
 const status = (msg) => { $("status").textContent = msg; };
@@ -93,8 +85,8 @@ const state = {
   overall: null, shown: null, fade: null, clicked: null,
   analogs: [], candidates: [], showAnalogs: true, showCandidates: true, showConfirms: true,
   iceSheet: null, hideIce: false, cellWeight: null, arc: null,
-  compare: new Set(),   // dimensions ticked in "Compare only…" (empty = all, normal scoring)
-  live: null,           // live top 5 shown as globe dots while "Compare only…" is on
+  compare: new Set(),   // dimensions ticked in "Dimensional analysis" (empty = all, normal scoring)
+  live: null,           // live top 5 shown as globe dots while "Dimensional analysis" is on
 };
 
 // ---------- colours ----------
@@ -273,13 +265,16 @@ function updateLayers() {
     (c.style.group === "finds" && state.showCandidates) || (c.style.group === "confirms" && state.showConfirms));
   // known sites of the current body only (Mars sites when a Mars site is picked): less clutter
   const analogs = state.showAnalogs ? state.analogs.filter((a) => a.bodyList.includes(state.target?.body)) : [];
-  const knownDiscs = [...analogs, ...cands.filter((c) => c.style.group === "confirms")].flatMap((d) => ringDiscs(d));
-  // "Compare only…": the cyan dots are the live top 5 on the ticked dimensions, not the precomputed
+  // Dimensional analysis: the known sites test the full score, not one property, so their rings are hidden
+  // while properties are ticked (else e.g. Rio Tinto shows up under "Temperature", where it scores 0).
+  const knownDiscs = state.compare.size ? []
+    : [...analogs, ...cands.filter((c) => c.style.group === "confirms")].flatMap((d) => ringDiscs(d));
+  // "Dimensional analysis": the cyan dots are the live top 5 on the ticked dimensions, not the precomputed
   // finds (those were chosen on all dimensions together).
   const finds = state.live ? (state.showCandidates ? state.live : []) : cands.filter((c) => c.style.group === "finds");
   globe.pointsData([...knownDiscs, ...finds]);
   const rings = finds.filter((c) => c.style.pulse > 0).map((c) => ({
-    lat: c.lat, lng: c.lng, rgb: c.style.rgb, strength: c.style.pulse, maxR: 2.4, speed: 1.2, period: 2200,
+    lat: c.lat, lng: c.lng, rgb: c.style.rgb, strength: c.style.pulse, maxR: 4, speed: 1.2, period: 2200,
   }));
   if (state.clicked) rings.push({ lat: state.clicked[0], lng: state.clicked[1], rgb: COLOURS.click, strength: 1, maxR: 3, speed: 2.2, period: 1100 });
   globe.ringsData(rings);
@@ -310,7 +305,9 @@ function displayRange(values) {
     for (let b = 0; b < BINS; b++) { acc += hist[b]; if (acc >= q * total) return (b + 0.5) / BINS; }
     return 1;
   };
-  const lo = Math.max(SHOW_FLOOR, quantile(1 - SHOW_TOP));
+  // In the dimensional analysis the best places glow even when their scores are low (no place on Earth
+  // reaches Mars temperatures: the best is about 35); a small floor keeps all-zero sites dark.
+  const lo = Math.max(state.compare.size ? 0.02 : SHOW_FLOOR, quantile(1 - SHOW_TOP));
   return { lo, hi: Math.max(lo + 0.02, quantile(1 - FULL_TOP)) };
 }
 function updateMapKey(lo, hi) {
@@ -337,7 +334,7 @@ function updateMapKey(lo, hi) {
     <p><b>Cyan dots</b> are our finds: places that match well and are far from any site scientists already use.
       <b>Light rings</b> are known analog sites, the test: if the method works, they should glow too.</p>
     <p>The scale is set for each site, so compare <b>scores</b>, not colours, between sites. No place on Earth can copy
-      gravity, air or radiation: see “About ${tn}”. Click any land for its score, or use “Compare only…” to see one property at a time.</p>`;
+      gravity, air or radiation: see “About ${tn}”. Click any land for its score, or use “Dimensional analysis” to see one property at a time.</p>`;
 }
 
 let raster = null;       // displayed score per grid pixel (NaN = not shown), for the contours
@@ -552,7 +549,6 @@ function selectTarget(id) {
   const count = (v) => targetCandidates().filter((c) => c.verdict === v).length;
   const parts = [[count("none"), "new find"], [count("under"), "little-studied find"], [count("known"), "known area found again"]]
     .filter(([n]) => n).map(([n, w]) => `${n} ${w}${n === 1 ? "" : "s"}`);
-  $("target-blurb").textContent = TARGET_BLURB[t.id] || "";
   $("site-more-title").textContent = `About ${shortName(t)} (${t.body === "moon" ? "Moon" : "Mars"})`;
   $("site-counts").textContent = parts.length ? `Our search on Earth: ${parts.join(", ")}.` : "";
   const m = MISSIONS[t.id];
@@ -844,13 +840,12 @@ function showPlace(lat, lng, { quiet = false, point = null } = {}) {
   // --- score, good for, different in ---
   if (i < 0) {
     simple += `<p class="note">Sea, or outside our land map: no score.</p>`;
-  } else if (Number.isNaN((state.compare.size ? fullScores() : state.overall)[i])) {
+  } else if (Number.isNaN(state.overall[i])) {
     simple += `<p class="note">Not enough satellite data here to compare with ${tn}.</p>`;
   } else {
-    // In "Compare only…" the headline stays the full score on all dimensions; the score on the ticked
-    // ones is its own line (it is often 100 where the site is beyond anything on Earth).
-    const headline = state.compare.size ? fullScores() : state.overall;
-    const s = headline[i], pct = areaPercentile(s, headline);
+    // One score: in the dimensional analysis it is the score on the ticked properties only.
+    const s = state.overall[i], pct = areaPercentile(s, state.overall);
+    const onWhat = state.compare.size ? ` on ${esc(andList([...state.compare].map((d) => dimName(d).toLowerCase())))}` : "";
     // Rainfall (aridity) is kept out of the lists: the satellite estimate cannot tell dry from extremely
     // dry deserts, so it would be "different" almost everywhere (decision in CLAUDE.md, 2026-11-14).
     const scored = state.grid.meta.dimensions.map((d, k) => ({ d, s: state.dims.dimScores[i * state.dims.nd + k] }))
@@ -861,13 +856,8 @@ function showPlace(lat, lng, { quiet = false, point = null } = {}) {
 
     const topShare = Math.max(1, Math.round((1 - pct) * 100));
     simple += `<div class="place-top"><div class="score-big"><strong>${Math.round(s * 100)}<small>/100</small></strong>
-      <span>similar to ${tn}</span>
+      <span>similar to ${tn}${onWhat}</span>
       <em class="pct">${pct >= 0.5 ? `Top ${topShare}% of Earth's land` : `More similar than ${Math.round(pct * 100)}% of land`}</em></div><div>${fingerprintSVG(i)}<p class="fp-note">dashed ring = ${tn}</p></div></div>`;
-    if (state.compare.size) {
-      const c = state.overall[i], names = andList([...state.compare].map((d) => dimName(d).toLowerCase()));
-      simple += `<p class="compare-score"><b>${Number.isNaN(c) ? "–" : Math.round(c * 100)}</b>/100 on ${esc(names)} only
-        <span class="sub">(the big number is the score on all properties)</span></p>`;
-    }
     const uses = good.filter((x) => USE[x.d]).slice(0, 2).map((x) => USE[x.d]);
     if (s >= 0.5 && uses.length) simple += `<p class="line good">${ICON.good}<span><b>Good for practising</b> ${andList(uses)}</span></p>`;
     else if (s < 0.5) simple += `<p class="line muted">Too different from ${tn} to be a useful practice site.</p>`;
@@ -999,7 +989,7 @@ function countryAt(lat, lng) {
   return null;
 }
 
-// ---------- "Compare only…": score on chosen dimensions ----------
+// ---------- "Dimensional analysis": score on chosen dimensions ----------
 // Ticked = weight 1, unticked = weight 0: just another setting of the existing sliders (score.js
 // drops weight-0 dimensions from the weighted mean). The glow and a live top 5 then show which
 // places match the site on those dimensions alone.
@@ -1036,7 +1026,7 @@ function syncCompareUI() {
     b.setAttribute("aria-pressed", state.compare.has(b.dataset.dim) ? "true" : "false");
   }
   $("compare").classList.toggle("on", on);
-  $("compare-title").textContent = on ? "Comparing only:" : "Compare only…";
+  $("compare-title").textContent = "Dimensional analysis";
   // notes: values beyond anything on Earth (every place scores low on them) and the rainfall caveat
   const notes = [], t = state.target, tn = esc(shortName(t)), feats = state.grid.meta.features;
   for (const d of state.compare) {
@@ -1089,10 +1079,6 @@ function liveTop(k = 5) {
 }
 
 // ---------- site cards, top finds ----------
-const SITE_LINE = {
-  jezero: "Perseverance · 2021", gale: "Curiosity · 2012", utopia: "Zhurong · 2021",
-  arcadia: "First crews?", shackleton: "Artemis south pole", marius_hills: "Lava tubes",
-};
 function buildSites(meta) {
   const box = $("sites");
   box.innerHTML = "";
@@ -1113,7 +1099,6 @@ function buildSites(meta) {
       b.setAttribute("aria-checked", "false");
       b.disabled = !ok;
       b.innerHTML = `<span class="site-name">${esc(shortName(t))}</span>
-        <span class="site-line">${esc(SITE_LINE[t.id] || "")}</span>
         <span class="site-finds">${ok ? (finds ? `<i class="dot new"></i>${finds} new find${finds === 1 ? "" : "s"}` : "no new finds") : "values pending"}</span>`;
       b.addEventListener("click", () => { if (state.target?.id !== t.id) selectTarget(t.id); });
       grid.appendChild(b);
@@ -1161,7 +1146,7 @@ function renderTopFinds() {
   }));
 }
 
-// "Compare only…": the five best places on the ticked dimensions, ranked live over every land cell.
+// "Dimensional analysis": the five best places on the ticked dimensions, ranked live over every land cell.
 function renderLiveTop() {
   const t = state.target, list = liveTop(5);
   const names = [...state.compare].map((d) => dimName(d).toLowerCase());
@@ -1174,7 +1159,7 @@ function renderLiveTop() {
     p.sub = [reg.name && country !== reg.name ? country : null, fmtLatLon(p.lat, p.lng)].filter(Boolean).join(" · ");
     p.full = full[p.i];
     // globe dot (cyan, pulsing) for this live result
-    Object.assign(p, { kind: "live", colour: FIND.colour, radius: 0.5, alt: 0.012, style: { pulse: 0.75, rgb: FIND.rgb },
+    Object.assign(p, { kind: "live", colour: FIND.colour, radius: 1.0, alt: 0.012, style: { pulse: 0.75, rgb: FIND.rgb },
       title: `#${k + 1} on ${andList(names)}`, subtitle: p.name });
   }
   // Ties: when several places share the top score (the site is beyond anything on Earth on this
@@ -1192,7 +1177,7 @@ function renderLiveTop() {
   $("top-finds-list").innerHTML = list.map((p, k) => `<li><button type="button" class="find-row" data-k="${k}">
       <span class="rank">${k + 1}</span>
       <span class="find-name">${esc(p.name)}<small>${esc(p.sub)}</small></span>
-      <span class="score-pair"><b>${Math.round(p.s * 100)}</b><small>${Number.isNaN(p.full) ? "–" : Math.round(p.full * 100)} on all</small></span></button></li>`).join("");
+      <b>${Math.round(p.s * 100)}</b></button></li>`).join("");
   state.live = list;
   updateLayers();
   $("top-finds-list").querySelectorAll(".find-row").forEach((b) => b.addEventListener("click", () => {

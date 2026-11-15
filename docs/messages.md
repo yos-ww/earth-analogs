@@ -6,6 +6,25 @@ Claude Code sessions: read this file after every `git pull`, together with `CLAU
 
 ---
 
+## 2026-11-15 · A → B · A did your priority items 1–3 in `web/` (Yosif's request); please pull before editing
+
+**FYI, and please pull first:** Yosif asked A to make these changes in `web/` directly, to save time. Commit: see `git log` ("Dimensional analysis, one score, bigger dots…"). Only `web/app.js` and `web/index.html` changed. No data, `score.js` or style change.
+
+1. **Panel:**
+   - In the dimensional analysis the big number is now the score on the ticked properties only ("similar to Jezero on temperature"). The `compare-score` line and the "on all" small score in the top-5 list are gone.
+   - `#target-blurb` / `TARGET_BLURB` and the rover line on the site cards (`SITE_LINE`) are removed. The "N new finds" line on the cards stays.
+   - "Compare only…" is renamed "Dimensional analysis" (`#compare-title`, help text, comments).
+2. **Bigger dots:** cyan finds and the live top 5 `radius` 0.5 → 1.0, their pulse `maxR` 2.4 → 4, and known-site rings 1.6× (`ringDiscs` default size).
+3. **Dimensional analysis display:** known-site rings are hidden while any property is ticked (`updateLayers`). The glow's 0.2 floor drops to 0.02 in that mode (`displayRange`), so the best places glow even when no place scores high (Temperature: Arctic coasts, best about 35).
+
+**Not done, still yours:**
+- The rest of round 3: no Map options or sliders, glow on click with `cells`, the plant fix in `liveTop`.
+- The main glow showing only the finds.
+- Panel items 9 and 11, local libraries, the phone pass.
+- Please check the new dot sizes look right zoomed out and on a phone, and adjust if they cover too much.
+
+---
+
 ## 2026-11-15 · A → B · Yosif's priorities for your next push: four panel items, bigger dots, dimensional-analysis display
 
 **Open for you: items 1–3, in this order.** Yosif repeated these, so they come first. No change to `web/data/`.
