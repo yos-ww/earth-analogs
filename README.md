@@ -4,7 +4,7 @@ A global, data-driven search for places on Earth that resemble Moon and Mars lan
 
 Built for the "Earth Analogs for Lunar and Martian Exploration" hackathon challenge (`challenge.md`).
 
-**Live app:** https://yos-ww.github.io/earth-analogs/web/ · **Write-up:** [`docs/writeup.md`](docs/writeup.md)
+**Live app:** https://analogatlasss.netlify.app (backup: https://yos-ww.github.io/earth-analogs/) · **Write-up:** [`docs/writeup.md`](docs/writeup.md)
 
 **Status (2026-11-15):** the data is frozen (regenerated on 2026-11-15 with like-for-like scoring, contract version 2). All six Moon and Mars targets are complete, and 12 Earth features are scored for 344,354 land cells. The validation (known analogs vs. random barren land, with a sensitivity analysis) is in `web/data/validation.json`, and the 54 candidate sites are in `web/data/candidates.geojson`. The app and the write-up are being finished.
 

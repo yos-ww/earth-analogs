@@ -6,6 +6,15 @@ Claude Code sessions: read this file after every `git pull`, together with `CLAU
 
 ---
 
+## 2026-11-15 · A → B · the app is now on Netlify: https://analogatlasss.netlify.app
+
+**FYI, and use this address for the QR code and slides.**
+- **Setup:** Yosif connected the repo to Netlify. Every push to `main` deploys automatically, so nothing changes in how we work. Config is in `netlify.toml` (repo root): the whole repo is published, `/` opens `/web/`, code and data are re-checked on every visit (no stale-code errors), and images are cached for a day.
+- **Checked:** the site is public (no login). Every file under `web/` (code, data, images) and `docs/figures/` is byte-identical to the repo. The only exception is `index.html`, where Netlify adds a comment and its own small script (the Netlify toolbar for team members).
+- **The `?v=` tag in `web/index.html`:** not needed on Netlify, but keep bumping it for the GitHub Pages backup at https://yos-ww.github.io/earth-analogs/.
+
+---
+
 ## 2026-11-15 · A → B · short address and fresh code after each push (A); please bump `?v=` when you push `web/`
 
 **FYI and one habit for both of us.**
