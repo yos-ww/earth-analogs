@@ -13,7 +13,7 @@
 - For the Makran and Chagai parts of the belt, that search found no analog study at all.
 - A deeper search is still needed before calling any of it unrecognised.
 
-**Does it work?** We tested the method on 37 places scientists already use. Known Mars analogs rank above plain desert: better than 90% of Earth's land, against 72% for random barren land (p ≈ 0.005). The result holds for Jezero and Arcadia on their own, but not for Utopia, and it is not corrected for testing several targets. For the Moon there are too few independent sites to conclude, and we make no claim.
+**Does it work?** We tested the method on 37 places scientists already use. Known Mars analogs rank above plain desert: better than 90% of Earth's land, against 72% for random barren land (p ≈ 0.005). The result holds for Jezero and Arcadia on their own, Gale is borderline (p ≈ 0.05) and Utopia does not pass, and it is not corrected for testing several targets. For the Moon there are too few independent sites to conclude, and we make no claim.
 
 **Where it breaks down.**
 - The score cannot see life, caves, buried ice or practical access.
@@ -319,12 +319,11 @@ Open **https://yos-ww.github.io/earth-analogs/web/** in a desktop browser. Press
 
 1. **Pick a site** on Mars or the Moon. Earth glows where it is similar: the brighter and redder, the closer.
 2. **Read the dots.**
-   - Green: a new find, with no analog study found in our first-pass literature search.
-   - Yellow: a little-studied find.
-   - Grey: a known area our search found too.
-   - Small orange and white dots: places scientists already use for Mars and the Moon.
-3. **Click a dot or any land.** The panel gives a score out of 100, what the place is good for practising and where it is different. "More details" has every number and the comparison with all six targets.
-4. **Open the fold-outs** for more:
+   - Cyan dots: our finds. The panel says whether our first-pass literature search found no analog study, a few studies ("little studied"), or none yet checked.
+   - Small light rings: places scientists already use for the chosen body, and known areas our search found again. They are the test: if the method works, they glow too.
+3. **Click a dot or any land.** The panel gives the country and coordinates, a score out of 100, what the place is good for practising and where it is different. "More details" has every number and the comparison with all six targets.
+4. **Compare only…** Tick one or more properties (for example dust, or landscape and rock) to see which places on Earth match the site on just those, with a live top 5. Some properties cannot be matched at all: every Mars and Moon site is colder than anywhere on Earth, and the app says so.
+5. **Open the fold-outs** for more:
    - "About <site>": the mission, what teams must test on Earth first, and what Earth can never copy.
    - "Does it work?": the validation.
    - "Map options": layers, plus sliders that change how much each property counts.
@@ -337,7 +336,7 @@ Open **https://yos-ww.github.io/earth-analogs/web/** in a desktop browser. Press
 
 ### Deep dives (in progress)
 
-The first deep dive is the **Makran–Chagai–Hormozgan belt** (south-east Iran and south-west Pakistan), the top region for four of the six targets. It will cover what matches, where it breaks down and how it could help exploration. It follows a full Google Scholar and NASA ADS search: our first pass found no analog study for Makran and Chagai, and only conference comparisons of Iranian salt glaciers with Mars for the Hormozgan salt domes. Access to parts of the belt is difficult, so the deep dive will also name accessible places with similar scores, such as Egypt's Eastern Desert or central Saudi Arabia (Utopia's third candidate).
+The first deep dive is the **Makran–Chagai–Hormozgan belt** (south-east Iran and south-west Pakistan), the top region for four of the six targets. It will cover what matches, where it breaks down and how it could help exploration. It follows a full Google Scholar and NASA ADS search: our first pass found no analog study for Makran and Chagai, and only conference comparisons of Iranian salt glaciers with Mars for the Hormozgan salt domes. Access to parts of the belt is difficult, so the deep dive will also name accessible places with similar scores, such as Egypt's Eastern Desert (a candidate for all six targets) or the Kuwait desert (Utopia's second candidate).
 
 ### Next steps
 

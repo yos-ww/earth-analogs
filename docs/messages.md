@@ -6,7 +6,55 @@ Claude Code sessions: read this file after every `git pull`, together with `CLAU
 
 ---
 
+## 2026-11-15 · B → A · contract v2 done on B's side; checked against your data; four things for you
+
+**Open for you: questions 1–4. Everything else is FYI.** It answers your entry below (items 1–6). No change to `web/data/` or the contract.
+
+**Done (your items 1–6):**
+1. **`web/score.js`** follows contract v2: `directional()` uses `min`/`max`, and every feature is scored like-for-like. The golden check is **306/306** against the new `tests/golden_scores.json`.
+2. **Texts in `web/app.js` and `web/tour.js`:**
+   - **Compare notes** now read "No place on Earth reaches Gale Crater's coldest-month night temperature and day-night range, so every place scores low on temperature".
+   - **The tie note** no longer explains ties as one-sided.
+   - **"Does it work?"** is rewritten from `validation.json`: "Only about 1 in 210 random sets of plain desert do this well (p ≈ 0.005), so for Mars as a whole the method works". A limits line follows, built from the data: it depends on the definition of plain desert, it is not corrected for testing several sites, and Gale (p ≈ 0.05) and Utopia (p ≈ 0.24) do not pass on their own. Each site's own line now says when known places rank **below** plain desert, as at Shackleton (61st vs 65th).
+   - **Ordinals and p-values:** fixed "72th", and "p ≈ 0.00" now reads 0.005.
+   - **Tour:** step 6 says "Only about 1 in 210 random sets of desert do as well. We also show where it fails". Step 3 no longer lists temperature as a match.
+3. **Literature check:** all 54 finds now have a verdict. Of the 17 that were "not checked yet":
+   - 2 needed a wider box (Tibesti to 20 E; Anti-Atlas to 29 N, 9.5 W).
+   - 1 was a box bug: Turpan at 42.6 N was meant to be in "Tarim/Kumtag", but that box stopped at 40 N.
+   - 14 are new regions.
+
+   **Totals:** 24 no analog study found, 15 little studied, 15 known area. Evidence and sources are in `docs/literature-check.md` ("Update 2026-11-15").
+4. **Pitch numbers:** the tour captions still hold. The Qatar line is now **54/100** for Jezero (was 55), still more similar than 98.7% of land. There are no slides yet, so nothing else quotes old numbers.
+5. **`docs/literature-check.md` and the deep dive:** the old table is marked as the 2026-11-14 run. The new table lists which find is in which region. In my write-up sections:
+   - "Central Saudi Arabia (Utopia's third candidate)" is no longer a find. It's replaced by "Egypt's Eastern Desert (a candidate for all six targets) or the Kuwait desert (Utopia's second candidate)".
+   - "How to use it" now describes cyan finds, rings, compare mode and country.
+   - In the Summary I added "Gale is borderline (p ≈ 0.05)" to your sentence.
+6. **Screenshots:** the write-up has no app screenshots (only your `docs/figures`), and the slides don't exist yet.
+
+Also fixed in compare mode:
+- The Moon's dust chip and Shackleton's rock chip are disabled, since those sites have no value there. Before, ticking them blanked the map.
+- When nothing on Earth comes close (temperature), the list says "Nothing on Earth comes close to Gale Crater on temperature: the best place scores 36/100". For Marius Hills (0/100 everywhere) there's no top 5 at all.
+
+**How I checked it against your data** (`.claude-local/checks/audit.mjs` and `fullcheck.mjs`, B's machine):
+- For all 6 sites, the browser's "beyond Earth" labels equal `validation.json` → `directional`.
+- **All 54 finds:** browser overall and all 8 dimension scores equal `candidates.geojson` (tolerance 6e-4), and `nearest_known_km` matches within 3 km.
+- **All 76 known-site percentiles** (6 sites) equal `validation.json` (largest difference 0.0005).
+- **Your before/after claims hold:** 30 same cells, 5 moved less than 150 km, 19 new; the #1 for Jezero, Gale, Utopia and Shackleton is the same cell.
+- **In the real page (headless Chrome):** the Top finds scores equal your scores; the Gale #1 panel shows 68/100, Iran, "Different in temperature"; the tour runs 8/8; no page errors.
+
+**Questions for you (science):**
+1. **Utopia #6 is green savanna** (northeast Nigeria, 10.88 N 10.62 E): `ndvi_max` 0.49, satellite rain about 880 mm/yr. It is in Utopia's top 1% (score 60, robustness 0.52) on landscape, brightness, dust, rock and no snow, with vegetation 0.12 and rain 0. It's the only find with vegetation below 0.5. Should finds be restricted to barren land (e.g. `ndvi_max` < 0.15, the same line as your validation baseline)? Or do we keep it and say so? The app currently says "green savanna with a rainy season" in its note.
+2. **"Dust in the air" is aerosol optical depth, so wildfire smoke counts as dust.** On dust alone, the best places for Jezero and Gale include northern Canada (around 66 N 112 W, boreal forest). Should the app call it "Dust and haze", and should the write-up say AOD includes smoke?
+3. **Temperature is now about 0 at every find** (the best on Earth is 31–50 for every site and 0 for Marius Hills). So it only lowers every warm place by about 1/8 and lifts polar cells a little. That's correct under the rule, but worth one sentence in the write-up: "No place on Earth can match Mars or Moon temperatures, so the best possible score for a warm desert is about 87".
+4. **Region outlines:** you prefer (b), a list of cells per find. B hasn't decided whether to do it before the pitch; we'll tell you.
+
+**Still open on B's side:** your panel items 9–11, then the phone pass. The tour step 5 "Doha" label still overlaps the arc's distance label.
+
+---
+
 ## 2026-11-15 · A → B · scoring is now like-for-like (contract version 2): data regenerated, six things for you
+
+**Done by B, 2026-11-15** (items 1–6; see the B → A entry above, which also has four questions for you).
 
 **Open for you: items 1–6. Item 1 first: until `web/score.js` is updated, the live app scores with the old rule while the finds come from the new one.** You agreed to the change in chat; this entry records what was done and what is left. It also answers your three questions (end of entry).
 

@@ -541,7 +541,9 @@ function selectTarget(id) {
     b.tabIndex = on ? 0 : -1;
   }
   state.dims = dimensionScores(state.grid, t);
-  // a new site keeps the "compare only" choice, so one property can be compared across sites
+  // a new site keeps the "compare only" choice, so one property can be compared across sites,
+  // minus properties this site has no value for (e.g. dust on the Moon)
+  for (const d of [...state.compare]) if (!targetHasDim(t, d)) state.compare.delete(d);
   state.weights = state.compare.size ? state.grid.meta.dimensions.map((d) => (state.compare.has(d) ? 1 : 0))
     : state.grid.meta.dimensions.map((d) => t.weights?.[d] ?? 1);
   syncCompareUI();
@@ -614,23 +616,33 @@ function renderTrust() {
   const v = state.validation;
   if (!v?.bodies?.mars) { $("trust").hidden = true; return; }
   const m = v.bodies.mars, moon = v.bodies.moon, t = v.targets?.[state.target?.id];
-  const oneIn = (p) => Math.max(1, Math.round(1 / p));
+  // "about 1 in 210": rounded to 10s above 50 so it does not look more precise than it is
+  const oneIn = (p) => { const x = 1 / p; return x > 50 ? Math.round(x / 10) * 10 : Math.max(1, Math.round(x)); };
+  const pc = (x) => ordinal(Math.round(x * 100));
+  // Mars sites that do not pass on their own (p > 0.05), read from the data
+  const weak = (m.targets || []).filter((id) => v.targets?.[id]?.p_vs_barren > 0.05)
+    .map((id) => `${esc(shortName(state.targets.find((x) => x.id === id) || { name: id }))} (p ≈ ${fmtP(v.targets[id].p_vs_barren)})`);
   let html = `<p>To test the method, we scored the places scientists <b>already use</b> to prepare for Mars and the Moon,
     and compared them with random <b>plain desert</b> (bare land without plants). If the method works, the known places should rank higher.</p>
     <h4>Mars (${m.n_sites} known places)</h4>
     ${trustBars([["Known Mars places", m.known_percentile_median, "known"], ["Plain desert", m.random_barren_median, "barren"], ["Any land", m.random_land_median, "land"]])}
     <p class="note">Numbers are percentiles of Earth's land (higher = more Mars-like).</p>
-    <p><b>Result:</b> known Mars places rank above plain desert (${Math.round(m.known_percentile_median * 100)}th vs
-      ${Math.round(m.random_barren_median * 100)}th percentile). The evidence is <b>modest</b>: about 1 in ${oneIn(m.p_vs_barren)} random sets
-      of plain desert would do this well (p ≈ ${m.p_vs_barren.toFixed(2)}), and it depends on how "plain desert" is defined.</p>`;
+    <p><b>Result:</b> known Mars places rank above plain desert (${pc(m.known_percentile_median)} vs
+      ${pc(m.random_barren_median)} percentile). Only about <b>1 in ${oneIn(m.p_vs_barren)}</b> random sets of plain desert do this well
+      (p ≈ ${fmtP(m.p_vs_barren)}), so for Mars as a whole the method works.</p>
+    <p class="note">Limits: the result depends on how "plain desert" is defined, it is not corrected for testing several sites${
+      weak.length ? `, and ${andList(weak)} ${weak.length === 1 ? "does" : "do"} not pass on ${weak.length === 1 ? "its" : "their"} own` : ""}.</p>`;
   if (moon) {
     html += `<h4>Moon (${moon.n_sites} known places)</h4>
       ${trustBars([["Known Moon places", moon.known_percentile_median, "known"], ["Plain desert", moon.random_barren_median, "barren"]])}
-      <p>The Moon test has <b>too few independent places</b> to conclude (half are in the USA), so we make no claim for it.</p>`;
+      <p>Known Moon places rank higher too (${pc(moon.known_percentile_median)} vs ${pc(moon.random_barren_median)}, p ≈ ${fmtP(moon.p_vs_barren)}),
+        but the test has <b>too few independent places</b> to conclude (half are in the USA), so we make no claim for the Moon.</p>`;
   }
   if (t) {
-    html += `<p class="note">For ${esc(shortName(state.target))} alone: known places ${Math.round(t.known_percentile_median * 100)}th vs plain desert
-      ${Math.round(t.random_barren_median * 100)}th percentile (p ≈ ${t.p_vs_barren.toFixed(3)}).</p>`;
+    const below = t.known_percentile_median < t.random_barren_median;
+    html += `<p class="note">For ${esc(shortName(state.target))} alone: known places ${pc(t.known_percentile_median)} vs plain desert
+      ${pc(t.random_barren_median)} percentile (p ≈ ${fmtP(t.p_vs_barren)}).${below
+        ? ` Here the known places rank <b>below</b> plain desert: the score does not pick them out for this site.` : ""}</p>`;
   }
   html += `<h4>What the score cannot see</h4>
     <p class="note">Life and biosignatures, caves and lava tubes, ice under the ground, and practical things like access and safety.
@@ -707,6 +719,10 @@ function describe(dim, i) {
 
 // "a", "a and b", "a, b and c"
 const andList = (xs) => (xs.length < 2 ? xs.join("") : `${xs.slice(0, -1).join(", ")} and ${xs[xs.length - 1]}`);
+// 1st, 2nd, 3rd, 11th, 72nd
+const ordinal = (n) => { const k = n % 100; return `${n}${k >= 11 && k <= 13 ? "th" : ["th", "st", "nd", "rd"][n % 10] || "th"}`; };
+// p-values: 0.0004 -> "< 0.001", 0.0047 -> "0.005", 0.24 -> "0.24"
+const fmtP = (p) => (p < 0.001 ? "< 0.001" : p < 0.01 ? p.toFixed(3) : p.toFixed(2));
 
 const verdictWord = (s) => (s >= 0.8 ? "very similar" : s >= 0.6 ? "similar" : s >= 0.4 ? "partly similar" : "different");
 
@@ -850,7 +866,7 @@ function showPlace(lat, lng, { quiet = false, point = null } = {}) {
     if (state.compare.size) {
       const c = state.overall[i], names = andList([...state.compare].map((d) => dimName(d).toLowerCase()));
       simple += `<p class="compare-score"><b>${Number.isNaN(c) ? "–" : Math.round(c * 100)}</b>/100 on ${esc(names)} only
-        <span class="sub">(the big number is the score on all 8 properties)</span></p>`;
+        <span class="sub">(the big number is the score on all properties)</span></p>`;
     }
     const uses = good.filter((x) => USE[x.d]).slice(0, 2).map((x) => USE[x.d]);
     if (s >= 0.5 && uses.length) simple += `<p class="line good">${ICON.good}<span><b>Good for practising</b> ${andList(uses)}</span></p>`;
@@ -992,6 +1008,7 @@ function buildCompare() {
   const box = $("compare-chips");
   box.innerHTML = state.grid.meta.dimensions.map((d) =>
     `<button type="button" class="chip-btn" data-dim="${d}" aria-pressed="false">${esc(dimName(d))}</button>`).join("");
+  // (chips the current site has no value for are disabled in syncCompareUI)
   box.querySelectorAll("[data-dim]").forEach((b) => b.addEventListener("click", () => {
     const d = b.dataset.dim;
     if (state.compare.has(d)) state.compare.delete(d); else state.compare.add(d);
@@ -1006,26 +1023,30 @@ function applyCompare() {
   buildSliders();
   rescore({ fade: true });
 }
+// Does the site have a value for any feature of this dimension? (The Moon has no dust value, Shackleton no rock value.)
+function targetHasDim(t, d) {
+  return state.grid.meta.features.some((f) => f.dimension === d && t.features[f.id] && !t.features[f.id].na);
+}
 function syncCompareUI() {
   const on = state.compare.size > 0;
   for (const b of $("compare-chips").querySelectorAll("[data-dim]")) {
+    const has = targetHasDim(state.target, b.dataset.dim);
+    b.disabled = !has;
+    b.title = has ? "" : `No ${dimName(b.dataset.dim).toLowerCase()} value for ${shortName(state.target)}`;
     b.setAttribute("aria-pressed", state.compare.has(b.dataset.dim) ? "true" : "false");
   }
   $("compare").classList.toggle("on", on);
   $("compare-title").textContent = on ? "Comparing only:" : "Compare only…";
-  // notes: one-sided features (target beyond Earth's range) and the rainfall caveat
+  // notes: values beyond anything on Earth (every place scores low on them) and the rainfall caveat
   const notes = [], t = state.target, tn = esc(shortName(t)), feats = state.grid.meta.features;
   for (const d of state.compare) {
     const dir = feats.filter((f) => f.dimension === d && state.dims.directional[f.id]);
     if (!dir.length) continue;
-    if (d === "temperature" && dir.some((f) => state.dims.directional[f.id] === "low")) {
-      notes.push(`Earth never gets as cold as ${tn}, so this shows Earth's coldest places.`);
-    } else {
-      notes.push(`${esc(dimName(d))}: ${tn} is beyond anything on Earth, so this shows Earth's most extreme places.`);
-    }
+    const what = dir.map((f) => (f.label || f.id).toLowerCase());
+    notes.push(`No place on Earth reaches ${tn}'s ${esc(andList(what))}, so every place scores low on ${esc(dimName(d).toLowerCase())}.`);
   }
   if (state.compare.has("aridity")) {
-    notes.push("Rainfall: the rain satellite reads 0 over Antarctica, so it comes first; in deserts its estimate is too high.");
+    notes.push("Rainfall: the satellite estimate is too high in deserts and close to 0 over ice sheets, so this ranking is rough.");
   }
   $("compare-note").innerHTML = notes.join("<br>");
   $("compare-note").hidden = !notes.length;
@@ -1157,15 +1178,21 @@ function renderLiveTop() {
       title: `#${k + 1} on ${andList(names)}`, subtitle: p.name });
   }
   // Ties: when several places share the top score (the site is beyond anything on Earth on this
-  // property), say so: they are then ordered by their score on all 8 properties.
-  const ties = list.filter((p) => Math.round(p.s * 100) === Math.round(list[0].s * 100)).length;
-  $("top-finds-note").hidden = ties < 2;
-  $("top-finds-note").textContent = ties < 2 ? "" : `${ties === list.length ? "All five" : `The first ${ties}`} score ${Math.round(list[0].s * 100)} on ${andList(names)}${
-    Math.round(list[0].s * 100) === 100 ? ` (many places on Earth reach the closest possible value to ${shortName(t)})` : ""}, so they are ordered by their score on all 8 properties.`;
+  // property), say so: they are then ordered by their full score.
+  const ties = list.length ? list.filter((p) => Math.round(p.s * 100) === Math.round(list[0].s * 100)).length : 0;
+  const best = list.length ? Math.round(list[0].s * 100) : 0;
+  // Nothing on Earth comes close (e.g. temperature: every Mars and Moon site is far colder): say so
+  // instead of presenting a "top 5" of poor matches.
+  const far = best < 50;
+  $("top-finds-note").hidden = !far && ties < 2;
+  $("top-finds-note").textContent = far
+    ? `Nothing on Earth comes close to ${shortName(t)} on ${andList(names)}: the best place scores ${best}/100.${best < 5 ? "" : " These are the least different places."}`
+    : ties < 2 ? "" : `${ties === list.length ? "All five" : `The first ${ties}`} score ${best} on ${andList(names)}, so they are ordered by their score on all properties.`;
+  if (far && best < 5) list.length = 0;    // a ranking of zeros means nothing
   $("top-finds-list").innerHTML = list.map((p, k) => `<li><button type="button" class="find-row" data-k="${k}">
       <span class="rank">${k + 1}</span>
       <span class="find-name">${esc(p.name)}<small>${esc(p.sub)}</small></span>
-      <span class="score-pair"><b>${Math.round(p.s * 100)}</b><small>${Number.isNaN(p.full) ? "–" : Math.round(p.full * 100)} on all 8</small></span></button></li>`).join("");
+      <span class="score-pair"><b>${Math.round(p.s * 100)}</b><small>${Number.isNaN(p.full) ? "–" : Math.round(p.full * 100)} on all</small></span></button></li>`).join("");
   state.live = list;
   updateLayers();
   $("top-finds-list").querySelectorAll(".find-row").forEach((b) => b.addEventListener("click", () => {

@@ -75,7 +75,7 @@ Hours 7–11
 - [ ] Known-analog layer (done), candidate layer split by literature verdict (done), Earth-limits card (done), "Does it work?" panel from `validation.json` (done), About/method panel (still to do)
 
 Hours 14–17
-- [ ] First-pass literature check done (`docs/literature-check.md`, shown in the app); still to do: Scholar/ADS check, then set `novelty`, `name` and `dossier` in `data/candidate_notes.csv` (never in `web/data/`)
+- [ ] First-pass literature check done (`docs/literature-check.md`, shown in the app; all 54 finds of contract v2 have a verdict, 2026-11-15); still to do: Scholar/ADS check, then set `novelty`, `name` and `dossier` in `data/candidate_notes.csv` (never in `web/data/`)
 - [ ] Deep dives on the top 2–3 sites → `docs/sites/*.md` (match / breaks down / exploration use)
 
 Hours 17–21

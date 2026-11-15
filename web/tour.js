@@ -4,6 +4,7 @@
 
 const STEP_MS = 6500;                    // auto-play time per step
 const DOHA = { lat: 25.2854, lng: 51.531 }; // pitch venue (NASA Space Apps Doha)
+const ordinal = (n) => { const k = n % 100; return `${n}${k >= 11 && k <= 13 ? "th" : ["th", "st", "nd", "rd"][n % 10] || "th"}`; };
 
 function steps(api) {
   const v = api.validation()?.bodies?.mars;
@@ -27,7 +28,7 @@ function steps(api) {
     },
     {
       title: "Earth lights up",
-      text: "The glow shows where Earth is most like Jezero: landscape, temperature, rock type, dust and more. The brighter, the closer: white-hot is the top 1% of Earth's land.",
+      text: "The glow shows where Earth is most like Jezero: landscape, rock type, dust, bare ground and more. No place on Earth is as cold. The brighter, the closer: white-hot is the top 1% of Earth's land.",
       run() { api.flyTo(25, 52, 1.5, 2000); },
     },
     jez && {
@@ -47,7 +48,7 @@ function steps(api) {
     },
     v && {
       title: "Does it work?",
-      text: `We tested it: places scientists already use for Mars rank above plain desert (${Math.round(v.known_percentile_median * 100)}th vs ${Math.round(v.random_barren_median * 100)}th percentile of Earth's land). Modest evidence, and we say so.`,
+      text: `We tested it: places scientists already use for Mars rank above plain desert (${ordinal(Math.round(v.known_percentile_median * 100))} vs ${ordinal(Math.round(v.random_barren_median * 100))} percentile of Earth's land). Only about 1 in ${Math.round(1 / v.p_vs_barren / 10) * 10} random sets of desert do as well. We also show where it fails.`,
       run() { api.closePlace(); api.labels([]); api.flyTo(25, 40, 2.3, 1500); api.openFold("trust"); },
     },
     {

@@ -28,9 +28,10 @@ export function transform(value, kind) {
   return kind === "log1p" ? Math.log1p(value) : value;
 }
 
-// 'low' / 'high' if the target lies outside Earth's p1-p99 range, else null.
+// 'low' / 'high' if the target lies beyond Earth's actual range (min-max of the land cells), else null.
+// A label only (the app's "beyond Earth" badge): it does not change the score (contract version 2).
 export function directional(feature, t) {
-  return t < feature.p1 ? "low" : t > feature.p99 ? "high" : null;
+  return t < feature.min ? "low" : t > feature.max ? "high" : null;
 }
 
 // Per-feature scoring plan for one target: (target value t, sigma, mode) or null if skipped.
@@ -42,18 +43,15 @@ function featurePlan(meta, target) {
     const t = transform(entry.value, feat.transform);
     const d = directional(feat, t);
     if (d) dirs[feat.id] = d;
-    return { t, d, sigma: feat.sigma, p1: feat.p1, p99: feat.p99, dim: dims.indexOf(feat.dimension) };
+    return { t, sigma: feat.sigma, dim: dims.indexOf(feat.dimension) };
   });
   return { plan, dirs };
 }
 
-// Score (0-1) of one feature value f against its plan entry p.
+// Score (0-1) of one feature value f against its plan entry p: like-for-like for every feature.
+// A target beyond Earth's range scores low everywhere: Earth cannot match it.
 function featureScore(p, f) {
-  let diff;
-  if (p.d === "low") diff = Math.max(f - p.p1, 0);       // Earth can only reach p1
-  else if (p.d === "high") diff = Math.max(p.p99 - f, 0); // Earth can only reach p99
-  else diff = f - p.t;
-  const q = diff / p.sigma;
+  const q = (f - p.t) / p.sigma;
   return Math.exp(-q * q);
 }
 

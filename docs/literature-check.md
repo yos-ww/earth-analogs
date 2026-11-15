@@ -6,7 +6,64 @@ Question for each candidate region in `web/data/candidates.geojson` (55 candidat
 - "No analog study found" means none turned up in this pass. It does **not** yet justify the word `unrecognized`.
 - Before any site is called `unrecognized` in the app or the write-up, repeat the search in Google Scholar and NASA ADS, in English and the local language.
 
-## Summary
+## Update 2026-11-15: the 54 finds of contract version 2
+
+A's scoring change (like-for-like for every feature, `docs/messages.md` 2026-11-15) regenerated the finds: 54, of which 17 were outside every region box. B searched the new areas the same way, one or two first-pass searches each, and widened two boxes. **All 54 finds now have a verdict:** 24 "no analog study found", 15 little studied, 15 known area. The summary table further down is the 2026-11-14 run; its ranks are out of date, but its evidence still holds for the same regions.
+
+**Which find is in which region now** (generated from `web/data/candidates.geojson` and `web/regions.js`):
+
+| Region | Finds (target #rank) | Verdict |
+|---|---|---|
+| Makran coast (Iran–Pakistan) | Jezero #1 · Jezero #2 · Utopia #1 · Arcadia #1 · Marius Hills #4 | No analog study found |
+| Chagai and Registan deserts (Pakistan–Afghanistan) | Jezero #3 · Arcadia #2 | No analog study found |
+| Eastern Desert of Egypt, Red Sea Hills and Sinai | Jezero #4 · Gale #6 · Utopia #4 · Utopia #5 · Arcadia #5 · Shackleton #9 · Marius Hills #5 | No analog study found |
+| **Red Sea Hills of Sudan and western Eritrea** (new) | Jezero #7 · Shackleton #8 | No analog study found |
+| **Northeast Nigeria, Gombe–Bauchi** (new) | Utopia #6 | No analog study found (green savanna: see below) |
+| **Northeast Iran, Sarakhs / Kopet Dag foothills** (new) | Arcadia #3 | No analog study found |
+| **Biskra and the Saharan Atlas foothills, Algeria** (new) | Arcadia #6 | No analog study found |
+| **Hami Basin, China** (new) | Shackleton #6 | No analog study found |
+| **East of Lake Turkana, Kenya** (new) | Marius Hills #2 | No analog study found |
+| **Western Saudi lava fields, Harrat Khaybar area** (new) | Marius Hills #3 | No analog study found |
+| **Santa Cruz plateaus, Patagonia** (new) | Marius Hills #9 | No analog study found |
+| **Northern Patagonian basalt plateaus, Río Negro** (new) | Marius Hills #10 | No analog study found |
+| Tibesti and southern Libya (box widened east to 20 E) | Jezero #5 · Gale #7 | Little studied |
+| Southern coast of Peru | Jezero #9 · Gale #5 · Shackleton #4 | Little studied |
+| Southern Iran, Zagros salt domes | Gale #1 · Utopia #3 | Little studied |
+| Lut Desert and central Iran | Gale #4 · Shackleton #5 · Marius Hills #6 | Little studied |
+| **Kuwait desert** (new) | Utopia #2 | Little studied |
+| Hoggar and Tassili (Algeria) | Arcadia #4 | Little studied |
+| **Turpan Depression, China** (new box) | Shackleton #3 | Little studied |
+| Damaraland (Namibia) | Marius Hills #1 | Little studied |
+| Payunia volcanic field (Argentina) | Marius Hills #8 | Little studied |
+| Altiplano and Atacama | Jezero #6 · Gale #2 · Utopia #8 · Shackleton #1 | Known |
+| Nevada Great Basin | Jezero #8 | Known area |
+| **Mojave Desert and lower Colorado River** (new) | Jezero #10 | Known area |
+| Qaidam Basin (China) | Gale #3 | Known |
+| Moroccan Sahara and Anti-Atlas (box widened to 29 N, 9.5 W) | Gale #8 · Shackleton #7 | Known area |
+| **Coober Pedy and the Arckaringa Basin, Australia** (new) | Utopia #7 | Known area |
+| Puna (Argentina) | Shackleton #2 | Known |
+| Antarctica | Shackleton #10 | Known |
+| Sonoran Desert | Marius Hills #7 | Known area |
+| Pilbara (Australia) | Marius Hills #11 | Known |
+| **Central Baja California, Mexico** (new) | Marius Hills #12 | Known area |
+
+**Evidence for the new regions** (first pass, 2026-11-15):
+
+- **Red Sea Hills of Sudan / western Eritrea** (17.6–18.1 N, 37.1–37.9 E): only Earth-observation descriptions (NASA Earth Observatory, "The Red Sea Hills of Sudan": granite hills with desert varnish). The analog work in the region is the Danakil/Dallol (Europlanet), several hundred km away.
+- **Northeast Nigeria** (10.9 N, 10.6 E): nothing. **Caveat:** this cell is green savanna (`ndvi_max` 0.49, satellite rain ≈ 880 mm/yr). It reaches the top 1% on landscape, ground brightness, dust and rock, with plants scoring 0.12 and rain 0. Asked A whether it should count as a find.
+- **Northeast Iran, Sarakhs / Kopet Dag foothills** (36.1 N, 60.4 E): nothing beyond general geography.
+- **Biskra, Algeria** (34.9 N, 5.9 E): nothing for this site. Chotts in general are cited as playa analogs for Martian evaporite basins (Komatsu et al. 2007, via secondary sources); Chott Melrhir is about 60 km south-east.
+- **Hami Basin, China** (43.9 N, 93.9 E): wind-erosion and yardang work (Kapp et al., Earth-Science Reviews 2024), not as a planetary analog. The Chinese yardang analog work is in the Qaidam Basin (Wang et al., JGR Planets 2018).
+- **East of Lake Turkana, Kenya** (2.9 N, 36.4 E): nothing; popular descriptions only ("extra-terrestrial landscape").
+- **Harrat Khaybar area, Saudi Arabia** (25.4 N, 39.1 E): astronaut photos and popular articles compare it with Mars or the Moon (NASA Earth Observatory, Slate 2010); no scientific analog study found.
+- **Santa Cruz and Río Negro plateaus, Patagonia** (46.6 S, 69.9 W; 40.6 S, 68.4 W): NASA SRTM and Earth Observatory descriptions of the basalt plateaus (Somuncurá, Los Menucos); no analog study.
+- **Kuwait** (29.1 N, 48.1 E) → little studied: a 2025 GIS site-selection study (Alharbi & Almatar, figshare dataset 28599647) proposes the Jal Az-Zor escarpment, about 50 km away, as a Mars analog site; NASA/JPL flew a MARSIS/SHARAD-like 40 MHz sounding radar over northern Kuwait's aquifers (Caltech news, 2011).
+- **Turpan Depression** (42.6 N, 88.1 E) → little studied: Reiss et al., LPSC 2012, "Dust devil tracks in the Turpan Depression desert (China): implications for their formation on Mars" (DLR elib 80270). The 2026-11-14 table listed this point under Tarim/Kumtag, but that box stopped at 40 N; it now has its own box.
+- **Mojave / lower Colorado River** (34.4 N, 114.4 W) → known area: Mojave (Dumont Dunes) is in our known list, 222 km away.
+- **Coober Pedy / Arckaringa** (28.1 S, 134.4 E) → known area: Mars Society Australia shortlisted the Arkaringa Hills near Coober Pedy for its MARS-Oz station and proposes Moon Plain (25 km NE of Coober Pedy) as a test site (SA Geological Survey MESA Journal; MSA field trips 2001–2023).
+- **Central Baja California** (28.6 N, 114.1 W) → known area: NASA Ames has studied the Guerrero Negro microbial mats, about 75 km away, for biosignatures relevant to Mars (Des Marais et al.; NASA Astrobiology Institute reports).
+
+## Summary (2026-11-14 run: 55 finds, ranks out of date)
 
 | Region | Candidates (target #rank) | Verdict | Why |
 |---|---|---|---|
