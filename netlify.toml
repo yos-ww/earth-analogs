@@ -1,0 +1,23 @@
+# Netlify: serve the repo as a static site (no build step). The app is in web/; the write-up figures it
+# links to are in docs/, so the whole repo is published.
+[build]
+  publish = "."
+
+# The bare address opens the app.
+[[redirects]]
+  from = "/"
+  to = "/web/"
+  status = 302
+  force = true
+
+# Code and data: browsers always check for a newer version (avoids old app.js with a new index.html).
+[[headers]]
+  for = "/web/*"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
+
+# Images rarely change and are large (8K Earth): keep them for a day.
+[[headers]]
+  for = "/web/img/*"
+  [headers.values]
+    Cache-Control = "public, max-age=86400"
