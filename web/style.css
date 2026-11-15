@@ -12,7 +12,7 @@
   --accent: #e2683c;          /* Mars rust */
   --accent-soft: rgba(226, 104, 60, 0.14);
   --find: #2ee8ff;            /* our finds (cyan), on the red glow */
-  --ring: #eef2f7;            /* known sites (hollow rings) */
+  --ring: #ff3b3b;            /* known sites (red dots) */
   --new: var(--find);
   --under: var(--find);
   --known: #8b93a5;
@@ -265,7 +265,7 @@ select:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
 
 /* two kinds of dot: our finds (filled cyan) and known sites (hollow light ring, dark outline) */
 .dot.new, .dot.under, .dot.unchecked { background: var(--find); box-shadow: 0 0 6px rgba(46, 232, 255, 0.55); }
-.dot.ring { width: 9px; height: 9px; background: #0b0e14; border: 2px solid var(--ring); box-shadow: 0 0 0 1px #0b0e14; }
+.dot.ring { width: 9px; height: 9px; background: var(--ring); box-shadow: 0 0 0 1.5px #0b0e14; }
 .tag.find { background: var(--find); }
 .tag.known { background: var(--ring); }
 

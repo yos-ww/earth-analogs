@@ -36,23 +36,21 @@ const RESUME_ROTATE_MS = 2500;  // auto-rotation resumes this long after the use
 const ICE_SHEET_FROM = 0.9;     // snow_ice fraction from which a cell counts as permanent ice sheet
 const COLOURS = { click: "255,255,255" };
 // Two kinds of dot, matching the story: our finds (the discoveries) are filled bright cyan dots that
-// pulse; known sites (the test) are small hollow light rings with a dark outline. Cyan stands out on the
-// whole red -> white-hot glow and is safe for red-green colour blindness. The finer literature verdict
-// stays in the panel text (heading).
+// pulse; known sites (the test) are filled red dots with a dark outline (Yosif, 2026-11-15). The outline keeps
+// them visible on the red glow. The finer literature verdict stays in the panel text (heading).
 const FIND = { colour: "#2ee8ff", rgb: "46,232,255" };
-const RING = { outline: "#0b0e14", ring: "#eef2f7" };
+const RING = { outline: "#0b0e14", ring: "#ff3b3b" };   // known sites: red dot, dark outline
 const CAND_STYLE = {
   none:      { ...FIND, radius: 1.0, alt: 0.012, pulse: 0.75, heading: "New find", group: "finds" },
   under:     { ...FIND, radius: 1.0, alt: 0.012, pulse: 0.75, heading: "Little-studied find", group: "finds" },
   unchecked: { ...FIND, radius: 1.0, alt: 0.012, pulse: 0.75, heading: "Candidate (not checked yet)", group: "finds" },
   known:     { ...RING, heading: "Known area our search found too", group: "confirms" },
 };
-// A hollow ring from three stacked discs (globe.gl points have no outline): dark rim, light ring, dark centre.
-function ringDiscs(d, size = 1.6) {   // 1.6: big enough to read as a ring when zoomed out
+// A known site: a filled red dot on a slightly larger dark disc (globe.gl points have no outline).
+function ringDiscs(d) {
   return [
-    { ...d, colour: RING.outline, radius: 0.36 * size, alt: 0.003 },
-    { ...d, colour: RING.ring,    radius: 0.29 * size, alt: 0.0045 },
-    { ...d, colour: RING.outline, radius: 0.17 * size, alt: 0.006 },
+    { ...d, colour: RING.outline, radius: 0.95, alt: 0.009 },
+    { ...d, colour: RING.ring,    radius: 0.78, alt: 0.0105 },
   ];
 }
 // Short axis names for the fingerprint radar.
@@ -265,10 +263,18 @@ function updateLayers() {
     (c.style.group === "finds" && state.showCandidates) || (c.style.group === "confirms" && state.showConfirms));
   // known sites of the current body only (Mars sites when a Mars site is picked): less clutter
   const analogs = state.showAnalogs ? state.analogs.filter((a) => a.bodyList.includes(state.target?.body)) : [];
-  // Dimensional analysis: the known sites test the full score, not one property, so their rings are hidden
-  // while properties are ticked (else e.g. Rio Tinto shows up under "Temperature", where it scores 0).
-  const knownDiscs = state.compare.size ? []
-    : [...analogs, ...cands.filter((c) => c.style.group === "confirms")].flatMap((d) => ringDiscs(d));
+  // Dimensional analysis: a known site is shown only if it scores as well as the glowing places on the
+  // ticked properties (at or above where the glow starts); else e.g. Rio Tinto would show under
+  // "Temperature", where it scores 0. Without ticked properties every known site of the body is shown.
+  let known = [...analogs, ...cands.filter((c) => c.style.group === "confirms")];
+  if (state.compare.size && state.overall) {
+    const cut = displayRange(state.overall).lo;
+    known = known.filter((d) => {
+      const i = cellIndex(state.grid, d.lat, d.lng);
+      return i >= 0 && !(state.hideIce && state.iceSheet[i]) && state.overall[i] >= cut;
+    });
+  }
+  const knownDiscs = known.flatMap((d) => ringDiscs(d));
   // "Dimensional analysis": the cyan dots are the live top 5 on the ticked dimensions, not the precomputed
   // finds (those were chosen on all dimensions together).
   const finds = state.live ? (state.showCandidates ? state.live : []) : cands.filter((c) => c.style.group === "finds");
@@ -332,7 +338,7 @@ function updateMapKey(lo, hi) {
     </ul>
     <p>The numbers at both ends of the bar are those two scores for ${tn}.</p>
     <p><b>Cyan dots</b> are our finds: places that match well and are far from any site scientists already use.
-      <b>Light rings</b> are known analog sites, the test: if the method works, they should glow too.</p>
+      <b>Red dots</b> are known analog sites, the test: if the method works, they should glow too.</p>
     <p>The scale is set for each site, so compare <b>scores</b>, not colours, between sites. No place on Earth can copy
       gravity, air or radiation: see “About ${tn}”. Click any land for its score, or use “Dimensional analysis” to see one property at a time.</p>`;
 }
@@ -366,7 +372,9 @@ function paintScores(values) {
   const band = (s) => (Number.isNaN(s) ? -1 : s >= CONTOURS[2] ? 3 : s >= CONTOURS[1] ? 2 : s >= CONTOURS[0] ? 1 : 0);
   const cp = contourImage.data;
   cp.fill(0);
-  for (let r = 0; r < nrows - 1; r++) {
+  // No contour lines in the dimensional analysis: on one property they trace the data's own grid
+  // (dust is 1° data, 4 x 4 cells), which shows as square lines.
+  for (let r = 0; r < (state.compare.size ? 0 : nrows - 1); r++) {
     for (let c = 0; c < ncols; c++) {
       const k = r * ncols + c, b = band(raster[k]);
       const br = band(raster[r * ncols + ((c + 1) % ncols)]), bd = band(raster[k + ncols]);
@@ -385,7 +393,10 @@ function paintScores(values) {
   texCtx.clearRect(0, 0, W, H);
   texCtx.imageSmoothingEnabled = true;
   texCtx.imageSmoothingQuality = "high";
-  texCtx.filter = `blur(${1.1 * GLOW_SCALE}px)`;   // soften the 0.25° cell edges into a field (ignored where unsupported)
+  // Soften the 0.25° cell edges into a field (ignored where unsupported). The dimensional analysis smooths
+  // more, and most for dust, whose data is 1° (4 x 4 cells), so every property reads as an even glow.
+  const blurCells = state.compare.size ? (state.compare.has("dust") ? 4 : 2) : 1.1;
+  texCtx.filter = `blur(${blurCells * GLOW_SCALE}px)`;
   texCtx.drawImage(scoreCanvas, 0, 0, W, H);
   texCtx.filter = "none";
   texCtx.drawImage(contourCanvas, 0, 0, W, H);
@@ -1090,7 +1101,6 @@ function buildSites(meta) {
     grid.className = "site-grid";
     for (const t of state.targets.filter((x) => x.body === body)) {
       const ok = targetCoverage(meta, t).have >= MIN_DIMENSIONS;
-      const finds = state.candidates.filter((c) => c.target_id === t.id && c.verdict === "none").length;
       const b = document.createElement("button");
       b.type = "button";
       b.className = `site-card ${body}`;
@@ -1098,8 +1108,7 @@ function buildSites(meta) {
       b.setAttribute("role", "radio");
       b.setAttribute("aria-checked", "false");
       b.disabled = !ok;
-      b.innerHTML = `<span class="site-name">${esc(shortName(t))}</span>
-        <span class="site-finds">${ok ? (finds ? `<i class="dot new"></i>${finds} new find${finds === 1 ? "" : "s"}` : "no new finds") : "values pending"}</span>`;
+      b.innerHTML = `<span class="site-name">${esc(shortName(t))}</span>${ok ? "" : `<span class="site-finds">values pending</span>`}`;
       b.addEventListener("click", () => { if (state.target?.id !== t.id) selectTarget(t.id); });
       grid.appendChild(b);
     }

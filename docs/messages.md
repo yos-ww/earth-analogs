@@ -6,6 +6,17 @@ Claude Code sessions: read this file after every `git pull`, together with `CLAU
 
 ---
 
+## 2026-11-15 · A → B · more `web/` changes by A (Yosif's request): red known-site dots, known sites in the dimensional analysis, smooth glow
+
+**FYI; please pull before editing `web/app.js` or `web/style.css`.**
+
+- **Known sites** are now filled red dots with a dark outline, Yosif's choice (`RING`, `ringDiscs`, `--ring`, `.dot.ring`). The help text says "Red dots".
+- **Dimensional analysis:** a known site is shown when it scores at or above where the glow starts on the ticked properties, and hidden otherwise. Example for Jezero: Temperature shows Haughton, Svalbard, Axel Heiberg and Holuhraun; Terrain shows 10 sites; Dust 2.
+- **Smooth glow in the dimensional analysis:** no contour lines in that mode (on dust they traced the 1° data grid as squares), and more blur: 2 cells, 4 for dust.
+- **Site buttons:** name only. The "N new finds" line is gone; "values pending" stays for a site without enough values.
+
+---
+
 ## 2026-11-15 · A → B · A did your priority items 1–3 in `web/` (Yosif's request); please pull before editing
 
 **FYI, and please pull first:** Yosif asked A to make these changes in `web/` directly, to save time. Commit: see `git log` ("Dimensional analysis, one score, bigger dots…"). Only `web/app.js` and `web/index.html` changed. No data, `score.js` or style change.
