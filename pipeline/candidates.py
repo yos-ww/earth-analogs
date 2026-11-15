@@ -5,7 +5,8 @@
 Per target with a complete enough profile (at least 4 scored dimensions):
  1. Score every land cell at the target's default weights. For the rocky Mars targets,
     permanent ice-sheet cells (snow_ice >= ICE_SHEET) are removed first.
- 2. Take the top TOP_FRAC of the remaining land area (cos-latitude weights) and group the cells into
+ 2. Take the top TOP_FRAC of the remaining land area (cos-latitude weights), keep only bare ground
+    (ndvi_max < BARREN_NDVI, the validation baseline), and group the cells into
     regions (8-connected, joined across the antimeridian). Regions need at least MIN_CELLS cells.
  3. Split each region at its local maxima (SPLIT_KM apart; every cell goes to its nearest maximum) so a
     candidate is site-scale, not a whole desert. Drop pieces whose best cell is within MIN_KNOWN_KM of
@@ -25,7 +26,7 @@ import geopandas as gpd
 import numpy as np
 from scipy.ndimage import label
 
-from .common import NCOLS, NROWS, ROOT, WEB_DATA, cell_weights
+from .common import BARREN_NDVI, NCOLS, NROWS, ROOT, WEB_DATA, cell_weights
 from .score import load_grid, score_target
 
 warnings.filterwarnings("ignore", message=".*geographic CRS.*")  # sjoin_nearest on degrees is fine at 1.5 deg
@@ -135,6 +136,9 @@ def candidates_for(grid, target, known, rng):
     k = np.searchsorted(cum, TOP_FRAC * w[eligible].sum())
     top = np.zeros(len(cells), bool)
     top[order[: k + 1]] = True
+    # finds are bare ground only (a missing NDVI is ice: no plants), taken from the top 1% of ALL land
+    jn = [f["id"] for f in meta["features"]].index("ndvi_max")
+    top &= np.nan_to_num(grid["values"][:, jn], nan=0.0) < BARREN_NDVI
 
     grid_mask = np.zeros(NROWS * NCOLS, bool)
     grid_mask[cells[top]] = True

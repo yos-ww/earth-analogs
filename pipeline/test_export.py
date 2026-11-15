@@ -5,7 +5,7 @@ import json
 
 import numpy as np
 
-from .common import DIMENSIONS, FEATURES, INTERIM, NCOLS, NROWS, WEB_DATA
+from .common import BARREN_NDVI, DIMENSIONS, FEATURES, INTERIM, NCOLS, NROWS, WEB_DATA
 from .golden import data_hash
 
 
@@ -29,6 +29,9 @@ def main():
     for j, f in enumerate(meta["features"]):
         assert f["min"] <= f["p1"] <= f["p99"] <= f["max"] and f["sigma"] > 0, f["id"]
         src = np.load(INTERIM / f"{f['id']}.npy").ravel()[cells].astype(np.float64)
+        if f["id"] == "aod":  # aerosol is scored only over bare ground (export.py)
+            ndvi = np.load(INTERIM / "ndvi_max.npy").ravel()[cells]
+            src[np.nan_to_num(ndvi, nan=0.0) >= BARREN_NDVI] = np.nan
         x = np.log1p(src) if f["transform"] == "log1p" else src
         ok = codes[:, j] != 255
         assert (ok == np.isfinite(x)).all(), f"{f['id']}: no-data flags differ from the source"

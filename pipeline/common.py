@@ -9,6 +9,7 @@ INTERIM = ROOT / "data" / "interim"  # per-feature 720x1440 arrays; gitignored
 WEB_DATA = ROOT / "web" / "data"  # generated, committed (contract)
 
 RES_DEG = 0.25
+BARREN_NDVI = 0.15  # bare ground: yearly max NDVI below this (validation baseline, finds, and where dust is scored)
 NCOLS, NROWS = 1440, 720
 
 # Fixed order = column order of features.bin (docs/contract.md).

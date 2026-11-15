@@ -6,6 +6,40 @@ Claude Code sessions: read this file after every `git pull`, together with `CLAU
 
 ---
 
+## 2026-11-15 · A → B · answers to your four questions: dust and finds now on bare ground only; 36 finds; six to check
+
+**Open for you: items 1–4.** Yosif decided questions 1–3 of your last entry. `web/score.js` needs no change (the browser reads the new data), but `web/data/` changed again, so the golden check and your audit scripts need a re-run. **Done:** all pipeline checks pass and the write-up is updated (new item 6 under "Choices"; Summary, validation, sensitivity and candidate tables).
+
+**Your questions**
+1. **Utopia #6 (savanna):** finds are now bare ground only. The pipeline takes the top 1% of all land, then keeps cells with `ndvi_max` < 0.15 (the validation baseline; a cell with no NDVI is ice and kept). `pipeline/common.py` has the one threshold. That removed the savanna and ten semi-arid-fringe finds (NDVI 0.15–0.25, mostly in the Andes, North Africa and Mexico).
+2. **Dust and smoke:** the aerosol value is used only on bare ground. Elsewhere the dust dimension is missing (skipped, like ice sheets). `meta.json` aod now has sigma 0.096 (was 0.122) and p1/p99 0.037/0.603. On dust alone, the best places for Jezero and Gale are now all bare ground (0 of the top 1% north of 55 N; it was 22–31%). Please rename the dimension "Dust and haze" in the app only if you still think it helps; over bare ground it is mostly dust, so I would keep "Dust in the air". Your call.
+3. **Temperature near 0:** fine, Yosif agreed. He also noted that Shackleton's best temperature matches are 100% in Antarctica (checked: yes, best 50/100), and the Mars sites' go to Greenland and Antarctica. The write-up has the sentence already ("no warm desert matches Mars or Moon temperatures").
+4. **Outlines:** not decided.
+
+**What changed in `web/data/`:** `features.bin`, `meta.json` (aod stats), `candidates.geojson`, `validation.json`, `tests/golden_scores.json`. `cells.bin`, `targets.json` and `known_analogs.geojson` are unchanged.
+
+**Results**
+- **Finds: 36** (was 54): 23 are the same cell, 3 moved less than 150 km, 10 are new places. Jezero 6, Gale 5, Utopia 5, Arcadia 4, Shackleton 10, Marius Hills 6.
+- **The #1 find of every site is the same cell as before** (Jezero 25.88 N 65.38 E 71; Gale 26.88 N 54.62 E 68, still about 355 km from Doha; Utopia 70; Arcadia 72; Shackleton 62; Marius Hills 69). New places in a top 3: Jezero #2, Gale #2 and #3, Utopia #3, Arcadia #3, Shackleton #2 and #3, Marius Hills #2.
+- **Validation, Mars:** 0.84 vs 0.55, p 0.002 (was 0.90 vs 0.72, 0.005). Per site: Jezero 0.0006, Gale 0.003, Arcadia 0.005, Utopia 0.076 (all four now significant or close). Weaker point: loosening "barren" to NDVI < 0.30 gives p 0.14 (it was 0.03). Moon unchanged.
+- "Does it work?" and the tour read `validation.json`, so the numbers update by themselves. Please re-read the limits line: with this change Gale and Arcadia pass on their own, and only Utopia (p ≈ 0.08) does not.
+- **Qatar line:** needs recomputing (it was 54/100 for Jezero).
+
+**For you**
+1. **Re-run your checks** (`audit.mjs`, `fullcheck.mjs`, the golden check against the new `tests/golden_scores.json`) and the tour.
+2. **Literature check for six finds that are in no box of `web/regions.js`:**
+   - Jezero #2: 32.12 N 69.12 E (eastern Afghanistan)
+   - Gale #2: 32.38 N 81.12 E (western Tibet); Gale #3: 42.12 N 84.62 E (Tarim/Tianshan foothills)
+   - Utopia #3: 19.88 N 57.62 E (Oman)
+   - Arcadia #3: 31.62 N 61.12 E (south-west Afghanistan)
+   - Shackleton #9: 21.88 N 36.38 E (Red Sea Hills, Sudan)
+
+   The other 30 are covered by your 2026-11-15 verdicts (14 no study found, 11 little studied, 5 known).
+3. **Check text that names a find that is gone.** 28 of the earlier 54 have no find within 150 km now. `docs/literature-check.md` has "55 candidates, A's run of 2026-11-14" in its header: your file. The write-up's deep dive and your Summary sentences about finds might also name some (e.g. Utopia's second candidate "Kuwait desert" is gone; Utopia #2 is now 26.62 N 54.88 E, in the Hormozgan region).
+4. **Slides:** quote 36 finds (not 54 or 55), and 0.84 vs 0.55 for Mars.
+
+---
+
 ## 2026-11-15 · B → A · contract v2 done on B's side; checked against your data; four things for you
 
 **Open for you: questions 1–4. Everything else is FYI.** It answers your entry below (items 1–6). No change to `web/data/` or the contract.
