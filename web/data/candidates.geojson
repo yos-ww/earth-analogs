@@ -14,11 +14,11 @@
     "id": "jezero-25.88N-065.38E",
     "name": "25.88, 65.38",
     "target_id": "jezero",
-    "score": 0.7244,
-    "robustness": 0.996,
+    "score": 0.718,
+    "robustness": 1.0,
     "dim_scores": {
      "terrain": 0.989,
-     "temperature": 0.051,
+     "temperature": 0.0,
      "vegetation": 0.923,
      "aridity": 0.0,
      "albedo": 0.989,
@@ -26,7 +26,7 @@
      "dust": 0.923,
      "geology": 0.92
     },
-    "area_km2": 47112,
+    "area_km2": 51960,
     "nearest_known_km": 798,
     "novelty": "under-studied",
     "dossier": null,
@@ -47,11 +47,11 @@
     "id": "jezero-25.88N-060.38E",
     "name": "25.88, 60.38",
     "target_id": "jezero",
-    "score": 0.6868,
+    "score": 0.6757,
     "robustness": 1.0,
     "dim_scores": {
      "terrain": 0.887,
-     "temperature": 0.089,
+     "temperature": 0.0,
      "vegetation": 0.917,
      "aridity": 0.0,
      "albedo": 0.989,
@@ -59,7 +59,7 @@
      "dust": 0.641,
      "geology": 0.972
     },
-    "area_km2": 25662,
+    "area_km2": 29120,
     "nearest_known_km": 397,
     "novelty": "under-studied",
     "dossier": null,
@@ -80,11 +80,11 @@
     "id": "jezero-29.12N-062.88E",
     "name": "29.12, 62.88",
     "target_id": "jezero",
-    "score": 0.6796,
+    "score": 0.6441,
     "robustness": 1.0,
     "dim_scores": {
      "terrain": 0.996,
-     "temperature": 0.284,
+     "temperature": 0.0,
      "vegetation": 0.954,
      "aridity": 0.0,
      "albedo": 0.995,
@@ -92,12 +92,45 @@
      "dust": 0.269,
      "geology": 0.94
     },
-    "area_km2": 2704,
+    "area_km2": 2027,
     "nearest_known_km": 835,
     "novelty": "under-studied",
     "dossier": null,
     "continent": "Asia",
     "rank": 3
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     35.375,
+     23.875
+    ]
+   },
+   "properties": {
+    "id": "jezero-23.88N-035.38E",
+    "name": "23.88, 35.38",
+    "target_id": "jezero",
+    "score": 0.6148,
+    "robustness": 0.998,
+    "dim_scores": {
+     "terrain": 0.968,
+     "temperature": 0.0,
+     "vegetation": 0.954,
+     "aridity": 0.001,
+     "albedo": 0.999,
+     "ice": 1.0,
+     "dust": 0.001,
+     "geology": 0.995
+    },
+    "area_km2": 10573,
+    "nearest_known_km": 1189,
+    "novelty": "under-studied",
+    "dossier": null,
+    "continent": "Africa",
+    "rank": 4
    }
   },
   {
@@ -113,11 +146,11 @@
     "id": "jezero-20.88N-017.62E",
     "name": "20.88, 17.62",
     "target_id": "jezero",
-    "score": 0.6481,
-    "robustness": 1.0,
+    "score": 0.6064,
+    "robustness": 0.94,
     "dim_scores": {
      "terrain": 0.983,
-     "temperature": 0.333,
+     "temperature": 0.0,
      "vegetation": 0.911,
      "aridity": 0.0,
      "albedo": 0.988,
@@ -125,12 +158,12 @@
      "dust": 0.004,
      "geology": 0.965
     },
-    "area_km2": 40432,
+    "area_km2": 32505,
     "nearest_known_km": 2470,
     "novelty": "under-studied",
     "dossier": null,
     "continent": "Africa",
-    "rank": 4
+    "rank": 5
    }
   },
   {
@@ -146,11 +179,11 @@
     "id": "jezero-19.88S-069.38W",
     "name": "-19.88, -69.38",
     "target_id": "jezero",
-    "score": 0.6477,
-    "robustness": 1.0,
+    "score": 0.606,
+    "robustness": 0.794,
     "dim_scores": {
      "terrain": 0.899,
-     "temperature": 0.334,
+     "temperature": 0.0,
      "vegetation": 0.949,
      "aridity": 0.0,
      "albedo": 1.0,
@@ -158,12 +191,45 @@
      "dust": 0.0,
      "geology": 1.0
     },
-    "area_km2": 24664,
+    "area_km2": 17411,
     "nearest_known_km": 308,
     "novelty": "under-studied",
     "dossier": null,
     "continent": "South America",
-    "rank": 5
+    "rank": 6
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     37.125,
+     18.125
+    ]
+   },
+   "properties": {
+    "id": "jezero-18.12N-037.12E",
+    "name": "18.12, 37.12",
+    "target_id": "jezero",
+    "score": 0.6019,
+    "robustness": 0.674,
+    "dim_scores": {
+     "terrain": 0.965,
+     "temperature": 0.0,
+     "vegetation": 0.858,
+     "aridity": 0.0,
+     "albedo": 0.988,
+     "ice": 1.0,
+     "dust": 0.007,
+     "geology": 0.998
+    },
+    "area_km2": 11781,
+    "nearest_known_km": 549,
+    "novelty": "under-studied",
+    "dossier": null,
+    "continent": "Africa",
+    "rank": 7
    }
   },
   {
@@ -179,11 +245,11 @@
     "id": "jezero-38.12N-117.88W",
     "name": "38.12, -117.88",
     "target_id": "jezero",
-    "score": 0.6417,
-    "robustness": 0.998,
+    "score": 0.6018,
+    "robustness": 0.63,
     "dim_scores": {
      "terrain": 0.964,
-     "temperature": 0.32,
+     "temperature": 0.0,
      "vegetation": 0.872,
      "aridity": 0.0,
      "albedo": 0.999,
@@ -191,77 +257,11 @@
      "dust": 0.0,
      "geology": 1.0
     },
-    "area_km2": 18230,
+    "area_km2": 17691,
     "nearest_known_km": 205,
     "novelty": "under-studied",
     "dossier": null,
     "continent": "North America",
-    "rank": 6
-   }
-  },
-  {
-   "type": "Feature",
-   "geometry": {
-    "type": "Point",
-    "coordinates": [
-     33.875,
-     26.125
-    ]
-   },
-   "properties": {
-    "id": "jezero-26.12N-033.88E",
-    "name": "26.12, 33.88",
-    "target_id": "jezero",
-    "score": 0.6475,
-    "robustness": 0.944,
-    "dim_scores": {
-     "terrain": 0.833,
-     "temperature": 0.201,
-     "vegetation": 0.954,
-     "aridity": 0.223,
-     "albedo": 0.969,
-     "ice": 1.0,
-     "dust": 0.002,
-     "geology": 0.998
-    },
-    "area_km2": 13215,
-    "nearest_known_km": 1481,
-    "novelty": "under-studied",
-    "dossier": null,
-    "continent": "Africa",
-    "rank": 7
-   }
-  },
-  {
-   "type": "Feature",
-   "geometry": {
-    "type": "Point",
-    "coordinates": [
-     5.875,
-     23.375
-    ]
-   },
-   "properties": {
-    "id": "jezero-23.38N-005.88E",
-    "name": "23.38, 5.88",
-    "target_id": "jezero",
-    "score": 0.6278,
-    "robustness": 0.914,
-    "dim_scores": {
-     "terrain": 0.879,
-     "temperature": 0.303,
-     "vegetation": 0.923,
-     "aridity": 0.0,
-     "albedo": 0.999,
-     "ice": 1.0,
-     "dust": 0.01,
-     "geology": 0.909
-    },
-    "area_km2": 7799,
-    "nearest_known_km": 1339,
-    "novelty": "under-studied",
-    "dossier": null,
-    "continent": "Africa",
     "rank": 8
    }
   },
@@ -278,11 +278,11 @@
     "id": "jezero-15.12S-075.12W",
     "name": "-15.12, -75.12",
     "target_id": "jezero",
-    "score": 0.6363,
-    "robustness": 0.864,
+    "score": 0.5946,
+    "robustness": 0.4,
     "dim_scores": {
      "terrain": 0.975,
-     "temperature": 0.333,
+     "temperature": 0.0,
      "vegetation": 0.98,
      "aridity": 0.0,
      "albedo": 0.999,
@@ -290,7 +290,7 @@
      "dust": 0.0,
      "geology": 0.803
     },
-    "area_km2": 8212,
+    "area_km2": 3727,
     "nearest_known_km": 1096,
     "novelty": "under-studied",
     "dossier": null,
@@ -303,31 +303,31 @@
    "geometry": {
     "type": "Point",
     "coordinates": [
-     -70.875,
-     -28.125
+     -114.375,
+     34.375
     ]
    },
    "properties": {
-    "id": "jezero-28.12S-070.88W",
-    "name": "-28.12, -70.88",
+    "id": "jezero-34.38N-114.38W",
+    "name": "34.38, -114.38",
     "target_id": "jezero",
-    "score": 0.618,
-    "robustness": 0.31,
+    "score": 0.5987,
+    "robustness": 0.396,
     "dim_scores": {
-     "terrain": 0.876,
-     "temperature": 0.263,
-     "vegetation": 0.827,
+     "terrain": 0.967,
+     "temperature": 0.0,
+     "vegetation": 0.843,
      "aridity": 0.0,
-     "albedo": 0.995,
+     "albedo": 0.979,
      "ice": 1.0,
      "dust": 0.0,
-     "geology": 0.983
+     "geology": 1.0
     },
-    "area_km2": 11600,
-    "nearest_known_km": 389,
+    "area_km2": 7600,
+    "nearest_known_km": 222,
     "novelty": "under-studied",
     "dossier": null,
-    "continent": "South America",
+    "continent": "North America",
     "rank": 10
    }
   },
@@ -344,11 +344,11 @@
     "id": "gale-26.88N-054.62E",
     "name": "26.88, 54.62",
     "target_id": "gale",
-    "score": 0.712,
-    "robustness": 0.996,
+    "score": 0.6824,
+    "robustness": 1.0,
     "dim_scores": {
-     "terrain": 0.852,
-     "temperature": 0.076,
+     "terrain": 0.692,
+     "temperature": 0.0,
      "vegetation": 0.865,
      "aridity": 0.0,
      "albedo": 0.91,
@@ -356,7 +356,7 @@
      "dust": 0.992,
      "geology": 1.0
     },
-    "area_km2": 17873,
+    "area_km2": 14441,
     "nearest_known_km": 570,
     "novelty": "under-studied",
     "dossier": null,
@@ -377,11 +377,11 @@
     "id": "gale-18.62S-069.88W",
     "name": "-18.62, -69.88",
     "target_id": "gale",
-    "score": 0.6489,
+    "score": 0.5953,
     "robustness": 1.0,
     "dim_scores": {
-     "terrain": 0.96,
-     "temperature": 0.334,
+     "terrain": 0.865,
+     "temperature": 0.0,
      "vegetation": 0.939,
      "aridity": 0.0,
      "albedo": 0.963,
@@ -389,78 +389,12 @@
      "dust": 0.0,
      "geology": 0.995
     },
-    "area_km2": 21252,
+    "area_km2": 15393,
     "nearest_known_km": 455,
     "novelty": "under-studied",
     "dossier": null,
     "continent": "South America",
     "rank": 2
-   }
-  },
-  {
-   "type": "Feature",
-   "geometry": {
-    "type": "Point",
-    "coordinates": [
-     88.625,
-     38.375
-    ]
-   },
-   "properties": {
-    "id": "gale-38.38N-088.62E",
-    "name": "38.38, 88.62",
-    "target_id": "gale",
-    "score": 0.639,
-    "robustness": 1.0,
-    "dim_scores": {
-     "terrain": 0.92,
-     "temperature": 0.338,
-     "vegetation": 0.905,
-     "aridity": 0.0,
-     "albedo": 1.0,
-     "ice": 0.946,
-     "dust": 0.003,
-     "geology": 1.0
-    },
-    "area_km2": 22004,
-    "nearest_known_km": 251,
-    "novelty": "under-studied",
-    "dossier": null,
-    "continent": "Asia",
-    "rank": 3
-   }
-  },
-  {
-   "type": "Feature",
-   "geometry": {
-    "type": "Point",
-    "coordinates": [
-     -73.625,
-     -16.125
-    ]
-   },
-   "properties": {
-    "id": "gale-16.12S-073.62W",
-    "name": "-16.12, -73.62",
-    "target_id": "gale",
-    "score": 0.6374,
-    "robustness": 1.0,
-    "dim_scores": {
-     "terrain": 0.953,
-     "temperature": 0.333,
-     "vegetation": 0.905,
-     "aridity": 0.0,
-     "albedo": 0.913,
-     "ice": 1.0,
-     "dust": 0.0,
-     "geology": 0.995
-    },
-    "area_km2": 9675,
-    "nearest_known_km": 907,
-    "novelty": "under-studied",
-    "dossier": null,
-    "continent": "South America",
-    "rank": 4
    }
   },
   {
@@ -476,11 +410,11 @@
     "id": "gale-39.38N-094.12E",
     "name": "39.38, 94.12",
     "target_id": "gale",
-    "score": 0.637,
+    "score": 0.5952,
     "robustness": 1.0,
     "dim_scores": {
-     "terrain": 0.978,
-     "temperature": 0.28,
+     "terrain": 0.922,
+     "temperature": 0.002,
      "vegetation": 0.879,
      "aridity": 0.0,
      "albedo": 0.985,
@@ -488,12 +422,12 @@
      "dust": 0.0,
      "geology": 0.995
     },
-    "area_km2": 4775,
+    "area_km2": 4179,
     "nearest_known_km": 243,
     "novelty": "under-studied",
     "dossier": null,
     "continent": "Asia",
-    "rank": 5
+    "rank": 3
    }
   },
   {
@@ -501,32 +435,65 @@
    "geometry": {
     "type": "Point",
     "coordinates": [
-     17.875,
-     19.875
+     57.625,
+     30.625
     ]
    },
    "properties": {
-    "id": "gale-19.88N-017.88E",
-    "name": "19.88, 17.88",
+    "id": "gale-30.62N-057.62E",
+    "name": "30.62, 57.62",
     "target_id": "gale",
-    "score": 0.5994,
-    "robustness": 0.73,
+    "score": 0.5883,
+    "robustness": 1.0,
     "dim_scores": {
-     "terrain": 0.686,
-     "temperature": 0.257,
-     "vegetation": 0.923,
+     "terrain": 0.896,
+     "temperature": 0.0,
+     "vegetation": 0.917,
      "aridity": 0.0,
-     "albedo": 0.931,
+     "albedo": 0.892,
      "ice": 1.0,
-     "dust": 0.001,
+     "dust": 0.003,
      "geology": 0.998
     },
-    "area_km2": 10153,
-    "nearest_known_km": 2462,
+    "area_km2": 19330,
+    "nearest_known_km": 861,
     "novelty": "under-studied",
     "dossier": null,
-    "continent": "Africa",
-    "rank": 6
+    "continent": "Asia",
+    "rank": 4
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -73.625,
+     -16.125
+    ]
+   },
+   "properties": {
+    "id": "gale-16.12S-073.62W",
+    "name": "-16.12, -73.62",
+    "target_id": "gale",
+    "score": 0.582,
+    "robustness": 1.0,
+    "dim_scores": {
+     "terrain": 0.843,
+     "temperature": 0.0,
+     "vegetation": 0.905,
+     "aridity": 0.0,
+     "albedo": 0.913,
+     "ice": 1.0,
+     "dust": 0.0,
+     "geology": 0.995
+    },
+    "area_km2": 16348,
+    "nearest_known_km": 907,
+    "novelty": "under-studied",
+    "dossier": null,
+    "continent": "South America",
+    "rank": 5
    }
   },
   {
@@ -542,11 +509,11 @@
     "id": "gale-28.62N-033.62E",
     "name": "28.62, 33.62",
     "target_id": "gale",
-    "score": 0.5987,
-    "robustness": 0.434,
+    "score": 0.575,
+    "robustness": 0.96,
     "dim_scores": {
-     "terrain": 0.927,
-     "temperature": 0.051,
+     "terrain": 0.788,
+     "temperature": 0.0,
      "vegetation": 0.929,
      "aridity": 0.0,
      "albedo": 0.997,
@@ -554,8 +521,41 @@
      "dust": 0.0,
      "geology": 0.885
     },
-    "area_km2": 4072,
+    "area_km2": 5435,
     "nearest_known_km": 1741,
+    "novelty": "under-studied",
+    "dossier": null,
+    "continent": "Africa",
+    "rank": 6
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     19.375,
+     22.125
+    ]
+   },
+   "properties": {
+    "id": "gale-22.12N-019.38E",
+    "name": "22.12, 19.38",
+    "target_id": "gale",
+    "score": 0.565,
+    "robustness": 0.854,
+    "dim_scores": {
+     "terrain": 0.679,
+     "temperature": 0.0,
+     "vegetation": 0.911,
+     "aridity": 0.009,
+     "albedo": 0.948,
+     "ice": 1.0,
+     "dust": 0.0,
+     "geology": 0.972
+    },
+    "area_km2": 7893,
+    "nearest_known_km": 2375,
     "novelty": "under-studied",
     "dossier": null,
     "continent": "Africa",
@@ -567,31 +567,31 @@
    "geometry": {
     "type": "Point",
     "coordinates": [
-     -70.375,
-     -28.625
+     -8.625,
+     29.625
     ]
    },
    "properties": {
-    "id": "gale-28.62S-070.38W",
-    "name": "-28.62, -70.38",
+    "id": "gale-29.62N-008.62W",
+    "name": "29.62, -8.62",
     "target_id": "gale",
-    "score": 0.5973,
-    "robustness": 0.362,
+    "score": 0.558,
+    "robustness": 0.598,
     "dim_scores": {
-     "terrain": 0.857,
-     "temperature": 0.311,
-     "vegetation": 0.795,
+     "terrain": 0.627,
+     "temperature": 0.0,
+     "vegetation": 0.879,
      "aridity": 0.0,
-     "albedo": 0.82,
+     "albedo": 0.963,
      "ice": 1.0,
      "dust": 0.0,
      "geology": 0.995
     },
-    "area_km2": 9491,
-    "nearest_known_km": 416,
+    "area_km2": 17432,
+    "nearest_known_km": 466,
     "novelty": "under-studied",
     "dossier": null,
-    "continent": "South America",
+    "continent": "Africa",
     "rank": 8
    }
   },
@@ -608,11 +608,11 @@
     "id": "utopia-25.62N-061.12E",
     "name": "25.62, 61.12",
     "target_id": "utopia",
-    "score": 0.7187,
-    "robustness": 0.998,
+    "score": 0.7032,
+    "robustness": 1.0,
     "dim_scores": {
      "terrain": 0.971,
-     "temperature": 0.124,
+     "temperature": 0.0,
      "vegetation": 0.886,
      "aridity": 0.0,
      "albedo": 0.805,
@@ -620,7 +620,7 @@
      "dust": 0.992,
      "geology": 0.972
     },
-    "area_km2": 22999,
+    "area_km2": 23694,
     "nearest_known_km": 424,
     "novelty": "under-studied",
     "dossier": null,
@@ -633,28 +633,28 @@
    "geometry": {
     "type": "Point",
     "coordinates": [
-     88.375,
-     39.125
+     48.125,
+     29.125
     ]
    },
    "properties": {
-    "id": "utopia-39.12N-088.38E",
-    "name": "39.12, 88.38",
+    "id": "utopia-29.12N-048.12E",
+    "name": "29.12, 48.12",
     "target_id": "utopia",
-    "score": 0.6893,
-    "robustness": 1.0,
+    "score": 0.697,
+    "robustness": 0.998,
     "dim_scores": {
      "terrain": 0.949,
-     "temperature": 0.283,
-     "vegetation": 0.872,
+     "temperature": 0.0,
+     "vegetation": 0.835,
      "aridity": 0.0,
-     "albedo": 0.999,
+     "albedo": 0.968,
      "ice": 1.0,
-     "dust": 0.416,
-     "geology": 0.995
+     "dust": 0.977,
+     "geology": 0.846
     },
-    "area_km2": 4192,
-    "nearest_known_km": 277,
+    "area_km2": 4035,
+    "nearest_known_km": 1221,
     "novelty": "under-studied",
     "dossier": null,
     "continent": "Asia",
@@ -666,28 +666,28 @@
    "geometry": {
     "type": "Point",
     "coordinates": [
-     45.125,
-     22.625
+     54.875,
+     26.625
     ]
    },
    "properties": {
-    "id": "utopia-22.62N-045.12E",
-    "name": "22.62, 45.12",
+    "id": "utopia-26.62N-054.88E",
+    "name": "26.62, 54.88",
     "target_id": "utopia",
-    "score": 0.6703,
-    "robustness": 1.0,
+    "score": 0.6792,
+    "robustness": 0.982,
     "dim_scores": {
-     "terrain": 0.988,
-     "temperature": 0.245,
-     "vegetation": 0.905,
+     "terrain": 0.951,
+     "temperature": 0.0,
+     "vegetation": 0.892,
      "aridity": 0.0,
-     "albedo": 0.988,
+     "albedo": 0.88,
      "ice": 1.0,
-     "dust": 0.241,
-     "geology": 0.995
+     "dust": 0.907,
+     "geology": 0.803
     },
-    "area_km2": 2848,
-    "nearest_known_km": 1062,
+    "area_km2": 8959,
+    "nearest_known_km": 533,
     "novelty": "under-studied",
     "dossier": null,
     "continent": "Asia",
@@ -707,11 +707,11 @@
     "id": "utopia-24.88N-033.12E",
     "name": "24.88, 33.12",
     "target_id": "utopia",
-    "score": 0.6635,
-    "robustness": 0.936,
+    "score": 0.636,
+    "robustness": 0.88,
     "dim_scores": {
      "terrain": 0.928,
-     "temperature": 0.22,
+     "temperature": 0.0,
      "vegetation": 0.905,
      "aridity": 0.258,
      "albedo": 0.989,
@@ -732,31 +732,31 @@
    "geometry": {
     "type": "Point",
     "coordinates": [
-     -69.625,
-     -20.375
+     34.625,
+     21.375
     ]
    },
    "properties": {
-    "id": "utopia-20.38S-069.62W",
-    "name": "-20.38, -69.62",
+    "id": "utopia-21.38N-034.62E",
+    "name": "21.38, 34.62",
     "target_id": "utopia",
-    "score": 0.6427,
-    "robustness": 0.68,
+    "score": 0.607,
+    "robustness": 0.552,
     "dim_scores": {
-     "terrain": 0.982,
-     "temperature": 0.334,
-     "vegetation": 0.886,
+     "terrain": 0.963,
+     "temperature": 0.0,
+     "vegetation": 0.899,
      "aridity": 0.0,
-     "albedo": 1.0,
+     "albedo": 0.995,
      "ice": 1.0,
-     "dust": 0.0,
-     "geology": 0.94
+     "dust": 0.001,
+     "geology": 0.998
     },
-    "area_km2": 5074,
-    "nearest_known_km": 274,
+    "area_km2": 7928,
+    "nearest_known_km": 995,
     "novelty": "under-studied",
     "dossier": null,
-    "continent": "South America",
+    "continent": "Africa",
     "rank": 5
    }
   },
@@ -765,28 +765,28 @@
    "geometry": {
     "type": "Point",
     "coordinates": [
-     16.875,
-     26.875
+     10.625,
+     10.875
     ]
    },
    "properties": {
-    "id": "utopia-26.88N-016.88E",
-    "name": "26.88, 16.88",
+    "id": "utopia-10.88N-010.62E",
+    "name": "10.88, 10.62",
     "target_id": "utopia",
-    "score": 0.6375,
-    "robustness": 0.596,
+    "score": 0.6034,
+    "robustness": 0.516,
     "dim_scores": {
-     "terrain": 0.956,
-     "temperature": 0.289,
-     "vegetation": 0.886,
-     "aridity": 0.001,
-     "albedo": 0.968,
+     "terrain": 0.943,
+     "temperature": 0.0,
+     "vegetation": 0.116,
+     "aridity": 0.0,
+     "albedo": 0.995,
      "ice": 1.0,
-     "dust": 0.0,
-     "geology": 1.0
+     "dust": 0.776,
+     "geology": 0.998
     },
-    "area_km2": 2754,
-    "nearest_known_km": 2107,
+    "area_km2": 12915,
+    "nearest_known_km": 2749,
     "novelty": "under-studied",
     "dossier": null,
     "continent": "Africa",
@@ -798,31 +798,31 @@
    "geometry": {
     "type": "Point",
     "coordinates": [
-     34.625,
-     21.375
+     134.375,
+     -28.125
     ]
    },
    "properties": {
-    "id": "utopia-21.38N-034.62E",
-    "name": "21.38, 34.62",
+    "id": "utopia-28.12S-134.38E",
+    "name": "-28.12, 134.38",
     "target_id": "utopia",
-    "score": 0.6306,
-    "robustness": 0.41,
+    "score": 0.6027,
+    "robustness": 0.37,
     "dim_scores": {
-     "terrain": 0.963,
-     "temperature": 0.189,
-     "vegetation": 0.899,
+     "terrain": 0.974,
+     "temperature": 0.0,
+     "vegetation": 0.85,
      "aridity": 0.0,
-     "albedo": 0.995,
+     "albedo": 1.0,
      "ice": 1.0,
-     "dust": 0.001,
+     "dust": 0.0,
      "geology": 0.998
     },
-    "area_km2": 8646,
-    "nearest_known_km": 995,
+    "area_km2": 2716,
+    "nearest_known_km": 539,
     "novelty": "under-studied",
     "dossier": null,
-    "continent": "Africa",
+    "continent": "Oceania",
     "rank": 7
    }
   },
@@ -831,32 +831,65 @@
    "geometry": {
     "type": "Point",
     "coordinates": [
-     -113.125,
-     32.875
+     -69.625,
+     -20.375
     ]
    },
    "properties": {
-    "id": "utopia-32.88N-113.12W",
-    "name": "32.88, -113.12",
+    "id": "utopia-20.38S-069.62W",
+    "name": "-20.38, -69.62",
     "target_id": "utopia",
-    "score": 0.6273,
-    "robustness": 0.282,
+    "score": 0.6012,
+    "robustness": 0.312,
     "dim_scores": {
-     "terrain": 0.949,
-     "temperature": 0.274,
-     "vegetation": 0.803,
+     "terrain": 0.982,
+     "temperature": 0.002,
+     "vegetation": 0.886,
+     "aridity": 0.0,
+     "albedo": 1.0,
+     "ice": 1.0,
+     "dust": 0.0,
+     "geology": 0.94
+    },
+    "area_km2": 4350,
+    "nearest_known_km": 274,
+    "novelty": "under-studied",
+    "dossier": null,
+    "continent": "South America",
+    "rank": 8
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     60.125,
+     25.625
+    ]
+   },
+   "properties": {
+    "id": "arcadia-25.62N-060.12E",
+    "name": "25.62, 60.12",
+    "target_id": "arcadia",
+    "score": 0.724,
+    "robustness": 1.0,
+    "dim_scores": {
+     "terrain": 0.944,
+     "temperature": 0.0,
+     "vegetation": 0.905,
      "aridity": 0.0,
      "albedo": 0.995,
      "ice": 1.0,
-     "dust": 0.0,
-     "geology": 0.998
+     "dust": 0.999,
+     "geology": 0.949
     },
-    "area_km2": 8421,
-    "nearest_known_km": 308,
+    "area_km2": 27813,
+    "nearest_known_km": 360,
     "novelty": "under-studied",
     "dossier": null,
-    "continent": "North America",
-    "rank": 8
+    "continent": "Asia",
+    "rank": 1
    }
   },
   {
@@ -872,11 +905,11 @@
     "id": "arcadia-29.12N-065.62E",
     "name": "29.12, 65.62",
     "target_id": "arcadia",
-    "score": 0.741,
+    "score": 0.7158,
     "robustness": 1.0,
     "dim_scores": {
      "terrain": 0.953,
-     "temperature": 0.202,
+     "temperature": 0.0,
      "vegetation": 0.923,
      "aridity": 0.0,
      "albedo": 0.968,
@@ -884,41 +917,8 @@
      "dust": 0.962,
      "geology": 0.92
     },
-    "area_km2": 41286,
+    "area_km2": 32490,
     "nearest_known_km": 1014,
-    "novelty": "under-studied",
-    "dossier": null,
-    "continent": "Asia",
-    "rank": 1
-   }
-  },
-  {
-   "type": "Feature",
-   "geometry": {
-    "type": "Point",
-    "coordinates": [
-     59.625,
-     25.875
-    ]
-   },
-   "properties": {
-    "id": "arcadia-25.88N-059.62E",
-    "name": "25.88, 59.62",
-    "target_id": "arcadia",
-    "score": 0.7404,
-    "robustness": 0.996,
-    "dim_scores": {
-     "terrain": 0.954,
-     "temperature": 0.158,
-     "vegetation": 0.934,
-     "aridity": 0.0,
-     "albedo": 0.879,
-     "ice": 1.0,
-     "dust": 1.0,
-     "geology": 0.998
-    },
-    "area_km2": 25036,
-    "nearest_known_km": 361,
     "novelty": "under-studied",
     "dossier": null,
     "continent": "Asia",
@@ -938,11 +938,11 @@
     "id": "arcadia-36.12N-060.38E",
     "name": "36.12, 60.38",
     "target_id": "arcadia",
-    "score": 0.7332,
+    "score": 0.7023,
     "robustness": 1.0,
     "dim_scores": {
      "terrain": 0.977,
-     "temperature": 0.247,
+     "temperature": 0.0,
      "vegetation": 0.879,
      "aridity": 0.0,
      "albedo": 0.999,
@@ -950,7 +950,7 @@
      "dust": 0.765,
      "geology": 1.0
     },
-    "area_km2": 29456,
+    "area_km2": 28807,
     "nearest_known_km": 1485,
     "novelty": "under-studied",
     "dossier": null,
@@ -963,28 +963,28 @@
    "geometry": {
     "type": "Point",
     "coordinates": [
-     6.125,
+     6.375,
      22.875
     ]
    },
    "properties": {
-    "id": "arcadia-22.88N-006.12E",
-    "name": "22.88, 6.12",
+    "id": "arcadia-22.88N-006.38E",
+    "name": "22.88, 6.38",
     "target_id": "arcadia",
-    "score": 0.6695,
-    "robustness": 0.698,
+    "score": 0.6452,
+    "robustness": 0.728,
     "dim_scores": {
-     "terrain": 0.918,
-     "temperature": 0.195,
+     "terrain": 0.939,
+     "temperature": 0.0,
      "vegetation": 0.899,
      "aridity": 0.0,
-     "albedo": 1.0,
+     "albedo": 0.98,
      "ice": 1.0,
      "dust": 0.346,
      "geology": 0.998
     },
-    "area_km2": 24133,
-    "nearest_known_km": 1397,
+    "area_km2": 20601,
+    "nearest_known_km": 1415,
     "novelty": "under-studied",
     "dossier": null,
     "continent": "Africa",
@@ -1004,11 +1004,11 @@
     "id": "arcadia-25.12N-033.12E",
     "name": "25.12, 33.12",
     "target_id": "arcadia",
-    "score": 0.6566,
-    "robustness": 0.426,
+    "score": 0.6315,
+    "robustness": 0.482,
     "dim_scores": {
      "terrain": 0.597,
-     "temperature": 0.201,
+     "temperature": 0.0,
      "vegetation": 0.923,
      "aridity": 0.406,
      "albedo": 0.955,
@@ -1016,7 +1016,7 @@
      "dust": 0.262,
      "geology": 0.909
     },
-    "area_km2": 8381,
+    "area_km2": 9075,
     "nearest_known_km": 1424,
     "novelty": "under-studied",
     "dossier": null,
@@ -1029,31 +1029,31 @@
    "geometry": {
     "type": "Point",
     "coordinates": [
-     -69.875,
-     -21.625
+     5.875,
+     34.875
     ]
    },
    "properties": {
-    "id": "arcadia-21.62S-069.88W",
-    "name": "-21.62, -69.88",
+    "id": "arcadia-34.88N-005.88E",
+    "name": "34.88, 5.88",
     "target_id": "arcadia",
-    "score": 0.6534,
-    "robustness": 0.416,
+    "score": 0.6337,
+    "robustness": 0.336,
     "dim_scores": {
-     "terrain": 0.984,
-     "temperature": 0.334,
-     "vegetation": 0.934,
+     "terrain": 0.967,
+     "temperature": 0.0,
+     "vegetation": 0.872,
      "aridity": 0.0,
-     "albedo": 0.98,
+     "albedo": 0.69,
      "ice": 1.0,
-     "dust": 0.0,
-     "geology": 0.995
+     "dust": 0.632,
+     "geology": 0.909
     },
-    "area_km2": 11449,
-    "nearest_known_km": 208,
+    "area_km2": 2536,
+    "nearest_known_km": 968,
     "novelty": "under-studied",
     "dossier": null,
-    "continent": "South America",
+    "continent": "Africa",
     "rank": 6
    }
   },
@@ -1070,17 +1070,17 @@
     "id": "shackleton-29.62S-069.12W",
     "name": "-29.62, -69.12",
     "target_id": "shackleton",
-    "score": 0.6433,
+    "score": 0.6236,
     "robustness": 1.0,
     "dim_scores": {
-     "terrain": 0.974,
-     "temperature": 0.003,
+     "terrain": 0.859,
+     "temperature": 0.0,
      "vegetation": 0.899,
      "aridity": 0.0,
      "albedo": 0.987,
      "ice": 0.997
     },
-    "area_km2": 38365,
+    "area_km2": 36345,
     "nearest_known_km": 499,
     "novelty": "under-studied",
     "dossier": null,
@@ -1093,26 +1093,26 @@
    "geometry": {
     "type": "Point",
     "coordinates": [
-     -65.875,
+     -66.125,
      -24.625
     ]
    },
    "properties": {
-    "id": "shackleton-24.62S-065.88W",
-    "name": "-24.62, -65.88",
+    "id": "shackleton-24.62S-066.12W",
+    "name": "-24.62, -66.12",
     "target_id": "shackleton",
-    "score": 0.6173,
+    "score": 0.5906,
     "robustness": 1.0,
     "dim_scores": {
-     "terrain": 0.956,
-     "temperature": 0.001,
-     "vegetation": 0.753,
+     "terrain": 0.859,
+     "temperature": 0.0,
+     "vegetation": 0.699,
      "aridity": 0.0,
-     "albedo": 0.994,
-     "ice": 1.0
+     "albedo": 0.987,
+     "ice": 0.999
     },
-    "area_km2": 21050,
-    "nearest_known_km": 285,
+    "area_km2": 19646,
+    "nearest_known_km": 268,
     "novelty": "under-studied",
     "dossier": null,
     "continent": "South America",
@@ -1132,17 +1132,17 @@
     "id": "shackleton-42.62N-088.12E",
     "name": "42.62, 88.12",
     "target_id": "shackleton",
-    "score": 0.6142,
-    "robustness": 0.998,
+    "score": 0.5846,
+    "robustness": 0.96,
     "dim_scores": {
-     "terrain": 0.834,
-     "temperature": 0.014,
+     "terrain": 0.67,
+     "temperature": 0.0,
      "vegetation": 0.929,
      "aridity": 0.0,
      "albedo": 0.916,
      "ice": 0.992
     },
-    "area_km2": 16400,
+    "area_km2": 16388,
     "nearest_known_km": 530,
     "novelty": "under-studied",
     "dossier": null,
@@ -1155,92 +1155,30 @@
    "geometry": {
     "type": "Point",
     "coordinates": [
-     56.125,
-     26.125
+     -73.125,
+     -15.625
     ]
    },
    "properties": {
-    "id": "shackleton-26.12N-056.12E",
-    "name": "26.12, 56.12",
+    "id": "shackleton-15.62S-073.12W",
+    "name": "-15.62, -73.12",
     "target_id": "shackleton",
-    "score": 0.6106,
-    "robustness": 0.992,
+    "score": 0.5746,
+    "robustness": 0.966,
     "dim_scores": {
-     "terrain": 0.909,
+     "terrain": 0.945,
      "temperature": 0.0,
-     "vegetation": 0.803,
+     "vegetation": 0.606,
      "aridity": 0.0,
-     "albedo": 0.951,
+     "albedo": 0.896,
      "ice": 1.0
     },
-    "area_km2": 3475,
-    "nearest_known_km": 416,
-    "novelty": "under-studied",
-    "dossier": null,
-    "continent": "Asia",
-    "rank": 4
-   }
-  },
-  {
-   "type": "Feature",
-   "geometry": {
-    "type": "Point",
-    "coordinates": [
-     37.875,
-     17.625
-    ]
-   },
-   "properties": {
-    "id": "shackleton-17.62N-037.88E",
-    "name": "17.62, 37.88",
-    "target_id": "shackleton",
-    "score": 0.6038,
-    "robustness": 0.972,
-    "dim_scores": {
-     "terrain": 0.937,
-     "temperature": 0.0,
-     "vegetation": 0.812,
-     "aridity": 0.0,
-     "albedo": 0.874,
-     "ice": 1.0
-    },
-    "area_km2": 8855,
-    "nearest_known_km": 457,
-    "novelty": "under-studied",
-    "dossier": null,
-    "continent": "Africa",
-    "rank": 5
-   }
-  },
-  {
-   "type": "Feature",
-   "geometry": {
-    "type": "Point",
-    "coordinates": [
-     -69.875,
-     -17.625
-    ]
-   },
-   "properties": {
-    "id": "shackleton-17.62S-069.88W",
-    "name": "-17.62, -69.88",
-    "target_id": "shackleton",
-    "score": 0.5986,
-    "robustness": 0.968,
-    "dim_scores": {
-     "terrain": 0.943,
-     "temperature": 0.005,
-     "vegetation": 0.803,
-     "aridity": 0.0,
-     "albedo": 0.85,
-     "ice": 0.99
-    },
-    "area_km2": 17652,
-    "nearest_known_km": 558,
+    "area_km2": 11913,
+    "nearest_known_km": 919,
     "novelty": "under-studied",
     "dossier": null,
     "continent": "South America",
-    "rank": 6
+    "rank": 4
    }
   },
   {
@@ -1256,21 +1194,83 @@
     "id": "shackleton-30.12N-057.62E",
     "name": "30.12, 57.62",
     "target_id": "shackleton",
-    "score": 0.5955,
-    "robustness": 0.924,
+    "score": 0.5747,
+    "robustness": 0.92,
     "dim_scores": {
-     "terrain": 0.884,
-     "temperature": 0.001,
+     "terrain": 0.761,
+     "temperature": 0.0,
      "vegetation": 0.892,
      "aridity": 0.0,
      "albedo": 0.798,
      "ice": 0.997
     },
-    "area_km2": 16717,
+    "area_km2": 20105,
     "nearest_known_km": 805,
     "novelty": "under-studied",
     "dossier": null,
     "continent": "Asia",
+    "rank": 5
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     93.875,
+     43.875
+    ]
+   },
+   "properties": {
+    "id": "shackleton-43.88N-093.88E",
+    "name": "43.88, 93.88",
+    "target_id": "shackleton",
+    "score": 0.5829,
+    "robustness": 0.9,
+    "dim_scores": {
+     "terrain": 0.63,
+     "temperature": 0.0,
+     "vegetation": 0.923,
+     "aridity": 0.0,
+     "albedo": 0.965,
+     "ice": 0.979
+    },
+    "area_km2": 27690,
+    "nearest_known_km": 619,
+    "novelty": "under-studied",
+    "dossier": null,
+    "continent": "Asia",
+    "rank": 6
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -7.875,
+     31.125
+    ]
+   },
+   "properties": {
+    "id": "shackleton-31.12N-007.88W",
+    "name": "31.12, -7.88",
+    "target_id": "shackleton",
+    "score": 0.557,
+    "robustness": 0.902,
+    "dim_scores": {
+     "terrain": 0.9,
+     "temperature": 0.0,
+     "vegetation": 0.625,
+     "aridity": 0.0,
+     "albedo": 0.951,
+     "ice": 0.865
+    },
+    "area_km2": 11234,
+    "nearest_known_km": 348,
+    "novelty": "under-studied",
+    "dossier": null,
+    "continent": "Africa",
     "rank": 7
    }
   },
@@ -1279,59 +1279,30 @@
    "geometry": {
     "type": "Point",
     "coordinates": [
-     -157.625,
-     -86.375
+     37.875,
+     17.625
     ]
    },
    "properties": {
-    "id": "shackleton-86.38S-157.62W",
-    "name": "-86.38, -157.62",
+    "id": "shackleton-17.62N-037.88E",
+    "name": "17.62, 37.88",
     "target_id": "shackleton",
-    "score": 0.6879,
-    "robustness": 0.798,
+    "score": 0.5683,
+    "robustness": 0.874,
     "dim_scores": {
-     "terrain": 0.899,
-     "temperature": 0.852,
-     "aridity": 1.0,
-     "ice": 0.0
-    },
-    "area_km2": 1617,
-    "nearest_known_km": 1114,
-    "novelty": "under-studied",
-    "dossier": null,
-    "continent": "Antarctica",
-    "rank": 8
-   }
-  },
-  {
-   "type": "Feature",
-   "geometry": {
-    "type": "Point",
-    "coordinates": [
-     -6.875,
-     31.375
-    ]
-   },
-   "properties": {
-    "id": "shackleton-31.38N-006.88W",
-    "name": "31.38, -6.88",
-    "target_id": "shackleton",
-    "score": 0.5885,
-    "robustness": 0.86,
-    "dim_scores": {
-     "terrain": 0.91,
-     "temperature": 0.002,
-     "vegetation": 0.735,
+     "terrain": 0.724,
+     "temperature": 0.0,
+     "vegetation": 0.812,
      "aridity": 0.0,
-     "albedo": 0.896,
-     "ice": 0.988
+     "albedo": 0.874,
+     "ice": 1.0
     },
-    "area_km2": 12528,
-    "nearest_known_km": 251,
+    "area_km2": 7378,
+    "nearest_known_km": 457,
     "novelty": "under-studied",
     "dossier": null,
     "continent": "Africa",
-    "rank": 9
+    "rank": 8
    }
   },
   {
@@ -1347,113 +1318,51 @@
     "id": "shackleton-28.38N-034.38E",
     "name": "28.38, 34.38",
     "target_id": "shackleton",
-    "score": 0.5936,
-    "robustness": 0.838,
+    "score": 0.548,
+    "robustness": 0.766,
     "dim_scores": {
-     "terrain": 0.716,
+     "terrain": 0.443,
      "temperature": 0.0,
      "vegetation": 0.949,
      "aridity": 0.0,
      "albedo": 0.896,
      "ice": 1.0
     },
-    "area_km2": 5431,
+    "area_km2": 4753,
     "nearest_known_km": 1687,
     "novelty": "under-studied",
     "dossier": null,
     "continent": "Africa",
+    "rank": 9
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -168.375,
+     -85.375
+    ]
+   },
+   "properties": {
+    "id": "shackleton-85.38S-168.38W",
+    "name": "-85.38, -168.38",
+    "target_id": "shackleton",
+    "score": 0.5253,
+    "robustness": 0.476,
+    "dim_scores": {
+     "terrain": 0.673,
+     "temperature": 0.429,
+     "aridity": 0.999,
+     "ice": 0.0
+    },
+    "area_km2": 312,
+    "nearest_known_km": 976,
+    "novelty": "under-studied",
+    "dossier": null,
+    "continent": "Antarctica",
     "rank": 10
-   }
-  },
-  {
-   "type": "Feature",
-   "geometry": {
-    "type": "Point",
-    "coordinates": [
-     166.125,
-     -83.375
-    ]
-   },
-   "properties": {
-    "id": "shackleton-83.38S-166.12E",
-    "name": "-83.38, 166.12",
-    "target_id": "shackleton",
-    "score": 0.5305,
-    "robustness": 0.402,
-    "dim_scores": {
-     "terrain": 0.905,
-     "temperature": 0.748,
-     "aridity": 1.0,
-     "albedo": 0.0,
-     "ice": 0.0
-    },
-    "area_km2": 535,
-    "nearest_known_km": 656,
-    "novelty": "under-studied",
-    "dossier": null,
-    "continent": "Antarctica",
-    "rank": 11
-   }
-  },
-  {
-   "type": "Feature",
-   "geometry": {
-    "type": "Point",
-    "coordinates": [
-     105.625,
-     -89.125
-    ]
-   },
-   "properties": {
-    "id": "shackleton-89.12S-105.62E",
-    "name": "-89.12, 105.62",
-    "target_id": "shackleton",
-    "score": 0.5005,
-    "robustness": 0.352,
-    "dim_scores": {
-     "terrain": 0.003,
-     "temperature": 0.999,
-     "aridity": 1.0,
-     "ice": 0.0
-    },
-    "area_km2": 94,
-    "nearest_known_km": 1336,
-    "novelty": "under-studied",
-    "dossier": null,
-    "continent": "Antarctica",
-    "rank": 12
-   }
-  },
-  {
-   "type": "Feature",
-   "geometry": {
-    "type": "Point",
-    "coordinates": [
-     58.875,
-     31.875
-    ]
-   },
-   "properties": {
-    "id": "marius_hills-31.88N-058.88E",
-    "name": "31.88, 58.88",
-    "target_id": "marius_hills",
-    "score": 0.7702,
-    "robustness": 1.0,
-    "dim_scores": {
-     "terrain": 0.987,
-     "temperature": 0.668,
-     "vegetation": 0.966,
-     "aridity": 0.0,
-     "albedo": 0.771,
-     "ice": 1.0,
-     "geology": 1.0
-    },
-    "area_km2": 30720,
-    "nearest_known_km": 1000,
-    "novelty": "under-studied",
-    "dossier": null,
-    "continent": "Asia",
-    "rank": 1
    }
   },
   {
@@ -1469,19 +1378,51 @@
     "id": "marius_hills-21.38S-014.12E",
     "name": "-21.38, 14.12",
     "target_id": "marius_hills",
-    "score": 0.7702,
+    "score": 0.6889,
     "robustness": 1.0,
     "dim_scores": {
      "terrain": 0.923,
-     "temperature": 0.569,
+     "temperature": 0.0,
      "vegetation": 0.934,
      "aridity": 0.0,
      "albedo": 0.965,
      "ice": 1.0,
      "geology": 1.0
     },
-    "area_km2": 13031,
+    "area_km2": 10855,
     "nearest_known_km": 261,
+    "novelty": "under-studied",
+    "dossier": null,
+    "continent": "Africa",
+    "rank": 1
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     36.375,
+     2.875
+    ]
+   },
+   "properties": {
+    "id": "marius_hills-02.88N-036.38E",
+    "name": "2.88, 36.38",
+    "target_id": "marius_hills",
+    "score": 0.6863,
+    "robustness": 1.0,
+    "dim_scores": {
+     "terrain": 0.974,
+     "temperature": 0.0,
+     "vegetation": 0.923,
+     "aridity": 0.0,
+     "albedo": 0.998,
+     "ice": 1.0,
+     "geology": 0.909
+    },
+    "area_km2": 4629,
+    "nearest_known_km": 1335,
     "novelty": "under-studied",
     "dossier": null,
     "continent": "Africa",
@@ -1493,30 +1434,30 @@
    "geometry": {
     "type": "Point",
     "coordinates": [
-     18.125,
-     -28.125
+     39.125,
+     25.375
     ]
    },
    "properties": {
-    "id": "marius_hills-28.12S-018.12E",
-    "name": "-28.12, 18.12",
+    "id": "marius_hills-25.38N-039.12E",
+    "name": "25.38, 39.12",
     "target_id": "marius_hills",
-    "score": 0.7566,
+    "score": 0.6763,
     "robustness": 1.0,
     "dim_scores": {
-     "terrain": 0.999,
-     "temperature": 0.662,
-     "vegetation": 0.865,
+     "terrain": 0.946,
+     "temperature": 0.0,
+     "vegetation": 0.858,
      "aridity": 0.0,
-     "albedo": 0.771,
+     "albedo": 0.965,
      "ice": 1.0,
-     "geology": 1.0
+     "geology": 0.965
     },
-    "area_km2": 5439,
-    "nearest_known_km": 594,
+    "area_km2": 31439,
+    "nearest_known_km": 1244,
     "novelty": "under-studied",
     "dossier": null,
-    "continent": "Africa",
+    "continent": "Asia",
     "rank": 3
    }
   },
@@ -1533,18 +1474,18 @@
     "id": "marius_hills-26.88N-061.62E",
     "name": "26.88, 61.62",
     "target_id": "marius_hills",
-    "score": 0.7536,
+    "score": 0.6751,
     "robustness": 1.0,
     "dim_scores": {
      "terrain": 0.958,
-     "temperature": 0.55,
+     "temperature": 0.0,
      "vegetation": 0.917,
      "aridity": 0.0,
      "albedo": 0.85,
      "ice": 1.0,
      "geology": 1.0
     },
-    "area_km2": 51062,
+    "area_km2": 50956,
     "nearest_known_km": 561,
     "novelty": "under-studied",
     "dossier": null,
@@ -1557,27 +1498,27 @@
    "geometry": {
     "type": "Point",
     "coordinates": [
-     6.125,
-     25.375
+     33.875,
+     25.625
     ]
    },
    "properties": {
-    "id": "marius_hills-25.38N-006.12E",
-    "name": "25.38, 6.12",
+    "id": "marius_hills-25.62N-033.88E",
+    "name": "25.62, 33.88",
     "target_id": "marius_hills",
-    "score": 0.754,
-    "robustness": 0.998,
+    "score": 0.678,
+    "robustness": 0.994,
     "dim_scores": {
-     "terrain": 1.0,
-     "temperature": 0.656,
-     "vegetation": 0.944,
-     "aridity": 0.0,
-     "albedo": 0.713,
+     "terrain": 0.989,
+     "temperature": 0.0,
+     "vegetation": 0.949,
+     "aridity": 0.338,
+     "albedo": 0.683,
      "ice": 1.0,
-     "geology": 0.965
+     "geology": 0.787
     },
-    "area_km2": 2098,
-    "nearest_known_km": 1215,
+    "area_km2": 18109,
+    "nearest_known_km": 1432,
     "novelty": "under-studied",
     "dossier": null,
     "continent": "Africa",
@@ -1589,63 +1530,31 @@
    "geometry": {
     "type": "Point",
     "coordinates": [
-     53.125,
-     32.875
+     58.875,
+     31.875
     ]
    },
    "properties": {
-    "id": "marius_hills-32.88N-053.12E",
-    "name": "32.88, 53.12",
+    "id": "marius_hills-31.88N-058.88E",
+    "name": "31.88, 58.88",
     "target_id": "marius_hills",
-    "score": 0.7495,
-    "robustness": 0.998,
+    "score": 0.6748,
+    "robustness": 0.996,
     "dim_scores": {
-     "terrain": 0.903,
-     "temperature": 0.668,
-     "vegetation": 0.962,
+     "terrain": 0.987,
+     "temperature": 0.0,
+     "vegetation": 0.966,
      "aridity": 0.0,
-     "albedo": 0.713,
-     "ice": 0.999,
+     "albedo": 0.771,
+     "ice": 1.0,
      "geology": 1.0
     },
-    "area_km2": 26572,
-    "nearest_known_km": 1216,
+    "area_km2": 17663,
+    "nearest_known_km": 1000,
     "novelty": "under-studied",
     "dossier": null,
     "continent": "Asia",
     "rank": 6
-   }
-  },
-  {
-   "type": "Feature",
-   "geometry": {
-    "type": "Point",
-    "coordinates": [
-     -68.625,
-     -36.625
-    ]
-   },
-   "properties": {
-    "id": "marius_hills-36.62S-068.62W",
-    "name": "-36.62, -68.62",
-    "target_id": "marius_hills",
-    "score": 0.7131,
-    "robustness": 0.672,
-    "dim_scores": {
-     "terrain": 0.963,
-     "temperature": 0.433,
-     "vegetation": 0.753,
-     "aridity": 0.0,
-     "albedo": 0.935,
-     "ice": 1.0,
-     "geology": 0.909
-    },
-    "area_km2": 30402,
-    "nearest_known_km": 1276,
-    "novelty": "under-studied",
-    "dossier": null,
-    "continent": "South America",
-    "rank": 7
    }
   },
   {
@@ -1661,22 +1570,54 @@
     "id": "marius_hills-33.12N-114.62W",
     "name": "33.12, -114.62",
     "target_id": "marius_hills",
-    "score": 0.704,
-    "robustness": 0.5,
+    "score": 0.6518,
+    "robustness": 0.942,
     "dim_scores": {
      "terrain": 0.965,
-     "temperature": 0.365,
+     "temperature": 0.0,
      "vegetation": 0.858,
      "aridity": 0.0,
      "albedo": 0.742,
      "ice": 1.0,
      "geology": 0.998
     },
-    "area_km2": 10336,
+    "area_km2": 9046,
     "nearest_known_km": 320,
     "novelty": "under-studied",
     "dossier": null,
     "continent": "North America",
+    "rank": 7
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -68.625,
+     -36.625
+    ]
+   },
+   "properties": {
+    "id": "marius_hills-36.62S-068.62W",
+    "name": "-36.62, -68.62",
+    "target_id": "marius_hills",
+    "score": 0.6512,
+    "robustness": 0.902,
+    "dim_scores": {
+     "terrain": 0.963,
+     "temperature": 0.0,
+     "vegetation": 0.753,
+     "aridity": 0.0,
+     "albedo": 0.935,
+     "ice": 1.0,
+     "geology": 0.909
+    },
+    "area_km2": 45262,
+    "nearest_known_km": 1276,
+    "novelty": "under-studied",
+    "dossier": null,
+    "continent": "South America",
     "rank": 8
    }
   },
@@ -1686,26 +1627,26 @@
     "type": "Point",
     "coordinates": [
      -69.875,
-     -19.375
+     -46.625
     ]
    },
    "properties": {
-    "id": "marius_hills-19.38S-069.88W",
-    "name": "-19.38, -69.88",
+    "id": "marius_hills-46.62S-069.88W",
+    "name": "-46.62, -69.88",
     "target_id": "marius_hills",
-    "score": 0.7025,
-    "robustness": 0.492,
+    "score": 0.6406,
+    "robustness": 0.736,
     "dim_scores": {
-     "terrain": 0.829,
-     "temperature": 0.661,
-     "vegetation": 0.949,
+     "terrain": 0.969,
+     "temperature": 0.0,
+     "vegetation": 0.726,
      "aridity": 0.0,
-     "albedo": 0.53,
-     "ice": 1.0,
-     "geology": 0.949
+     "albedo": 0.825,
+     "ice": 0.999,
+     "geology": 0.965
     },
-    "area_km2": 11604,
-    "nearest_known_km": 381,
+    "area_km2": 20243,
+    "nearest_known_km": 2390,
     "novelty": "under-studied",
     "dossier": null,
     "continent": "South America",
@@ -1717,30 +1658,30 @@
    "geometry": {
     "type": "Point",
     "coordinates": [
-     -117.875,
-     38.125
+     -68.375,
+     -40.625
     ]
    },
    "properties": {
-    "id": "marius_hills-38.12N-117.88W",
-    "name": "38.12, -117.88",
+    "id": "marius_hills-40.62S-068.38W",
+    "name": "-40.62, -68.38",
     "target_id": "marius_hills",
-    "score": 0.6957,
-    "robustness": 0.4,
+    "score": 0.6432,
+    "robustness": 0.716,
     "dim_scores": {
-     "terrain": 0.715,
-     "temperature": 0.652,
-     "vegetation": 0.872,
+     "terrain": 0.955,
+     "temperature": 0.0,
+     "vegetation": 0.778,
      "aridity": 0.0,
-     "albedo": 0.652,
-     "ice": 0.979,
-     "geology": 1.0
+     "albedo": 0.896,
+     "ice": 1.0,
+     "geology": 0.873
     },
-    "area_km2": 10998,
-    "nearest_known_km": 205,
+    "area_km2": 48767,
+    "nearest_known_km": 1721,
     "novelty": "under-studied",
     "dossier": null,
-    "continent": "North America",
+    "continent": "South America",
     "rank": 10
    }
   },
@@ -1757,23 +1698,55 @@
     "id": "marius_hills-23.38S-117.88E",
     "name": "-23.38, 117.88",
     "target_id": "marius_hills",
-    "score": 0.6944,
-    "robustness": 0.394,
+    "score": 0.6436,
+    "robustness": 0.66,
     "dim_scores": {
      "terrain": 0.975,
-     "temperature": 0.356,
+     "temperature": 0.0,
      "vegetation": 0.569,
      "aridity": 0.0,
      "albedo": 0.977,
      "ice": 1.0,
      "geology": 0.983
     },
-    "area_km2": 54581,
+    "area_km2": 42559,
     "nearest_known_km": 294,
     "novelty": "under-studied",
     "dossier": null,
     "continent": "Oceania",
     "rank": 11
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -114.125,
+     28.625
+    ]
+   },
+   "properties": {
+    "id": "marius_hills-28.62N-114.12W",
+    "name": "28.62, -114.12",
+    "target_id": "marius_hills",
+    "score": 0.6365,
+    "robustness": 0.538,
+    "dim_scores": {
+     "terrain": 0.97,
+     "temperature": 0.0,
+     "vegetation": 0.69,
+     "aridity": 0.0,
+     "albedo": 0.798,
+     "ice": 1.0,
+     "geology": 0.998
+    },
+    "area_km2": 4054,
+    "nearest_known_km": 770,
+    "novelty": "under-studied",
+    "dossier": null,
+    "continent": "North America",
+    "rank": 12
    }
   }
  ]

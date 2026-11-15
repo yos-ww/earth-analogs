@@ -8,12 +8,12 @@
 
 **What we built.** Analog Atlas compares **every place on Earth's land, 344,354 patches about 28 km across**, with six real Mars and Moon sites: the Jezero, Gale and Zhurong rover landing sites, a human-landing candidate in Arcadia Planitia, the Artemis region at Shackleton crater, and a lava-tube skylight in the Marius Hills. It uses **twelve measurements in eight dimensions**: terrain, temperature, plants, rainfall, ground brightness, ice, dust and rock type, from NASA MODIS, GPM, USGS, MGS, LRO and the Mars Climate Database. For each place it says how similar it is, **what matches, and where the analogy breaks down**. Everything runs in an interactive 3D globe with a guided tour: **https://yos-ww.github.io/earth-analogs/web/**
 
-**What we found.** 55 candidate sites, all at least 200 km from any analog on our list. The biggest surprise is a belt across **south-east Iran and south-west Pakistan** (the Makran coast, the Chagai–Registan deserts and the Hormozgan salt domes). It holds the top candidate for four of the six targets. The best match for Curiosity's Gale crater is **about 355 km from Doha**, among the Hormozgan salt domes.
+**What we found.** 54 candidate sites, all at least 200 km from any analog on our list. The biggest surprise is a belt across **south-east Iran and south-west Pakistan** (the Makran coast, the Chagai–Registan deserts and the Hormozgan salt domes). It holds the top candidate for four of the six targets. The best match for Curiosity's Gale crater is **about 355 km from Doha**, among the Hormozgan salt domes.
 - Salt glaciers like these have been compared with Mars in conference work, but our first-pass literature search found no field analog study at this site.
 - For the Makran and Chagai parts of the belt, that search found no analog study at all.
 - A deeper search is still needed before calling any of it unrecognised.
 
-**Does it work?** We tested the method on 37 places scientists already use. Known Mars analogs rank above plain desert: better than 89% of Earth's land, against 76% for random barren land. The evidence is **modest** (p ≈ 0.02–0.03) and depends on how "plain desert" is defined. For the Moon there are too few independent sites to conclude, and we make no claim.
+**Does it work?** We tested the method on 37 places scientists already use. Known Mars analogs rank above plain desert: better than 90% of Earth's land, against 72% for random barren land (p ≈ 0.005). The result holds for Jezero and Arcadia on their own, but not for Utopia, and it is not corrected for testing several targets. For the Moon there are too few independent sites to conclude, and we make no claim.
 
 **Where it breaks down.**
 - The score cannot see life, caves, buried ice or practical access.
@@ -100,22 +100,22 @@ Terrain depends on the size of the window, and a 0.25° cell is 28 km wide at th
 
 ### The six targets
 
-Each target is one point, a measured landing site or candidate, with a value for each feature and a source. Terrain is computed from MOLA and LOLA; everything else comes from the literature or models. "Directional" values (marked ↓ or ↑) lie outside Earth's p1 to p99 range, so Earth can only point in that direction.
+Each target is one point, a measured landing site or candidate, with a value for each feature and a source. Terrain is computed from MOLA and LOLA; everything else comes from the literature or models. Values marked ↓ or ↑ lie beyond anything measured on Earth's land (below the minimum or above the maximum of the 344,354 cells), so no place on Earth can match them. They are scored like every other value: the further beyond Earth's range, the lower every Earth cell scores (Jezero's night is only 1 K beyond it, so Earth's coldest cells still match; the lunar values are far beyond, so nothing does).
 
 | Target | Relief m | Rough. m | Slope ° | Day K | Night K | Range K | Albedo | Dust | Frost | Emis. |
 |---|---|---|---|---|---|---|---|---|---|---|
 | Jezero Crater (Mars) | 1,161 | 280 | 2.7 | 268 | 196 ↓ | 55 ↑ | 0.171 | 0.50 | 0 | 0.952 |
-| Gale Crater (Mars) | 4,396 ↑ | 831 ↑ | 5.1 | 274 | 189 ↓ | 63 ↑ | 0.236 | 0.59 | 0 | 0.952 |
+| Gale Crater (Mars) | 4,396 | 831 | 5.1 | 274 | 189 ↓ | 63 ↑ | 0.236 | 0.59 | 0 | 0.952 |
 | Utopia Planitia (Mars) | 177 | 41 | 0.4 | 263 | 187 ↓ | 50 ↑ | 0.231 | 0.54 | 0 | 0.952 |
 | Arcadia Planitia (Mars) | 854 | 158 | 2.1 | 268 | 166 ↓ | 62 ↑ | 0.238 | 0.43 | 0 | 0.952 |
-| Shackleton rim (Moon) | 4,741 ↑ | 1,161 ↑ | 15.2 ↑ | 240 ↓ | 90 ↓ | n/a | 0.11 | n/a | 0 | n/a |
+| Shackleton rim (Moon) | 4,741 | 1,161 | 15.2 | 240 | 90 ↓ | n/a | 0.11 | n/a | 0 | n/a |
 | Marius Hills pit (Moon) | 443 | 84 | 1.2 | 381 ↑ | 105 ↓ | 276 ↑ | 0.11 | n/a | 0 | 0.952 |
 
 Vegetation (NDVI) and precipitation are 0 for every target (no vegetation, no rainfall). Sources:
 
 - **Mars temperatures, albedo, dust and frost:** Mars Climate Database v6.2, climatology average solar scenario, queried at each target point for 12 months (Ls 15° to 345°) at 10:30 and 22:30 local time, the Terra overpass times. Day = surface temperature at 10:30 in the warmest month; night = at 22:30 in the coldest month; range = yearly mean of (10:30 − 22:30). Albedo is the model's TES-derived bolometric ground albedo. Dust is the yearly mean of the monthly visible dust opacity, used at 550 nm without conversion: Martian dust grains (about 1.5 µm) make the extinction nearly flat across visible wavelengths. Surface CO₂ and H₂O frost is zero in all 12 months at all four points. As a check, the same query at the Viking 2 site (47.7° N) gives 0.74 kg/m² of CO₂ frost in winter, where the lander photographed frost.
-- **Moon:** Marius Hills temperatures from the Diviner global cumulative product (J.-P. Williams, UCLA; the dataset behind Williams et al. 2017, Icarus 283:300–325): the mission-average bolometric temperature of the two 0.5° tiles inside the target window, interpolated to 10:30 local time (day, 381 K) and 22:30 (night, 105 K), the Terra overpass times; the range is their difference (276 K). The table has no seasons, so these are mission averages, not warmest- or coldest-month values. The peak and trough of the same profile are 392 K and 94 K, which is what the earlier literature-based values (390 K and 95 K) represented. Shackleton night temperature from a secondary summary of Diviner results (any value under 207 K scores the same). Shackleton day temperature is the median Diviner annual-maximum surface temperature of 4,729 triangles within ±13.9 km, which is an upper bound against Earth's monthly-mean convention. The Diviner table has no day or night values, so Shackleton's day–night range is n/a. Albedo 0.11 is the global mean lunar Bond albedo (NASA NSSDC fact sheet) and is a placeholder for site values.
-- **Geology:** the basaltic targets get the 8.55 µm emissivity that MODIS measures on two barren Earth basalt flows (Holuhraun 0.955, Black Point 0.950, mean 0.952), so the target and Earth come from the same sensor. Shackleton is feldspathic highland, for which there is no Earth reference, so geology is skipped for it. Both reference flows are also validation sites, so the test is slightly circular for them. Leaving them out changes little: Mars 0.898 vs 0.894 for the known-site median, p = 0.027 either way; Moon 0.701 vs 0.704, p = 0.23 vs 0.21.
+- **Moon:** Marius Hills temperatures from the Diviner global cumulative product (J.-P. Williams, UCLA; the dataset behind Williams et al. 2017, Icarus 283:300–325): the mission-average bolometric temperature of the two 0.5° tiles inside the target window, interpolated to 10:30 local time (day, 381 K) and 22:30 (night, 105 K), the Terra overpass times; the range is their difference (276 K). The table has no seasons, so these are mission averages, not warmest- or coldest-month values. The peak and trough of the same profile are 392 K and 94 K, which is what the earlier literature-based values (390 K and 95 K) represented. Shackleton night temperature from a secondary summary of Diviner results (90 K; Earth's coldest cell is 197 K, so every Earth cell scores close to 0 on it). Shackleton day temperature is the median Diviner annual-maximum surface temperature of 4,729 triangles within ±13.9 km, which is an upper bound against Earth's monthly-mean convention. The Diviner table has no day or night values, so Shackleton's day–night range is n/a. Albedo 0.11 is the global mean lunar Bond albedo (NASA NSSDC fact sheet) and is a placeholder for site values.
+- **Geology:** the basaltic targets get the 8.55 µm emissivity that MODIS measures on two barren Earth basalt flows (Holuhraun 0.955, Black Point 0.950, mean 0.952), so the target and Earth come from the same sensor. Shackleton is feldspathic highland, for which there is no Earth reference, so geology is skipped for it. Both reference flows are also validation sites, so the test is slightly circular for them. Leaving them out changes little for Mars (known-site median 0.905 vs 0.898, p = 0.004 either way) and weakens the Moon result (0.609 vs 0.657, p = 0.14 vs 0.07).
 - **Terrain at Gale** is dominated by Mount Sharp. The landing site lies on the crater floor, but the south-east corner of its 28 km window climbs the mountain's flank to about 4.3 km above it, so Gale's relief (4,396 m) and roughness (831 m) describe the crater-and-mountain setting, not the plains the rover landed on. Earth cells use the same square window, so the comparison is consistent.
 - **Ice** is surface snow or frost only. Arcadia's shallow ground ice and the ice in Shackleton's shadowed craters are below or off the surface and are described in the mission text, not scored.
 
@@ -123,16 +123,16 @@ Vegetation (NDVI) and precipitation are 0 for every target (no vegetation, no ra
 
 For one target and one cell, work in the transformed space (log(1 + x) for the skewed features). With f the cell value, t the target value and σ a robust spread of the Earth values (interquartile range ÷ 1.35, area-weighted):
 
-- **Like-for-like** (t inside Earth's p1 to p99): the feature score is exp(−((f − t) / σ)²), 1 for a perfect match and falling towards 0.
-- **Directional** (t outside that range): t is clamped to the nearest end of Earth's range and the feature is scored one-sided. If the target is colder than any Earth place, every cell at or below the clamp scores 1, and warmer cells fall off with the same formula. The app flags such features, because they say only "Earth can point in this direction".
+- **Like-for-like, for every feature:** the feature score is exp(−((f − t) / σ)²), 1 for a perfect match and falling towards 0.
+- **A target beyond Earth's range is not rewarded.** If the target is colder than any Earth place, even Earth's coldest cell scores low on that feature, because it is not a match. The app flags such features as "beyond Earth". This rule replaced an earlier one-sided rule on 2026-11-15; see "Choices, and when they were made".
 - A feature that is missing in a cell is **skipped** and the weights are renormalised; a feature that has no meaning for a target is n/a.
 - A dimension's score is the mean of its features. The overall score is the weighted mean of the dimensions (default weights all equal; the user can change them), and a cell is scored only if at least 4 dimensions have data.
 
-σ has a floor of 5% of the p1-to-p99 range so a mostly-constant feature cannot get σ = 0; the floor never binds for any of the twelve features. The browser and Python versions give the same numbers: 306 cells, including cells with missing data, were compared (largest difference 7.6 × 10⁻⁷).
+σ has a floor of 5% of the p1-to-p99 range so a mostly-constant feature cannot get σ = 0; the floor never binds for any of the twelve features. The browser and Python versions give the same numbers: 306 cells, including cells with missing data, are compared after every data change (tolerance 10⁻⁴).
 
 ### Choices, and when they were made
 
-The design below was fixed before any result was seen: the grid, the twelve features and eight dimensions, the scoring formula, the σ rule, equal default weights, area weighting, the like-for-like versus directional rule, the fixed 28 km terrain window, the validation design and the barren-land baseline. We did not tune any of it to improve a result.
+The design below was fixed before any result was seen: the grid, the twelve features and eight dimensions, the scoring formula, the σ rule, equal default weights, area weighting, the fixed 28 km terrain window, the validation design and the barren-land baseline. We did not tune any of it to improve a result. One part of the original design, the one-sided scoring rule, was changed after results were seen; it is item 5 below.
 
 Choices made after a first look at results, listed so they can be judged:
 
@@ -140,6 +140,20 @@ Choices made after a first look at results, listed so they can be judged:
 2. Candidates: regions need at least 3 cells; large regions are split at local maxima 200 km apart; kept candidates are at least 400 km apart (150 km at first) and need robustness of at least 0.25. These shape which places are shown and do not affect validation.
 3. Shackleton's day–night range was set to n/a rather than filled with a different quantity.
 4. Aridity was kept as designed after we found it nearly uninformative (see "What the dimensions show"). Lowering its weight would have been tuning to the answer; dropping it moves the Mars result only slightly (0.90 vs 0.75, p = 0.017, Figure 2). The app marks it as limited by the rainfall data instead. Decided by both, 2026-11-14.
+5. **The one-sided ("directional") scoring rule was removed on 2026-11-15, after all results had been seen.** The original design scored a feature one-sided when the target lay outside Earth's p1 to p99 range: every cell beyond that end scored 1. A new view in the app (scoring on one dimension at a time) showed that this gave false perfect matches. Shackleton's slope (15.2°) is inside Earth's range (maximum 25.2°), yet every slope above 13.4° scored 1, including 25° slopes. Where Earth cannot match at all (Mars day–night range, lunar temperatures), Earth's most extreme 1% also scored 1. Every feature is now scored like-for-like. We made the change because the rule was wrong, not to improve a result, but it did change the results, in both directions, so both sets are given:
+
+   | | Old rule: known vs barren, p | New rule: known vs barren, p |
+   |---|---|---|
+   | Mars, best of 4 | 0.89 vs 0.76, 0.024 | 0.90 vs 0.72, 0.005 |
+   | Moon, best of 2 | 0.70 vs 0.57, 0.210 | 0.66 vs 0.44, 0.070 |
+   | Jezero | 0.87 vs 0.56, 0.002 | 0.87 vs 0.49, 0.0004 |
+   | Arcadia | 0.89 vs 0.79, 0.063 | 0.89 vs 0.76, 0.031 |
+   | Gale | 0.86 vs 0.77, 0.097 | 0.86 vs 0.74, 0.052 |
+   | Utopia | 0.87 vs 0.79, 0.080 | 0.81 vs 0.77, 0.240 |
+   | Marius Hills | 0.73 vs 0.60, 0.199 | 0.68 vs 0.45, 0.055 |
+   | Shackleton | 0.67 vs 0.57, 0.194 | 0.61 vs 0.65, 0.822 |
+
+   The candidate list also changed: 30 of the 55 earlier candidates are unchanged, 5 moved by less than 150 km, and 19 of the 54 current candidates are new places. The first-ranked candidates for Jezero, Gale, Utopia and Shackleton are the same cells as before. A reader who distrusts a change made after the fact should use the old-rule column.
 
 ## Validation (A)
 
@@ -157,16 +171,16 @@ The known analog sites (`data/known_analogs.csv`, 37 published sites) are the te
 
 | | Sites | Known sites (median percentile) | Random barren land | p |
 |---|---|---|---|---|
-| **Mars**, best of 4 targets | 26 | **0.89** | 0.76 | **0.024** |
-| **Moon**, best of 2 targets | 12 | **0.70** | 0.57 | 0.210 |
-| Jezero alone | 26 | 0.87 | 0.56 | 0.002 |
-| Arcadia alone | 26 | 0.89 | 0.79 | 0.063 |
-| Gale alone | 26 | 0.86 | 0.77 | 0.097 |
-| Utopia alone | 26 | 0.87 | 0.79 | 0.080 |
-| Marius Hills alone | 12 | 0.73 | 0.60 | 0.199 |
-| Shackleton alone | 12 | 0.67 | 0.57 | 0.194 |
+| **Mars**, best of 4 targets | 26 | **0.90** | 0.72 | **0.005** |
+| **Moon**, best of 2 targets | 12 | **0.66** | 0.44 | 0.070 |
+| Jezero alone | 26 | 0.87 | 0.49 | 0.0004 |
+| Arcadia alone | 26 | 0.89 | 0.76 | 0.031 |
+| Gale alone | 26 | 0.86 | 0.74 | 0.052 |
+| Utopia alone | 26 | 0.81 | 0.77 | 0.240 |
+| Marius Hills alone | 12 | 0.68 | 0.45 | 0.055 |
+| Shackleton alone | 12 | 0.61 | 0.65 | 0.822 |
 
-Reading: **known Mars analogs rank above random barren land** (the median known site is better than 89% of Earth's land, against 76% for the typical barren cell; p ≈ 0.02 to 0.03). For Jezero on its own the evidence is strong (p = 0.002). For Arcadia, Gale and Utopia on their own the difference is in the same direction but not significant (p between 0.06 and 0.10). For the Moon the sites are in the right direction but there are only 12 and the difference could be chance. Counting every site of the body, including those the score cannot see, gives similar figures (for example Jezero 0.86 with 29 sites).
+Reading: **known Mars analogs rank above random barren land** (the median known site is better than 90% of Earth's land, against 72% for the typical barren cell; p ≈ 0.005). For Jezero on its own the evidence is strong (p = 0.0004), and Arcadia is significant at 0.05 (p = 0.03). Gale is borderline (p = 0.05) and Utopia is not significant (p = 0.24). For the Moon as a body the sites are in the right direction (p = 0.07), but there are only 12, and the two targets disagree: Marius Hills is borderline (p = 0.06), while for Shackleton the known sites rank slightly below random barren land (0.61 vs 0.65). Shackleton's temperatures are beyond anything on Earth, so its score rests on terrain, albedo and the three zero-valued features, and we make no claim for it. Counting every site of the body, including those the score cannot see, gives similar figures (for example Jezero 0.84 with 29 sites). These numbers are from the like-for-like rule adopted on 2026-11-15; the earlier numbers are in "Choices, and when they were made", item 5.
 
 ![Known analog sites against random barren land, per body](figures/validation.png)
 
@@ -179,23 +193,23 @@ Median percentile of the dimension score, for sites tagged with that dimension a
 | Dimension | Sites tagged | Known sites | Random barren land |
 |---|---|---|---|
 | Terrain | 10 | 0.83 | 0.41 |
-| Temperature | 4 | 0.91 | 0.81 |
+| Temperature | 4 | 0.61 | 0.19 |
 | Aridity | 7 | 0.87 | 0.85 |
 | Geology | 15 | 0.57 | 0.07 |
 | Ice | 3 | 0.11 | 0.51 |
 | Dust | 3 | 0.21 | 0.71 |
 
-- **Terrain and temperature separate known sites from barren land.** Terrain is the strongest signal. For Utopia (the flattest target) the sign reverses (known 0.30 vs barren 0.54): known analogs are rougher than a flat plain, which is why Utopia alone is not significant.
+- **Terrain and temperature separate known sites from barren land.** Terrain is the strongest signal. On temperature, barren land ranks low (0.19) because most of it is hot desert, far from Mars temperatures. For Utopia (the flattest target) the sign reverses (known 0.30 vs barren 0.54): known analogs are rougher than a flat plain, which is why Utopia alone is not significant.
 - **Aridity does not separate them, and is nearly uninformative.** This is a limit of the rainfall data, not a finding about deserts. IMERG at 0.1° overestimates desert rainfall: it reads 45 mm/yr at Atacama Yungay (the standard hyperarid analog, in reality a few millimetres), 56 mm/yr at the core of the Lut desert and 122 mm/yr at Death Valley. Against a target of 0 mm/yr a cell scores 0.4 at 2 mm/yr, 0.09 at 5 mm/yr and 0.01 at 10 mm/yr, so only 6.8% of land area scores 0.1 or more, and almost every desert, including the best-known analog, scores close to 0. The dimension therefore mainly identifies the driest few percent of land (the Libyan Sahara, the Antarctic plateau) and says little beyond that. Its weight can be lowered in the app, and a better aridity measure would be the first thing to improve.
 - **Geology: barren land is the worst match (0.07).** The basaltic targets match vegetation and ice (high emissivity) better than quartz-rich deserts, so the dimension must be read together with vegetation.
 - **Ice and dust go the wrong way for the known sites, for understandable reasons.** The sites tagged ice (McMurdo Dry Valleys, Haughton Crater, Axel Heiberg) are snow-covered by definition, while every Mars target has no surface frost, so a surface-snow measure scores them poorly (decision: the dimension is "surface snow and ice", and Arcadia's ice is below the surface). Mars dust opacity (0.4 to 0.6) is higher than at Qaidam, Mojave and the Namib (0.2 to 0.3), so Earth's dustiest barren land matches best.
 
 ### How far to trust this
 
-- **The evidence is modest and not robust to every choice.** p ≈ 0.02 to 0.03 for Mars with 26 sites; the sensitivity table below shows it ranges from 0.002 to 0.09 under reasonable changes. Several sites are not independent (11 of the 37 are in the USA, four are in the Atacama region, and there are pairs in Hawaii and Iceland), and the p-values are not corrected for testing several targets and dimensions.
+- **The evidence is modest and not robust to every choice.** p ≈ 0.005 for Mars with 26 sites; the sensitivity table below shows it ranges from below 0.001 to 0.09 under reasonable changes, and it was 0.024 under the scoring rule we replaced. Several sites are not independent (11 of the 37 are in the USA, four are in the Atacama region, and there are pairs in Hawaii and Iceland), and the p-values are not corrected for testing several targets and dimensions.
 - **The site list was compiled by us** from published analog sites, before any scoring, and the tags (which dimension a site is known for) are our reading of the literature.
 - **The Moon test is weak.** The Moon's analog sites are mostly Apollo-training sites chosen for crater shape or logistics (Ries, Sudbury, Lonar, Cinder Lake), many on vegetated or inhabited land. An environment score cannot be expected to rank them high.
-- **The data was checked against the outside world, not only against itself** (`python -m pipeline.test_landmarks`). MOLA elevations at the Perseverance, Curiosity and Zhurong landing sites, read without the pipeline's code, are within 4 m of the published values. The MODIS aerosol and temperature files, read raw, are not flipped or shifted. Six Earth landmarks (Amazon, Libyan sand sea, Dome C, Everest, Bodélé, Yakutsk) fall in physically sensible ranges. An independent implementation of the scoring rules reproduces all 55 candidate scores. The two LOLA polar grids (240 m and 80 m) give the same Shackleton roughness (1,161 vs 1,163 m).
+- **The data was checked against the outside world, not only against itself** (`python -m pipeline.test_landmarks`). MOLA elevations at the Perseverance, Curiosity and Zhurong landing sites, read without the pipeline's code, are within 4 m of the published values. The MODIS aerosol and temperature files, read raw, are not flipped or shifted. Six Earth landmarks (Amazon, Libyan sand sea, Dome C, Everest, Bodélé, Yakutsk) fall in physically sensible ranges. An independent implementation of the scoring rules reproduces all 54 candidate scores. The two LOLA polar grids (240 m and 80 m) give the same Shackleton roughness (1,161 vs 1,163 m).
 - **Early versions looked better and were wrong.** With five features and no target values for albedo or snow, the score rewarded ice sheets (percentile among barren land: McMurdo Dry Valleys 1.00, Holuhraun 0.99) and the tagged known sites scored a median of 0.75. Completing the features made the result more modest and more honest (McMurdo 0.42, Holuhraun 0.56, same measure).
 
 ### Sensitivity of the Mars result
@@ -204,30 +218,30 @@ Median percentile of the dimension score, for sites tagged with that dimension a
 
 | Change | Known vs barren | p |
 |---|---|---|
-| None (design) | 0.89 vs 0.76 | 0.03 |
-| Barren = NDVI < 0.10 / 0.20 / 0.30 (design 0.15) | 0.89 vs 0.77 / 0.80 / 0.82 | 0.03 / 0.06 / 0.09 |
-| Leave out any one site (26 runs) | 0.89 to 0.90 vs 0.76 | at most 0.04 |
-| Leave out the 4 Atacama sites | 0.87 vs 0.76 | 0.08 |
-| Leave out the 4 USA sites that are visible to the score | 0.89 vs 0.76 | 0.05 |
-| Leave out the 4 polar sites | 0.90 vs 0.76 | 0.02 |
-| Drop terrain (weight 0) | 0.86 vs 0.80 | 0.09 |
-| Drop albedo | 0.85 vs 0.81 | 0.09 |
-| Drop ice / geology / dust / aridity | 0.84 to 0.95 | 0.02 to 0.05 |
-| Drop temperature | 0.90 vs 0.71 | 0.004 |
-| Drop vegetation | 0.76 vs 0.35 | 0.002 |
-| All σ × 0.7 / × 1.4 | 0.88 / 0.89 vs 0.76 / 0.74 | 0.07 / 0.01 |
+| None (design) | 0.90 vs 0.72 | 0.004 |
+| Barren = NDVI < 0.10 / 0.20 / 0.30 (design 0.15) | 0.90 vs 0.72 / 0.76 / 0.80 | 0.002 / 0.02 / 0.03 |
+| Leave out any one site (26 runs) | 0.89 to 0.91 vs 0.72 | at most 0.01 |
+| Leave out the 4 Atacama sites | 0.88 vs 0.72 | 0.03 |
+| Leave out the 4 USA sites that are visible to the score | 0.89 vs 0.72 | 0.02 |
+| Leave out the 4 polar sites | 0.91 vs 0.72 | 0.004 |
+| Drop terrain (weight 0) | 0.83 vs 0.78 | 0.07 |
+| Drop geology | 0.92 vs 0.86 | 0.09 |
+| Drop albedo | 0.85 vs 0.78 | 0.04 |
+| Drop ice / dust / aridity / temperature | 0.85 to 0.90 vs 0.68 to 0.73 | 0.004 to 0.02 |
+| Drop vegetation | 0.72 vs 0.29 | < 0.001 |
+| All σ × 0.7 / × 1.4 | 0.88 / 0.89 vs 0.75 / 0.69 | 0.04 / 0.004 |
 
-The direction (known sites above barren land) holds in every variant. Whether p crosses 0.05 depends on choices: it passes 0.05 when the barren baseline is loosened to include semi-arid land, when the Atacama sites are removed, when all σ are narrowed, or when terrain or albedo is dropped, which are the two dimensions carrying most of the separation. It does not depend on any single site. Dropping vegetation makes the result much stronger because barren land matches the vegetation target (no plants) by construction, so comparing against barren land is a conservative test in that respect. For the Moon the result cannot be interpreted: with 6 of the 12 sites in the USA, removing them gives 0.42 vs 0.57 (p = 0.83), and the sign reverses when albedo or geology is dropped.
+The direction (known sites above barren land) holds in every variant, and p stays below 0.05 in all but two: dropping terrain (0.07) or geology (0.09), the dimensions that carry most of the separation. It does not depend on any single site or group of sites. Dropping vegetation makes the result much stronger because barren land matches the vegetation target (no plants) by construction, so comparing against barren land is a conservative test in that respect. For the Moon the result cannot be interpreted: with 6 of the 12 sites in the USA, removing them gives 0.52 vs 0.44 (p = 0.35), and the sign reverses when albedo is dropped (0.60 vs 0.80).
 
 ![The Mars validation under changed choices](figures/sensitivity.png)
 
-*Figure 2. The Mars result for each variant in the table (blue: known sites, grey: random barren land). The p values are a separate Monte Carlo run, so the design row reads 0.028 here and 0.024 in `validation.json`.*
+*Figure 2. The Mars result for each variant in the table (blue: known sites, grey: random barren land). The p values are a separate Monte Carlo run, so the design row reads 0.004 here and 0.005 in `validation.json`.*
 
 ## Results: new candidates (A)
 
-For each target the pipeline takes the top 1% of land area, groups the cells into regions, splits large regions at their local maxima, removes anything within 200 km of a known analog and, for the Mars targets, permanent ice sheets, and ranks what is left by score × robustness. Robustness is the share of 500 random changes of the dimension weights (each multiplied by exp(N(0, 0.5))) in which the place stays in the top 50. At most 3 candidates per continent are kept, at least 400 km apart. The result is 55 candidates (`web/data/candidates.geojson`).
+For each target the pipeline takes the top 1% of land area, groups the cells into regions, splits large regions at their local maxima, removes anything within 200 km of a known analog and, for the Mars targets, permanent ice sheets, and ranks what is left by score × robustness. Robustness is the share of 500 random changes of the dimension weights (each multiplied by exp(N(0, 0.5))) in which the place stays in the top 50. At most 3 candidates per continent are kept, at least 400 km apart. The result is 54 candidates (`web/data/candidates.geojson`).
 
-![The 55 candidates and the 37 known sites](figures/candidates.png)
+![The 54 candidates and the 37 known sites](figures/candidates.png)
 
 *Figure 3. Candidates by target (orange: Mars, blue: Moon) and the known analog sites used for validation (grey crosses).*
 
@@ -235,30 +249,30 @@ Top three for each target (score at the default equal weights; "weakest" shows w
 
 | Target | # | Best cell | Continent | Score | Robust. | Area km² | To nearest known | Weakest dimensions |
 |---|---|---|---|---|---|---|---|---|
-| Jezero | 1 | 25.9°N 65.4°E | Asia | 0.72 | 1.00 | 47,112 | 798 km | aridity 0.00, temperature 0.05 |
-| Jezero | 2 | 25.9°N 60.4°E | Asia | 0.69 | 1.00 | 25,662 | 397 km | aridity 0.00, temperature 0.09 |
-| Jezero | 3 | 29.1°N 62.9°E | Asia | 0.68 | 1.00 | 2,704 | 835 km | aridity 0.00, dust 0.27 |
-| Gale | 1 | 26.9°N 54.6°E | Asia | 0.71 | 1.00 | 17,873 | 570 km | aridity 0.00, temperature 0.08 |
-| Gale | 2 | 18.6°S 69.9°W | South America | 0.65 | 1.00 | 21,252 | 455 km | aridity 0.00, dust 0.00 |
-| Gale | 3 | 38.4°N 88.6°E | Asia | 0.64 | 1.00 | 22,004 | 251 km | aridity 0.00, dust 0.00 |
-| Utopia | 1 | 25.6°N 61.1°E | Asia | 0.72 | 1.00 | 22,999 | 424 km | aridity 0.00, temperature 0.12 |
-| Utopia | 2 | 39.1°N 88.4°E | Asia | 0.69 | 1.00 | 4,192 | 277 km | aridity 0.00, temperature 0.28 |
-| Utopia | 3 | 22.6°N 45.1°E | Asia | 0.67 | 1.00 | 2,848 | 1,062 km | aridity 0.00, dust 0.24 |
-| Arcadia | 1 | 29.1°N 65.6°E | Asia | 0.74 | 1.00 | 41,286 | 1,014 km | aridity 0.00, temperature 0.20 |
-| Arcadia | 2 | 25.9°N 59.6°E | Asia | 0.74 | 1.00 | 25,036 | 361 km | aridity 0.00, temperature 0.16 |
-| Arcadia | 3 | 36.1°N 60.4°E | Asia | 0.73 | 1.00 | 29,456 | 1,485 km | aridity 0.00, temperature 0.25 |
-| Shackleton | 1 | 29.6°S 69.1°W | South America | 0.64 | 1.00 | 38,365 | 499 km | aridity 0.00, temperature 0.00 |
-| Shackleton | 2 | 24.6°S 65.9°W | South America | 0.62 | 1.00 | 21,050 | 285 km | aridity 0.00, temperature 0.00 |
-| Shackleton | 3 | 42.6°N 88.1°E | Asia | 0.61 | 1.00 | 16,400 | 530 km | aridity 0.00, temperature 0.01 |
-| Marius Hills | 1 | 31.9°N 58.9°E | Asia | 0.77 | 1.00 | 30,720 | 1,000 km | aridity 0.00, temperature 0.67 |
-| Marius Hills | 2 | 21.4°S 14.1°E | Africa | 0.77 | 1.00 | 13,031 | 261 km | aridity 0.00, temperature 0.57 |
-| Marius Hills | 3 | 28.1°S 18.1°E | Africa | 0.76 | 1.00 | 5,439 | 594 km | aridity 0.00, temperature 0.66 |
+| Jezero | 1 | 25.9°N 65.4°E | Asia | 0.72 | 1.00 | 51,960 | 798 km | temperature 0.00, aridity 0.00 |
+| Jezero | 2 | 25.9°N 60.4°E | Asia | 0.68 | 1.00 | 29,120 | 397 km | temperature 0.00, aridity 0.00 |
+| Jezero | 3 | 29.1°N 62.9°E | Asia | 0.64 | 1.00 | 2,027 | 835 km | temperature 0.00, aridity 0.00 |
+| Gale | 1 | 26.9°N 54.6°E | Asia | 0.68 | 1.00 | 14,441 | 570 km | temperature 0.00, aridity 0.00 |
+| Gale | 2 | 18.6°S 69.9°W | South America | 0.60 | 1.00 | 15,393 | 455 km | temperature 0.00, aridity 0.00 |
+| Gale | 3 | 39.4°N 94.1°E | Asia | 0.60 | 1.00 | 4,179 | 243 km | aridity 0.00, dust 0.00 |
+| Utopia | 1 | 25.6°N 61.1°E | Asia | 0.70 | 1.00 | 23,694 | 424 km | temperature 0.00, aridity 0.00 |
+| Utopia | 2 | 29.1°N 48.1°E | Asia | 0.70 | 1.00 | 4,035 | 1,221 km | temperature 0.00, aridity 0.00 |
+| Utopia | 3 | 26.6°N 54.9°E | Asia | 0.68 | 0.98 | 8,959 | 533 km | temperature 0.00, aridity 0.00 |
+| Arcadia | 1 | 25.6°N 60.1°E | Asia | 0.72 | 1.00 | 27,813 | 360 km | temperature 0.00, aridity 0.00 |
+| Arcadia | 2 | 29.1°N 65.6°E | Asia | 0.72 | 1.00 | 32,490 | 1,014 km | temperature 0.00, aridity 0.00 |
+| Arcadia | 3 | 36.1°N 60.4°E | Asia | 0.70 | 1.00 | 28,807 | 1,485 km | temperature 0.00, aridity 0.00 |
+| Shackleton | 1 | 29.6°S 69.1°W | South America | 0.62 | 1.00 | 36,345 | 499 km | temperature 0.00, aridity 0.00 |
+| Shackleton | 2 | 24.6°S 66.1°W | South America | 0.59 | 1.00 | 19,646 | 268 km | temperature 0.00, aridity 0.00 |
+| Shackleton | 3 | 42.6°N 88.1°E | Asia | 0.58 | 0.96 | 16,388 | 530 km | temperature 0.00, aridity 0.00 |
+| Marius Hills | 1 | 21.4°S 14.1°E | Africa | 0.69 | 1.00 | 10,855 | 261 km | temperature 0.00, aridity 0.00 |
+| Marius Hills | 2 | 2.9°N 36.4°E | Africa | 0.69 | 1.00 | 4,629 | 1,335 km | temperature 0.00, aridity 0.00 |
+| Marius Hills | 3 | 25.4°N 39.1°E | Asia | 0.68 | 1.00 | 31,439 | 1,244 km | temperature 0.00, aridity 0.00 |
 
 What the pattern says:
 
-- The same few regions recur across targets: **the Iranian plateau and Baluchistan** (Dasht-e Lut, Makran and the desert to their east, about 25–36°N, 55–66°E), with one Arabian candidate, the **Altiplano and Atacama**, **Egypt's Eastern Desert and the central Sahara**, the **Tibet–Qaidam–Tarim** area, and, for the Moon targets, southern Africa. This is expected: temperature targets are directional, so terrain, albedo, dust and geology carry the difference between targets.
-- **Every top-three candidate in the table has aridity 0.00.** According to IMERG the first-ranked candidate of each target gets 69 to 266 mm/yr, so by this measure they are arid, not hyperarid. Given the bias of the rainfall data explained above, we cannot tell from our data whether they are drier than that. The candidates are therefore places that match on terrain, temperature, albedo, dust and geology, not proven hyperarid ones.
-- **"Under-studied" is not yet established.** For the top-three candidates in the table, the nearest site on our list of 37 is 250 km to 1,500 km away, but our list is short, and a place far from it may still be a published analog (the Dasht-e Lut, for example, is a known desert-geomorphology site). A literature check per candidate decides whether it is called "under-studied", and the word "unrecognized" is used only if that search finds nothing. A first pass (titles and abstracts, `docs/literature-check.md`) found no analog study for the Makran coast and Chagai–Registan. For the Hormozgan salt domes it found conference work comparing Iranian salt structures with Mars (Aftabi, EGU 2006), but no field analog study at this site. This belt across south-east Iran and south-west Pakistan holds the first-ranked candidate of four targets (Jezero, Gale, Utopia, Arcadia), and the Lut desert just north of it (aeolian analog work only) holds the first-ranked Marius Hills candidate. The nearest site on our list to the belt is the Samail Ophiolite in Oman, 360 to 1,010 km away, an analog studied for a different reason (serpentinisation). A Scholar and ADS search comes before any stronger claim.
+- The same few regions recur across targets: **the Iranian plateau and Baluchistan** (Dasht-e Lut, Makran and the desert to their east, about 25–36°N, 55–66°E), with one Arabian candidate, the **Altiplano and Atacama**, **Egypt's Eastern Desert and the central Sahara**, the **Tibet–Qaidam–Tarim** area, and, for the Moon targets, southern Africa. This is expected: no warm desert matches Mars or Moon temperatures (temperature scores 0.00 for almost every top candidate), so terrain, albedo, dust and geology carry the difference between targets.
+- **Every top-three candidate in the table has aridity 0.00, and all but one have temperature 0.00.** The candidates are warm deserts: their days, nights and day–night range are all far from the targets'. According to IMERG the first-ranked candidate of each target gets 60 to 267 mm/yr, so by this measure they are arid, not hyperarid. Given the bias of the rainfall data explained above, we cannot tell from our data whether they are drier than that. The candidates are therefore places that match on terrain, albedo, dust, geology, bare ground and the absence of snow, not on temperature, and they are not proven hyperarid.
+- **"Under-studied" is not yet established.** For the top-three candidates in the table, the nearest site on our list of 37 is 240 km to 1,500 km away, but our list is short, and a place far from it may still be a published analog (the Dasht-e Lut, for example, is a known desert-geomorphology site). A literature check per candidate decides whether it is called "under-studied", and the word "unrecognized" is used only if that search finds nothing. A first pass (titles and abstracts, `docs/literature-check.md`) found no analog study for the Makran coast and Chagai–Registan. For the Hormozgan salt domes it found conference work comparing Iranian salt structures with Mars (Aftabi, EGU 2006), but no field analog study at this site. This belt across south-east Iran and south-west Pakistan holds the first-ranked candidate of four targets (Jezero, Gale, Utopia, Arcadia), and it holds the second- or third-ranked candidate of three of them as well. The first-ranked Marius Hills candidate is in Damaraland, Namibia (a few studies, for one feature only). The nearest site on our list to the belt is the Samail Ophiolite in Oman, 360 to 1,010 km away, an analog studied for a different reason (serpentinisation). A Scholar and ADS search comes before any stronger claim.
 
 ## What the score cannot see (A), and Earth's limits (B)
 
@@ -279,7 +293,7 @@ What the pattern says:
 | Gravity | 3.73 m/s², 38% of Earth's | 1.62 m/s², 17% | 9.81 m/s² |
 | Surface pressure | 723 to 839 Pa, 0.7–0.8% of Earth's; mostly CO₂ | about 3 × 10⁻¹⁰ Pa at night: a vacuum | 101,325 Pa |
 | Radiation dose at the surface | 0.64 mSv/day | 1.37 mSv/day | about 0.0066 mSv/day (2.4 mSv/yr world average natural dose) |
-| Temperature | every target's coldest night is below Earth's coldest (166–196 K vs 207 K) | day–night swing 276 K at Marius Hills vs at most 25 K on Earth | |
+| Temperature | every target's coldest night is below Earth's coldest monthly mean (166–196 K vs 197 K) | day–night swing 276 K at Marius Hills vs at most 38 K on Earth | |
 
 Sources:
 - **Gravity:** NASA NSSDC Mars and Moon fact sheets. Mars 3.73 m/s² is the current sheet's mean surface gravity; 3.71 m/s² is the older, equatorial value.

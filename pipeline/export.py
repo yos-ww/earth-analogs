@@ -151,7 +151,7 @@ def main():
     np.stack(cols, axis=1).tofile(WEB_DATA / "features.bin")  # n_cells x n_features, row-major
     dims = [d for d in DIMENSIONS if any(f["dimension"] == d for f in feats)]
     meta = {
-        "contract_version": 1,
+        "contract_version": 2,
         "grid": {"res_deg": RES_DEG, "ncols": NCOLS, "nrows": NROWS},
         "n_cells": int(len(cells)),
         "dimensions": dims,

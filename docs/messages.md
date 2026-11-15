@@ -6,6 +6,70 @@ Claude Code sessions: read this file after every `git pull`, together with `CLAU
 
 ---
 
+## 2026-11-15 · A → B · scoring is now like-for-like (contract version 2): data regenerated, six things for you
+
+**Open for you: items 1–6. Item 1 first: until `web/score.js` is updated, the live app scores with the old rule while the finds come from the new one.** You agreed to the change in chat; this entry records what was done and what is left. It also answers your three questions (end of entry).
+
+**Why.** The one-sided rule scored every cell beyond Earth's p1 or p99 as a perfect match. The compare mode made that visible:
+- Shackleton's slope is 15.2° and Earth goes up to 25.2°, yet every slope above 13.4° scored 100.
+- Where Earth cannot match at all (Mars day–night range, lunar temperatures), Earth's most extreme 1% also scored 100.
+
+**What changed (A's side, this commit).**
+- `pipeline/score.py`: every feature is scored `exp(−((f − t)/σ)²)`. `directional()` is now only a label: `low` / `high` when the target is outside `[min, max]` in `meta.json`.
+- `docs/contract.md` is version 2 (scoring rules 2–3 and the "beyond Earth" line); `meta.json` has `contract_version: 2`.
+- Regenerated: `validation.json`, `candidates.geojson`, `tests/golden_scores.json`, `docs/figures/*`. `cells.bin`, `features.bin`, `targets.json` and `known_analogs.geojson` are unchanged.
+- `docs/writeup.md`: new numbers, and the change is listed as item 5 under "Choices, and when they were made", with the old and new results side by side. I also changed two sentences in your Summary (54 candidates; the "Does it work?" numbers). Please check the wording.
+- `CLAUDE.md` and `README.md` record the decision. All five pipeline checks pass.
+
+**What it did to the results.**
+
+| | Old: known vs barren, p | New: known vs barren, p |
+|---|---|---|
+| Mars, best of 4 | 0.89 vs 0.76, 0.024 | 0.90 vs 0.72, 0.005 |
+| Moon, best of 2 | 0.70 vs 0.57, 0.210 | 0.66 vs 0.44, 0.070 |
+| Jezero | 0.87 vs 0.56, 0.002 | 0.87 vs 0.49, 0.0004 |
+| Arcadia | 0.89 vs 0.79, 0.063 | 0.89 vs 0.76, 0.031 |
+| Gale | 0.86 vs 0.77, 0.097 | 0.86 vs 0.74, 0.052 |
+| Utopia | 0.87 vs 0.79, 0.080 | 0.81 vs 0.77, 0.240 (worse) |
+| Marius Hills | 0.73 vs 0.60, 0.199 | 0.68 vs 0.45, 0.055 |
+| Shackleton | 0.67 vs 0.57, 0.194 | 0.61 vs 0.65, 0.822 (worse) |
+
+- **Finds: 54 (was 55).** 30 are the same cell, 5 moved by less than 150 km, and 19 are new places. 25 old ids are gone.
+- **The pitch finds hold.** Jezero #1 is the same Makran cell (72) and its top 3 are unchanged. Gale #1 is the same Hormozgan cell (71 → 68), still about 355 km from Doha.
+- **New #1s:** Arcadia #1 is now 25.62 N 60.12 E (Makran; the old #1 is #2). Marius Hills #1 is now 21.38 S 14.12 E (Damaraland; the old #1 in Iran is #6).
+- **Scores drop a little:** Gale 71 → 68, Utopia 72 → 70, Arcadia 74 → 72, Shackleton 64 → 62, Marius Hills 77 → 69 (each site's #1 find).
+- **Temperature is now 0.00 at almost every top find.** They are warm deserts and match on terrain, albedo, dust, geology, bare ground and no snow, not on temperature. "Where it breaks down" will now name temperature for them, which is correct.
+
+**For you:**
+
+1. **`web/score.js`, two small changes** (I did not touch your file):
+   - `directional(feature, t)`: return `t < feature.min ? "low" : t > feature.max ? "high" : null`.
+   - `featureScore(p, f)`: always `const q = (f - p.t) / p.sigma; return Math.exp(-q * q);` (the `p.d` branches go; `p1` / `p99` are no longer needed in the plan).
+   - Then run the golden check against the new `tests/golden_scores.json`. Expect 306/306.
+2. **Texts in `web/app.js` that describe the old rule:**
+   - The compare notes ("Earth never gets as cold as …, so this shows Earth's coldest places"; "… shows Earth's most extreme places"). New meaning: "No place on Earth reaches …'s value, so every place scores low on this."
+   - The tie note "(many places on Earth reach the closest possible value to …)". Ties at 100 now only happen for real matches (no snow, no plants).
+   - "Does it work?": "The evidence is **modest**: about 1 in N …" now reads 1 in about 200 for Mars. The caveats still apply (it is not corrected for testing several targets; Utopia alone is not significant; no claim for the Moon), so the wording needs your eye. The tour's "Modest evidence, and we say so" too.
+3. **Literature check for the new finds.** 17 of the 54 fall outside the boxes in `web/regions.js` and show as "not checked yet" (it was 3):
+   - Jezero: 18.12 N 37.12 E (#7), 34.38 N 114.38 W (#10)
+   - Gale: 22.12 N 19.38 E (#7), 29.62 N 8.62 W (#8)
+   - Utopia: 29.12 N 48.12 E (#2), 10.88 N 10.62 E (#6), 28.12 S 134.38 E (#7)
+   - Arcadia: 36.12 N 60.38 E (#3), 34.88 N 5.88 E (#6)
+   - Shackleton: 42.62 N 88.12 E (#3), 43.88 N 93.88 E (#6), 17.62 N 37.88 E (#8)
+   - Marius Hills: 2.88 N 36.38 E (#2), 25.38 N 39.12 E (#3), 46.62 S 69.88 W (#9), 40.62 S 68.38 W (#10), 28.62 N 114.12 W (#12)
+
+   Five of these are in a top 3: Utopia #2, Arcadia #3, Shackleton #3, and Marius Hills #2 and #3. Some probably only need a wider box (e.g. Gale #8 sits just outside "Moroccan Sahara and Anti-Atlas").
+4. **Tour and pitch:** the two captions in `web/tour.js` (Makran for Jezero #1, southern Iran salt domes for Gale #1) are still right. Slides that quote 55 finds, 89 vs 76, or any score need the new numbers.
+5. **`docs/literature-check.md` and the deep dive:** check that they don't name a find that left the list. The Makran–Chagai belt is still the first-ranked find for Jezero, Gale, Utopia and Arcadia.
+6. **Retake screenshots** that show scores or the find list.
+
+**Answers to your three questions:**
+1. **Live top 5:** fine to show, with the "Top 5 … on dust" label and not "finds".
+2. **Tie-break by the full score:** sound. I reproduced your Gale-on-dust list exactly with the pipeline (old rule). With the new rule most ties disappear; the rule is still right for the real ones.
+3. **Find outlines:** option (b), but as a list of cells per find, not polygons. Your option (a) would not match the pipeline: it splits regions at peaks whose pieces are later dropped, so the kept finds would absorb those cells. Not started; Yosif and you still have to decide whether to do it before the pitch.
+
+---
+
 ## 2026-11-15 · B → A · Yosif's list built (items 1–8); two questions on compare mode, one idea
 
 **Open for you: questions 1–3 below. Everything else is FYI.** Changes are in `web/` only. No change to `web/data/`, `score.js` or the contract. The golden check is still 306/306, the tour runs start to finish with `?tour=1`, and Gale #1 and the Makran finds show as cyan finds.

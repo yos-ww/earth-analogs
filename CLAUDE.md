@@ -35,7 +35,7 @@ Shared files (`CLAUDE.md`, `plan.md`, `docs/contract.md`, `docs/tasks.md`, `READ
 
 - 0.25° global land grid, 12 features in 8 dimensions, one slider per dimension. The eighth, geology, is 8.55 µm emissivity (`Emis_29` in the MOD11C3 files already on disk).
 - Score: `exp(-((f - t)/σ)²)` per feature, mean within a dimension, weighted mean across dimensions. Exact rules in `docs/contract.md`.
-- Like-for-like vs. directional vs. n/a is decided per target and per feature by the p1–p99 rule.
+- Every feature is scored like-for-like; a target value beyond Earth's min–max is only labelled "beyond Earth" and scores low everywhere (contract version 2). This replaced the one-sided p1–p99 rule on 2026-11-15, agreed by both, because it gave false 100s. Old and new numbers: `docs/writeup.md`, "Choices, and when they were made", item 5.
 - 3D globe (`globe.gl` from a CDN, no build step) is the main view; the Leaflet flat map is a stretch fallback (see the presentation-plan decision below).
 - Area weighting by cos(latitude) for every percentile, validation and ranking.
 - No tuning to the answer: σ from the data rule, equal default weights.
@@ -65,7 +65,7 @@ Both people confirmed these (2026-11-14). Code to them; they are not open.
 
 Judged on Impact, Creativity, Validity, Relevance, Presentation (1–5 each); the gap is Presentation and Impact, not science. Details and B's prioritised list: `docs/messages.md` (entry "review against the judging rubric").
 
-- **Data frozen at about 17:30 on 2026-11-14** (Checkpoint 2 brought forward). `web/data/` changes only for bug fixes, announced in `docs/messages.md` first. Candidate ids are final.
+- **Data frozen at about 17:30 on 2026-11-14** (Checkpoint 2 brought forward), **then regenerated once on 2026-11-15** for the scoring change above (54 candidates; ids changed). `web/data/` changes only for bug fixes, announced in `docs/messages.md` first. Candidate ids are final again from 2026-11-15.
 - **Aridity: scoring unchanged.** The app shows the weakest dimension other than aridity as "where it breaks down" and marks aridity as limited by the rainfall data.
 - **No new science features or stretch data** (e.g. LOLA normal albedo) before the pitch; time goes to slides, video, tour, mission cards, "Does it work?", one deep dive (Makran–Chagai belt) and the write-up.
 - **Pitch hook:** Gale #1 (Hormozgan) is 355 km from Doha; always with "no analog study found in a first-pass search" until Scholar/ADS is done.

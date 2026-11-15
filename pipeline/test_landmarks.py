@@ -99,12 +99,7 @@ def independent_score(meta, values, target, i):
         if e is None or e.get("na") or np.isnan(x):
             continue
         t = np.log1p(e["value"]) if f["transform"] == "log1p" else e["value"]
-        if t < f["p1"]:
-            d = max(x - f["p1"], 0.0)
-        elif t > f["p99"]:
-            d = max(f["p99"] - x, 0.0)
-        else:
-            d = x - t
+        d = x - t  # like-for-like for every feature (contract v2)
         dims.setdefault(f["dimension"], []).append(np.exp(-(d / f["sigma"]) ** 2))
     ds = {d: float(np.mean(v)) for d, v in dims.items()}
     if len(ds) < 4:

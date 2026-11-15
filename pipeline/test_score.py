@@ -18,12 +18,7 @@ def scalar_score(grid, i, target, weights=None):
         if e is None or e.get("na") or math.isnan(x):
             continue
         t = transform(e["value"], f["transform"])
-        if t < f["p1"]:
-            diff = 0.0 if x <= f["p1"] else x - f["p1"]
-        elif t > f["p99"]:
-            diff = 0.0 if x >= f["p99"] else f["p99"] - x
-        else:
-            diff = x - t
+        diff = x - t  # like-for-like for every feature (contract v2)
         dims.setdefault(f["dimension"], []).append(math.exp(-((diff / f["sigma"]) ** 2)))
     w = weights or target["weights"]
     ds = {d: sum(v) / len(v) for d, v in dims.items()}
@@ -69,23 +64,29 @@ def main():
             assert abs(ref - got) < 1e-5, (i, ref, got)
     print("vectorised == scalar on 300 random cells")
 
-    # 3. Directional rules: a target far outside Earth's range clamps to p1 / p99.
+    # 3. Like-for-like everywhere: no clamping. A target beyond Earth's range is labelled, not rewarded.
     feats = grid["meta"]["features"]
-    jp = [f["id"] for f in feats].index("precip")
-    t2 = target_from_cell(grid, i0)
-    t2["features"]["precip"] = {"value": 0.0}  # zero rainfall: below Earth's p1 only if p1 > 0
-    r2 = score_target(grid, t2)
-    if feats[jp]["p1"] > 0:
-        assert r2["directional"].get("precip") == "low"
+    ids = [f["id"] for f in feats]
     t3 = target_from_cell(grid, i0)
     t3["features"]["lst_night_cold"] = {"value": 100.0}  # far colder than any Earth land cell
     r3 = score_target(grid, t3)
     assert r3["directional"]["lst_night_cold"] == "low"
-    jn = [f["id"] for f in feats].index("lst_night_cold")
+    jn = ids.index("lst_night_cold")
     coldest = int(np.nanargmin(grid["values"][:, jn]))
-    assert abs(r3["feature_scores"][coldest, jn] - 1.0) < 1e-6  # coldest Earth cell: perfect
-    assert r3["feature_scores"][i0, jn] < 0.01  # warm Sahara night: poor
-    print("directional clamp: coldest Earth cell scores 1, Sahara", float(r3["feature_scores"][i0, jn]))
+    assert r3["feature_scores"][coldest, jn] < 0.01  # even the coldest Earth cell is no match for 100 K
+    assert np.nanmax(r3["feature_scores"][:, jn]) == r3["feature_scores"][coldest, jn]  # but it is the closest
+    # A target outside p1-p99 but inside Earth's range: the nearest value wins, not the most extreme.
+    js = ids.index("slope")
+    t4 = target_from_cell(grid, i0)
+    t4["features"]["slope"] = {"value": 15.0}
+    r4 = score_target(grid, t4)
+    assert "slope" not in r4["directional"]
+    slope_deg = np.expm1(grid["values"][:, js])
+    near = int(np.nanargmin(np.abs(slope_deg - 15.0)))
+    steepest = int(np.nanargmax(slope_deg))
+    assert r4["feature_scores"][near, js] > 0.99 > r4["feature_scores"][steepest, js]
+    print("like-for-like: 100 K target, coldest Earth cell scores", float(r3["feature_scores"][coldest, jn]),
+          "| slope 15 deg: nearest", float(r4["feature_scores"][near, js]), "steepest", float(r4["feature_scores"][steepest, js]))
 
     # 4. n/a features are skipped; fewer than MIN_DIMENSIONS dimensions gives no score.
     by_dim = {}

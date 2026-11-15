@@ -15,7 +15,7 @@ def main():
     n, nf = meta["n_cells"], len(meta["features"])
     codes = np.fromfile(WEB_DATA / "features.bin", np.uint8)
 
-    assert meta["contract_version"] == 1 and meta["grid"] == {"res_deg": 0.25, "ncols": NCOLS, "nrows": NROWS}
+    assert meta["contract_version"] == 2 and meta["grid"] == {"res_deg": 0.25, "ncols": NCOLS, "nrows": NROWS}
     assert len(cells) == n and codes.size == n * nf, "cells.bin / features.bin disagree with meta.json"
     assert (np.diff(cells.astype(np.int64)) > 0).all() and cells.max() < NCOLS * NROWS, "cells not sorted/unique/in range"
     codes = codes.reshape(n, nf)

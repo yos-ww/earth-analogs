@@ -40,21 +40,16 @@ def transform(value, kind):
 
 
 def directional(feature, t):
-    """'low' / 'high' if the target lies outside Earth's p1-p99 range, else None."""
-    return "low" if t < feature["p1"] else "high" if t > feature["p99"] else None
+    """'low' / 'high' if the target lies beyond Earth's actual range (min-max of the land cells), else None.
+    A label only (the app's "beyond Earth" badge): it does not change the score."""
+    return "low" if t < feature["min"] else "high" if t > feature["max"] else None
 
 
 def feature_scores(f_values, feature, t):
-    """Score (0-1) of one feature for all cells; NaN where the cell has no data."""
-    sigma = feature["sigma"]
-    d = directional(feature, t)
-    if d == "low":  # Earth can only be at or above p1: anything at or below scores 1
-        diff = np.maximum(f_values - feature["p1"], 0.0)
-    elif d == "high":
-        diff = np.maximum(feature["p99"] - f_values, 0.0)
-    else:
-        diff = f_values - t
-    return np.exp(-((diff / sigma) ** 2))
+    """Score (0-1) of one feature for all cells, like-for-like against the target value t;
+    NaN where the cell has no data. A target beyond Earth's range scores low everywhere:
+    that is the honest answer, Earth cannot match it."""
+    return np.exp(-(((f_values - t) / feature["sigma"]) ** 2))
 
 
 def score_target(grid, target, weights=None):
@@ -64,7 +59,7 @@ def score_target(grid, target, weights=None):
       feature_scores  (n_cells, n_features)    NaN = skipped
       dim_scores      (n_cells, n_dimensions)  NaN = dimension missing
       overall         (n_cells,)               NaN = fewer than MIN_DIMENSIONS dimensions
-      directional     {feature_id: 'low' | 'high'} for features scored one-sided
+      directional     {feature_id: 'low' | 'high'} for target values beyond Earth's range (label only)
     `weights` overrides target["weights"] (dimension -> weight).
     """
     meta, values = grid["meta"], grid["values"]

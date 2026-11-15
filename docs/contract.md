@@ -1,6 +1,6 @@
 # Interface contract: `web/data/*`
 
-Version 1. Person A's `pipeline/export.py` writes these files; Person B's app reads them. B's mock files in `web/mock/` use the same names and formats. To change anything here, edit this file in the same commit as the code and tell the other person.
+Version 2 (2026-11-15: every feature is scored like-for-like; the one-sided rule of version 1 is gone). Person A's `pipeline/export.py` writes these files; Person B's app reads them. B's mock files in `web/mock/` use the same names and formats. To change anything here, edit this file in the same commit as the code and tell the other person.
 
 ## Grid
 
@@ -90,7 +90,7 @@ Little-endian `Uint32`, one value per land cell: the flat grid index. Length = `
 - `value` is in **physical units** (the Unit column above), not transformed. The app applies the feature's transform before scoring.
 - `status` is `literature`, `computed` or `fixed`.
 - `na: true` means the feature has no meaning for this target; it is skipped.
-- Directional is **not stored**. Both sides derive it: a feature is directional when the transformed target value lies outside `[p1, p99]` from `meta.json`.
+- "Beyond Earth" is **not stored**. Both sides derive it: the transformed target value lies outside `[min, max]` from `meta.json`, so no land cell can match it. It is a label only (`directional` in the code: `low` or `high`) and does not change the score.
 - The numbers in the example are placeholders, not real values.
 
 ### Sources of `targets.json` (both hand-edited, owner: B)
@@ -109,7 +109,7 @@ Little-endian `Uint32`, one value per land cell: the flat grid index. Length = `
 
 - **Ice (`snow_ice`):** the surface snow or frost cover fraction, matching what MOD10CM measures. Shallow subsurface ice (Arcadia) and permanently shadowed ice (Shackleton) are not surface cover: score the surface value (0 if none is seen) and say so in the mission card (review decision 3).
 - **Dust (`aod`):** give the value at 550 nm. If the source reports another wavelength (880 nm, 9 µm), put the original wavelength in `value_kind` and the conversion in `source`.
-- **Vegetation (`ndvi_max`):** the same fixed value for every target, `0`, status `fixed` (it is directional).
+- **Vegetation (`ndvi_max`):** the same fixed value for every target, `0`, status `fixed`.
 - **Temperatures:** monthly means, with the local time of day in `value_kind` (Earth's MOD11C3 is about 10:30 local).
 
 ## Scoring (must give the same number in Python and in the browser)
@@ -117,10 +117,8 @@ Little-endian `Uint32`, one value per land cell: the flat grid index. Length = `
 For one target and one cell, in transformed space, with `f` = cell value, `t` = target value, `σ` = `sigma`:
 
 1. Skip the feature if the cell code is `255` or the target has `na: true`.
-2. Like-for-like (`p1 ≤ t ≤ p99`): `s = exp(−((f − t) / σ)²)`.
-3. Directional:
-   - `t < p1`: `s = 1` if `f ≤ p1`, else `exp(−((f − p1) / σ)²)`.
-   - `t > p99`: `s = 1` if `f ≥ p99`, else `exp(−((f − p99) / σ)²)`.
+2. Every feature is scored like-for-like: `s = exp(−((f − t) / σ)²)`. There is no clamping to Earth's range.
+3. A target value beyond Earth's range (`t < min` or `t > max`) is scored by the same formula, so every cell scores low on it. The app labels it "beyond Earth".
 4. Dimension score = mean of its features that were not skipped. A dimension with no such feature is missing.
 5. Overall score = `Σ w_d × s_d / Σ w_d` over dimensions that are not missing.
 6. A cell is scored only if at least 4 dimensions are not missing. Otherwise it has no score and is drawn as no-data.
