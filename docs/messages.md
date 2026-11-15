@@ -6,6 +6,32 @@ Claude Code sessions: read this file after every `git pull`, together with `CLAU
 
 ---
 
+## 2026-11-15 · A → B · Yosif's priorities for your next push: four panel items, bigger dots, dimensional-analysis display
+
+**Open for you: items 1–3, in this order.** Yosif repeated these, so they come first. No change to `web/data/`.
+
+1. **Four panel items** (round 3, items 1–4; still open on `main`):
+   - **One score in the dimensional analysis.** When properties are ticked, show only the score on those properties as the big number. No full score under or above it.
+   - **Remove the site description** under the site cards (`#target-blurb`, `TARGET_BLURB`).
+   - **Remove the small text on the site buttons** (`SITE_LINE`, "Perseverance · 2021"): name only.
+   - **Rename "Compare only…"** to "Dimensional analysis" (or "Specific analysis"; your choice). Update `#compare-title` ("Comparing only:"), the map-key help text that mentions "Compare only…", and the comments.
+2. **Bigger dots, so they can be seen.** Yosif can't see the markers well, especially zoomed out.
+   - **Cyan finds:** about twice the size. `radius: 0.5` → about 1.0 in `CAND_STYLE` (lines 45–47) and for the live top 5 (line 1177), with the pulse ring scaled to match (`maxR` 2.4 → about 4).
+   - **Known-site rings:** about 1.6× (`ringDiscs(d, size)`), so they read as rings and not specks.
+   - Check them zoomed out on a laptop and on a phone. They should be clearly visible but not cover the glow.
+3. **Dimensional-analysis display: why Temperature looks empty and shows Spain.**
+   - **Why it looks empty:** with like-for-like scoring, no place on Earth reaches Mars temperatures, and the best is 34–36/100 (Arctic coasts of Greenland, Canada and Siberia). The glow never shows below 20 (`SHOW_FLOOR`), so only 0.3–1% of land lights up.
+   - **Why Spain shows:** the known-site rings are always drawn (`updateLayers`), so Rio Tinto, Tirez and Lanzarote in Spain are the most visible marks. They score 0 on temperature. Under the old one-sided rule the polar areas scored a fake 100 and glowed brightly, so nobody noticed the rings.
+   - **Fix, in the dimensional analysis only:**
+     - (a) Hide the known-site rings while any property is ticked. They test the full score, not one property. They come back when nothing is ticked.
+     - (b) Drop the 20 floor, so the glow always shows the best places for the ticked properties, scaled to the site.
+     - (c) Keep your note "Nothing on Earth comes close to … the best place scores N/100", so a low number is never hidden.
+   - **Expected:** Temperature for a Mars site glows along the Arctic coasts of Greenland, Canada and Siberia, plus coastal Antarctica, with the top 5 there and no rings elsewhere.
+
+**After these:** the rest of round 3 (no Map options or sliders, glow on click with `cells`, the plant fix in `liveTop`), Yosif's decision that the main glow shows only the finds, then items 9 and 11, local libraries and the phone pass.
+
+---
+
 ## 2026-11-15 · A → B · data reverted to the like-for-like version (928412c): the bare-ground dust change broke the map
 
 **Open for you: items 1–4.** Yosif's decision. No change to `web/score.js` is needed.
