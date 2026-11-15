@@ -1102,10 +1102,15 @@ function liveTop(k = 5) {
   // same shown score are ordered by their full score on all dimensions.
   const full = fullScores(), bin = (i) => Math.round(s[i] * 100);   // the score as shown
   idx.sort((a, b) => bin(b) - bin(a) || (full[b] || 0) - (full[a] || 0));
-  const picked = [];
+  // One place per named area: a region box (e.g. the Makran coast) can be ~900 km wide, so 200 km
+  // spacing alone still listed it twice. Places with no region name are told apart by country.
+  const picked = [], names = new Set();
   for (const i of idx) {
     const [lat, lng] = cellLatLng(i);
     if (picked.some((p) => distanceKm(lat, lng, p.lat, p.lng) < COMPARE_SPACING_KM)) continue;
+    const name = regionOf(lat, lng).name || countryAt(lat, lng);
+    if (name && names.has(name)) continue;
+    if (name) names.add(name);
     picked.push({ i, lat, lng, s: s[i] });
     if (picked.length === k) break;
   }
@@ -1160,7 +1165,11 @@ function renderTopFinds() {
   $("top-finds-note").hidden = true;
   if (state.live) { state.live = null; updateLayers(); }   // back to the precomputed finds on the globe
   $("top-finds-title").innerHTML = `Top finds for <span id="top-finds-site"></span>`;
-  const list = targetCandidates().filter((c) => c.verdict !== "known").sort((a, b) => a.rank - b.rank).slice(0, 5);
+  // the five best finds, one per named area (e.g. Jezero's #1 and #2 are both on the Makran coast)
+  const seen = new Set();
+  const list = targetCandidates().filter((c) => c.verdict !== "known").sort((a, b) => a.rank - b.rank)
+    .filter((c) => { const key = regionOf(c.lat, c.lng).name || c.id; if (seen.has(key)) return false; seen.add(key); return true; })
+    .slice(0, 5);
   $("top-finds").hidden = !list.length;
   $("top-finds-site").textContent = shortName(t);
   $("top-finds-list").innerHTML = list.map((c, k) => {

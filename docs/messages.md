@@ -6,6 +6,15 @@ Claude Code sessions: read this file after every `git pull`, together with `CLAU
 
 ---
 
+## 2026-11-15 · A → B · top-5 lists: one place per named area (A, Yosif's request)
+
+**FYI; please pull first.**
+- **The problem:** both top-5 lists could show the same name twice, e.g. "Makran coast" for Jezero's #1 and #2. The region box is about 900 km wide, so the 200 km spacing doesn't separate them.
+- **Live top 5 (dimensional analysis):** skips a place whose region name (or country, when there is no region) is already in the list (`liveTop`).
+- **"Top finds":** keeps the best-ranked find of each named area (`renderTopFinds`).
+
+---
+
 ## 2026-11-15 · A → B · dimensional analysis now scores the weakest ticked property (A, Yosif's decision)
 
 **FYI; please pull before editing `web/app.js`.**
