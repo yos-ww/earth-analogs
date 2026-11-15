@@ -5,16 +5,13 @@
 Per target with a complete enough profile (at least 4 scored dimensions):
  1. Score every land cell at the target's default weights. For the rocky Mars targets,
     permanent ice-sheet cells (snow_ice >= ICE_SHEET) are removed first.
- 2. Take the top TOP_FRAC of the remaining land area (cos-latitude weights), keep only bare ground
-    (ndvi_max < BARREN_NDVI, the validation baseline), and group the cells into
+ 2. Take the top TOP_FRAC of the remaining land area (cos-latitude weights) and group the cells into
     regions (8-connected, joined across the antimeridian). Regions need at least MIN_CELLS cells.
  3. Split each region at its local maxima (SPLIT_KM apart; every cell goes to its nearest maximum) so a
     candidate is site-scale, not a whole desert. Drop pieces whose best cell is within MIN_KNOWN_KM of
     any known analog site.
  4. Robustness = share of N_PERTURB random weight changes (each dimension weight multiplied by
-    exp(N(0, WEIGHT_SIGMA))) in which the region's best score ranks in the top TOP_SHARE of the regions
-    (at least MIN_TOP_N). A share, not a fixed count: with bare ground only a site can have fewer than 50
-    regions, and a fixed top 50 then passed every region (robustness 1.0 for all; fixed 2026-11-15).
+    exp(N(0, WEIGHT_SIGMA))) in which the region's best score ranks in the top TOP_N of the regions.
  5. Drop pieces with robustness below MIN_ROBUSTNESS. Rank by score x robustness; keep at most PER_CONTINENT regions per continent, and skip a region
     within MIN_SPACING_KM of an already kept higher-ranked one (so three pieces of one desert do not
     fill a continent's quota).
@@ -29,7 +26,7 @@ import geopandas as gpd
 import numpy as np
 from scipy.ndimage import label
 
-from .common import BARREN_NDVI, NCOLS, NROWS, ROOT, WEB_DATA, cell_weights
+from .common import NCOLS, NROWS, ROOT, WEB_DATA, cell_weights
 from .score import load_grid, score_target
 
 warnings.filterwarnings("ignore", message=".*geographic CRS.*")  # sjoin_nearest on degrees is fine at 1.5 deg
@@ -39,8 +36,7 @@ MIN_CELLS = 3
 MIN_KNOWN_KM = 200.0
 N_PERTURB = 500
 WEIGHT_SIGMA = 0.5
-TOP_SHARE = 0.38  # the design's share: top 50 of about 130 regions per target before the bare-ground filter
-MIN_TOP_N = 3
+TOP_N = 50
 PER_CONTINENT = 3
 MIN_ROBUSTNESS = 0.25  # below this the ranking depends too much on the slider settings to call it a finding
 SPLIT_KM = 200.0  # a region is split at local maxima that are at least this far apart
@@ -140,9 +136,6 @@ def candidates_for(grid, target, known, rng):
     k = np.searchsorted(cum, TOP_FRAC * w[eligible].sum())
     top = np.zeros(len(cells), bool)
     top[order[: k + 1]] = True
-    # finds are bare ground only (a missing NDVI is ice: no plants), taken from the top 1% of ALL land
-    jn = [f["id"] for f in meta["features"]].index("ndvi_max")
-    top &= np.nan_to_num(grid["values"][:, jn], nan=0.0) < BARREN_NDVI
 
     grid_mask = np.zeros(NROWS * NCOLS, bool)
     grid_mask[cells[top]] = True
@@ -178,8 +171,7 @@ def candidates_for(grid, target, known, rng):
     for i in range(len(regions)):
         best_by_region[:, i] = s[:, owner == i].max(axis=1)
     rank = (-best_by_region).argsort(axis=1).argsort(axis=1)  # 0 = best
-    top_n = max(MIN_TOP_N, round(TOP_SHARE * len(regions)))
-    robust = (rank < top_n).mean(axis=0)
+    robust = (rank < min(TOP_N, len(regions))).mean(axis=0)
 
     cont = continents_of(np.array([lat[g["best"]] for g in regions]), np.array([lon[g["best"]] for g in regions]))
     out = []

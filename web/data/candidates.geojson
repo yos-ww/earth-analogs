@@ -14,7 +14,7 @@
     "id": "jezero-25.88N-065.38E",
     "name": "25.88, 65.38",
     "target_id": "jezero",
-    "score": 0.7108,
+    "score": 0.718,
     "robustness": 1.0,
     "dim_scores": {
      "terrain": 0.989,
@@ -23,16 +23,16 @@
      "aridity": 0.0,
      "albedo": 0.989,
      "ice": 1.0,
-     "dust": 0.866,
+     "dust": 0.923,
      "geology": 0.92
     },
-    "area_km2": 24280,
+    "area_km2": 51960,
     "nearest_known_km": 798,
     "novelty": "under-studied",
     "dossier": null,
     "continent": "Asia",
     "rank": 1,
-    "cells": [155830,155831,155832,155833,156394,156395,156396,156397,156398,156399,156400,156960,156961,156962,157521,157526,157527,157528,158085,158086,158087,158088,158089,158090,158091,158092,158643,158644,158645,158646,158647,158648,158649,158651,159201]
+    "cells": [154673,155251,155253,155255,155256,155257,155258,155259,155826,155827,155828,155829,155830,155831,155832,155833,155834,155835,156394,156395,156396,156397,156398,156399,156400,156401,156402,156403,156958,156959,156960,156961,156962,156963,156964,156965,156966,156967,156969,156970,157521,157522,157523,157524,157525,157526,157527,157528,157529,157530,158085,158086,158087,158088,158089,158090,158091,158092,158093,158094,158643,158644,158645,158646,158647,158648,158649,158650,158651,158652,159195,159196,159200,159201,159202]
    }
   },
   {
@@ -48,8 +48,8 @@
     "id": "jezero-25.88N-060.38E",
     "name": "25.88, 60.38",
     "target_id": "jezero",
-    "score": 0.6546,
-    "robustness": 0.984,
+    "score": 0.6757,
+    "robustness": 1.0,
     "dim_scores": {
      "terrain": 0.887,
      "temperature": 0.0,
@@ -57,16 +57,16 @@
      "aridity": 0.0,
      "albedo": 0.989,
      "ice": 1.0,
-     "dust": 0.472,
+     "dust": 0.641,
      "geology": 0.972
     },
-    "area_km2": 13885,
+    "area_km2": 29120,
     "nearest_known_km": 397,
     "novelty": "under-studied",
     "dossier": null,
     "continent": "Asia",
     "rank": 2,
-    "cells": [156377,156940,156941,156943,156947,157506,157507,157508,157509,157510,158067,158068,158069,158070,158071,158072,158073,158074,158628,158630]
+    "cells": [155238,155811,155812,155813,155814,156377,156378,156379,156380,156381,156382,156940,156941,156942,156943,156944,156945,156946,156947,157503,157504,157505,157506,157507,157508,157509,157510,158067,158068,158069,158070,158071,158072,158073,158074,158625,158626,158627,158628,158629,158630,159182]
    }
   },
   {
@@ -74,32 +74,33 @@
    "geometry": {
     "type": "Point",
     "coordinates": [
-     69.125,
-     32.125
+     62.875,
+     29.125
     ]
    },
    "properties": {
-    "id": "jezero-32.12N-069.12E",
-    "name": "32.12, 69.12",
+    "id": "jezero-29.12N-062.88E",
+    "name": "29.12, 62.88",
     "target_id": "jezero",
-    "score": 0.6585,
-    "robustness": 0.908,
+    "score": 0.6441,
+    "robustness": 1.0,
     "dim_scores": {
-     "terrain": 0.882,
+     "terrain": 0.996,
      "temperature": 0.0,
-     "vegetation": 0.82,
+     "vegetation": 0.954,
      "aridity": 0.0,
-     "albedo": 0.988,
+     "albedo": 0.995,
      "ice": 1.0,
-     "geology": 0.92
+     "dust": 0.269,
+     "geology": 0.94
     },
-    "area_km2": 2611,
-    "nearest_known_km": 840,
+    "area_km2": 2027,
+    "nearest_known_km": 835,
     "novelty": "under-studied",
     "dossier": null,
     "continent": "Asia",
     "rank": 3,
-    "cells": [141764,142369,142370,142984]
+    "cells": [150508,150509,151107]
    }
   },
   {
@@ -107,33 +108,237 @@
    "geometry": {
     "type": "Point",
     "coordinates": [
-     33.875,
-     26.125
+     35.375,
+     23.875
     ]
    },
    "properties": {
-    "id": "jezero-26.12N-033.88E",
-    "name": "26.12, 33.88",
+    "id": "jezero-23.88N-035.38E",
+    "name": "23.88, 35.38",
     "target_id": "jezero",
-    "score": 0.622,
-    "robustness": 0.342,
+    "score": 0.6148,
+    "robustness": 0.998,
     "dim_scores": {
-     "terrain": 0.833,
+     "terrain": 0.968,
      "temperature": 0.0,
      "vegetation": 0.954,
-     "aridity": 0.223,
-     "albedo": 0.969,
+     "aridity": 0.001,
+     "albedo": 0.999,
      "ice": 1.0,
-     "dust": 0.0,
-     "geology": 0.998
+     "dust": 0.001,
+     "geology": 0.995
     },
-    "area_km2": 2077,
-    "nearest_known_km": 1481,
+    "area_km2": 10573,
+    "nearest_known_km": 1189,
     "novelty": "under-studied",
     "dossier": null,
     "continent": "Africa",
     "rank": 4,
-    "cells": [156307,156872,157435]
+    "cells": [159661,160185,160186,160712,161231,161232,161233,161752,161753,161754,162274,162275,162797,163320,163844]
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     17.625,
+     20.875
+    ]
+   },
+   "properties": {
+    "id": "jezero-20.88N-017.62E",
+    "name": "20.88, 17.62",
+    "target_id": "jezero",
+    "score": 0.6064,
+    "robustness": 0.94,
+    "dim_scores": {
+     "terrain": 0.983,
+     "temperature": 0.0,
+     "vegetation": 0.911,
+     "aridity": 0.0,
+     "albedo": 0.988,
+     "ice": 1.0,
+     "dust": 0.004,
+     "geology": 0.965
+    },
+    "area_km2": 32505,
+    "nearest_known_km": 2470,
+    "novelty": "under-studied",
+    "dossier": null,
+    "continent": "Africa",
+    "rank": 5,
+    "cells": [166404,166908,166909,166910,166912,166913,166916,166917,167411,167412,167416,167418,167420,167903,167907,167908,167909,167910,167911,168390,168395,168396,168397,168399,168400,168865,168866,168868,168869,168876,169335,169336,169337,169340,169799,169800,169803,169804,169805,169806,170254,170255,170259,170719,170720]
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -69.375,
+     -19.875
+    ]
+   },
+   "properties": {
+    "id": "jezero-19.88S-069.38W",
+    "name": "-19.88, -69.38",
+    "target_id": "jezero",
+    "score": 0.606,
+    "robustness": 0.794,
+    "dim_scores": {
+     "terrain": 0.899,
+     "temperature": 0.0,
+     "vegetation": 0.949,
+     "aridity": 0.0,
+     "albedo": 1.0,
+     "ice": 1.0,
+     "dust": 0.0,
+     "geology": 1.0
+    },
+    "area_km2": 17411,
+    "nearest_known_km": 308,
+    "novelty": "under-studied",
+    "dossier": null,
+    "continent": "South America",
+    "rank": 6,
+    "cells": [223006,223342,223343,223676,223677,224011,224013,224348,224350,224351,224684,224687,225027,225030,225378,225381,225382,225383,225385,225729,225730,225732,225733,226086]
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     37.125,
+     18.125
+    ]
+   },
+   "properties": {
+    "id": "jezero-18.12N-037.12E",
+    "name": "18.12, 37.12",
+    "target_id": "jezero",
+    "score": 0.6019,
+    "robustness": 0.674,
+    "dim_scores": {
+     "terrain": 0.965,
+     "temperature": 0.0,
+     "vegetation": 0.858,
+     "aridity": 0.0,
+     "albedo": 0.988,
+     "ice": 1.0,
+     "dust": 0.007,
+     "geology": 0.998
+    },
+    "area_km2": 11781,
+    "nearest_known_km": 549,
+    "novelty": "under-studied",
+    "dossier": null,
+    "continent": "Africa",
+    "rank": 7,
+    "cells": [173519,173520,173521,173523,173955,173956,173957,173958,174381,174382,174383,174384,174802,175221,175635,175636]
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -117.875,
+     38.125
+    ]
+   },
+   "properties": {
+    "id": "jezero-38.12N-117.88W",
+    "name": "38.12, -117.88",
+    "target_id": "jezero",
+    "score": 0.6018,
+    "robustness": 0.63,
+    "dim_scores": {
+     "terrain": 0.964,
+     "temperature": 0.0,
+     "vegetation": 0.872,
+     "aridity": 0.0,
+     "albedo": 0.999,
+     "ice": 0.979,
+     "dust": 0.0,
+     "geology": 1.0
+    },
+    "area_km2": 17691,
+    "nearest_known_km": 205,
+    "novelty": "under-studied",
+    "dossier": null,
+    "continent": "North America",
+    "rank": 8,
+    "cells": [126286,126894,127499,127500,127501,127503,128109,128110,128111,128112,128113,128114,128116,128721,128722,128723,128726,128728,129333,129334,129335,129337,129943,129944,129945,130553,130554,130556,131168]
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -75.125,
+     -15.125
+    ]
+   },
+   "properties": {
+    "id": "jezero-15.12S-075.12W",
+    "name": "-15.12, -75.12",
+    "target_id": "jezero",
+    "score": 0.5946,
+    "robustness": 0.4,
+    "dim_scores": {
+     "terrain": 0.975,
+     "temperature": 0.0,
+     "vegetation": 0.98,
+     "aridity": 0.0,
+     "albedo": 0.999,
+     "ice": 1.0,
+     "dust": 0.0,
+     "geology": 0.803
+    },
+    "area_km2": 3727,
+    "nearest_known_km": 1096,
+    "novelty": "under-studied",
+    "dossier": null,
+    "continent": "South America",
+    "rank": 9,
+    "cells": [217860,217861,217862,218197,218534]
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -114.375,
+     34.375
+    ]
+   },
+   "properties": {
+    "id": "jezero-34.38N-114.38W",
+    "name": "34.38, -114.38",
+    "target_id": "jezero",
+    "score": 0.5987,
+    "robustness": 0.396,
+    "dim_scores": {
+     "terrain": 0.967,
+     "temperature": 0.0,
+     "vegetation": 0.843,
+     "aridity": 0.0,
+     "albedo": 0.979,
+     "ice": 1.0,
+     "dust": 0.0,
+     "geology": 1.0
+    },
+    "area_km2": 7600,
+    "nearest_known_km": 222,
+    "novelty": "under-studied",
+    "dossier": null,
+    "continent": "North America",
+    "rank": 10,
+    "cells": [134211,134213,134809,134811,134812,135426,136058,136680,137278,137279,137280,137281]
    }
   },
   {
@@ -149,8 +354,8 @@
     "id": "gale-26.88N-054.62E",
     "name": "26.88, 54.62",
     "target_id": "gale",
-    "score": 0.6817,
-    "robustness": 0.998,
+    "score": 0.6824,
+    "robustness": 1.0,
     "dim_scores": {
      "terrain": 0.692,
      "temperature": 0.0,
@@ -158,49 +363,16 @@
      "aridity": 0.0,
      "albedo": 0.91,
      "ice": 1.0,
-     "dust": 0.987,
+     "dust": 0.992,
      "geology": 1.0
     },
-    "area_km2": 8261,
+    "area_km2": 14441,
     "nearest_known_km": 570,
     "novelty": "under-studied",
     "dossier": null,
     "continent": "Asia",
     "rank": 1,
-    "cells": [154628,154629,154631,155215,155216,155217,155791,155792,155793,155794,156364,156365]
-   }
-  },
-  {
-   "type": "Feature",
-   "geometry": {
-    "type": "Point",
-    "coordinates": [
-     81.125,
-     32.375
-    ]
-   },
-   "properties": {
-    "id": "gale-32.38N-081.12E",
-    "name": "32.38, 81.12",
-    "target_id": "gale",
-    "score": 0.6352,
-    "robustness": 0.968,
-    "dim_scores": {
-     "terrain": 0.633,
-     "temperature": 0.003,
-     "vegetation": 0.82,
-     "aridity": 0.0,
-     "albedo": 0.997,
-     "ice": 0.994,
-     "geology": 1.0
-    },
-    "area_km2": 1954,
-    "nearest_known_km": 310,
-    "novelty": "under-studied",
-    "dossier": null,
-    "continent": "Asia",
-    "rank": 2,
-    "cells": [141814,141815,142419]
+    "cells": [153455,153456,154042,154043,154628,154629,154630,155214,155215,155216,155217,155787,155788,155789,155790,155791,155792,155793,155794,156364,156365]
    }
   },
   {
@@ -217,7 +389,7 @@
     "name": "-18.62, -69.88",
     "target_id": "gale",
     "score": 0.5953,
-    "robustness": 0.914,
+    "robustness": 1.0,
     "dim_scores": {
      "terrain": 0.865,
      "temperature": 0.0,
@@ -228,13 +400,13 @@
      "dust": 0.0,
      "geology": 0.995
     },
-    "area_km2": 7313,
+    "area_km2": 15393,
     "nearest_known_km": 455,
     "novelty": "under-studied",
     "dossier": null,
     "continent": "South America",
-    "rank": 3,
-    "cells": [221633,221984,222330,222669,222670,223006,223342,223676,224011,224348]
+    "rank": 2,
+    "cells": [220935,221280,221281,221282,221630,221631,221633,221984,221986,222330,222332,222669,222670,222672,223006,223007,223342,223343,223676,224011,224012]
    }
   },
   {
@@ -242,32 +414,33 @@
    "geometry": {
     "type": "Point",
     "coordinates": [
-     -74.125,
-     -15.875
+     94.125,
+     39.375
     ]
    },
    "properties": {
-    "id": "gale-15.88S-074.12W",
-    "name": "-15.88, -74.12",
+    "id": "gale-39.38N-094.12E",
+    "name": "39.38, 94.12",
     "target_id": "gale",
-    "score": 0.5917,
-    "robustness": 0.892,
+    "score": 0.5952,
+    "robustness": 1.0,
     "dim_scores": {
-     "terrain": 0.803,
-     "temperature": 0.0,
-     "vegetation": 0.82,
+     "terrain": 0.922,
+     "temperature": 0.002,
+     "vegetation": 0.879,
      "aridity": 0.0,
-     "albedo": 0.554,
-     "ice": 1.0,
-     "geology": 0.965
+     "albedo": 0.985,
+     "ice": 0.979,
+     "dust": 0.0,
+     "geology": 0.995
     },
-    "area_km2": 12630,
-    "nearest_known_km": 963,
+    "area_km2": 4179,
+    "nearest_known_km": 243,
     "novelty": "under-studied",
     "dossier": null,
-    "continent": "South America",
-    "rank": 4,
-    "cells": [217862,218197,218535,218867,218868,218869,218870,218871,219203,219204,219205,219206,219207,219208,219542,219543,219544]
+    "continent": "Asia",
+    "rank": 3,
+    "cells": [124892,125524,125525,125526,125527,125528,125529]
    }
   },
   {
@@ -283,8 +456,8 @@
     "id": "gale-30.62N-057.62E",
     "name": "30.62, 57.62",
     "target_id": "gale",
-    "score": 0.5879,
-    "robustness": 0.878,
+    "score": 0.5883,
+    "robustness": 1.0,
     "dim_scores": {
      "terrain": 0.896,
      "temperature": 0.0,
@@ -292,16 +465,152 @@
      "aridity": 0.0,
      "albedo": 0.892,
      "ice": 1.0,
-     "dust": 0.0,
+     "dust": 0.003,
      "geology": 0.998
     },
-    "area_km2": 9938,
+    "area_km2": 19330,
     "nearest_known_km": 861,
     "novelty": "under-studied",
     "dossier": null,
     "continent": "Asia",
+    "rank": 4,
+    "cells": [144169,144797,145434,145435,146082,146083,146084,146085,146732,146734,146735,146736,146737,147382,147383,147384,147386,148016,148020,148021,148650,148651,148652,148653,148654,149270,149272,149273,149883]
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -73.625,
+     -16.125
+    ]
+   },
+   "properties": {
+    "id": "gale-16.12S-073.62W",
+    "name": "-16.12, -73.62",
+    "target_id": "gale",
+    "score": 0.582,
+    "robustness": 1.0,
+    "dim_scores": {
+     "terrain": 0.843,
+     "temperature": 0.0,
+     "vegetation": 0.905,
+     "aridity": 0.0,
+     "albedo": 0.913,
+     "ice": 1.0,
+     "dust": 0.0,
+     "geology": 0.995
+    },
+    "area_km2": 16348,
+    "nearest_known_km": 907,
+    "novelty": "under-studied",
+    "dossier": null,
+    "continent": "South America",
     "rank": 5,
-    "cells": [143549,144166,144168,144169,144794,144795,145434,145435,146084,146085,146737,147386,148019,148021,148653]
+    "cells": [217861,217862,218197,218198,218535,218536,218867,218868,218869,218870,218871,219203,219204,219205,219206,219207,219208,219209,219542,219543,219544,219890]
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     33.625,
+     28.625
+    ]
+   },
+   "properties": {
+    "id": "gale-28.62N-033.62E",
+    "name": "28.62, 33.62",
+    "target_id": "gale",
+    "score": 0.575,
+    "robustness": 0.96,
+    "dim_scores": {
+     "terrain": 0.788,
+     "temperature": 0.0,
+     "vegetation": 0.929,
+     "aridity": 0.0,
+     "albedo": 0.997,
+     "ice": 1.0,
+     "dust": 0.0,
+     "geology": 0.885
+    },
+    "area_km2": 5435,
+    "nearest_known_km": 1741,
+    "novelty": "under-studied",
+    "dossier": null,
+    "continent": "Africa",
+    "rank": 6,
+    "cells": [151001,151600,151601,151603,152199,152200,152795,152796]
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     19.375,
+     22.125
+    ]
+   },
+   "properties": {
+    "id": "gale-22.12N-019.38E",
+    "name": "22.12, 19.38",
+    "target_id": "gale",
+    "score": 0.565,
+    "robustness": 0.854,
+    "dim_scores": {
+     "terrain": 0.679,
+     "temperature": 0.0,
+     "vegetation": 0.911,
+     "aridity": 0.009,
+     "albedo": 0.948,
+     "ice": 1.0,
+     "dust": 0.0,
+     "geology": 0.972
+    },
+    "area_km2": 7893,
+    "nearest_known_km": 2375,
+    "novelty": "under-studied",
+    "dossier": null,
+    "continent": "Africa",
+    "rank": 7,
+    "cells": [165368,165892,165894,166409,166410,166916,166917,166918,166919,167420,167422]
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -8.625,
+     29.625
+    ]
+   },
+   "properties": {
+    "id": "gale-29.62N-008.62W",
+    "name": "29.62, -8.62",
+    "target_id": "gale",
+    "score": 0.558,
+    "robustness": 0.598,
+    "dim_scores": {
+     "terrain": 0.627,
+     "temperature": 0.0,
+     "vegetation": 0.879,
+     "aridity": 0.0,
+     "albedo": 0.963,
+     "ice": 1.0,
+     "dust": 0.0,
+     "geology": 0.995
+    },
+    "area_km2": 17432,
+    "nearest_known_km": 466,
+    "novelty": "under-studied",
+    "dossier": null,
+    "continent": "Africa",
+    "rank": 8,
+    "cells": [146481,147126,147127,147757,147760,147761,147762,147763,148391,148393,148394,148395,148396,148397,148398,149013,149014,149015,149016,149017,149625,149626,149627,149628,149629,150229]
    }
   },
   {
@@ -317,7 +626,7 @@
     "id": "utopia-25.62N-061.12E",
     "name": "25.62, 61.12",
     "target_id": "utopia",
-    "score": 0.703,
+    "score": 0.7032,
     "robustness": 1.0,
     "dim_scores": {
      "terrain": 0.971,
@@ -326,16 +635,50 @@
      "aridity": 0.0,
      "albedo": 0.805,
      "ice": 1.0,
-     "dust": 0.991,
+     "dust": 0.992,
      "geology": 0.972
     },
-    "area_km2": 16728,
+    "area_km2": 23694,
     "nearest_known_km": 424,
     "novelty": "under-studied",
     "dossier": null,
     "continent": "Asia",
     "rank": 1,
-    "cells": [158074,158075,158076,158077,158078,158079,158081,158632,158633,158634,158635,158636,158637,158638,158639,159184,159185,159186,159187,159188,159189,159191,159724,159725]
+    "cells": [157513,158070,158071,158072,158073,158074,158075,158076,158077,158078,158079,158628,158629,158630,158631,158632,158633,158634,158635,158636,158637,159180,159181,159182,159183,159184,159185,159186,159187,159188,159189,159190,159724,159725]
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     48.125,
+     29.125
+    ]
+   },
+   "properties": {
+    "id": "utopia-29.12N-048.12E",
+    "name": "29.12, 48.12",
+    "target_id": "utopia",
+    "score": 0.697,
+    "robustness": 0.998,
+    "dim_scores": {
+     "terrain": 0.949,
+     "temperature": 0.0,
+     "vegetation": 0.835,
+     "aridity": 0.0,
+     "albedo": 0.968,
+     "ice": 1.0,
+     "dust": 0.977,
+     "geology": 0.846
+    },
+    "area_km2": 4035,
+    "nearest_known_km": 1221,
+    "novelty": "under-studied",
+    "dossier": null,
+    "continent": "Asia",
+    "rank": 2,
+    "cells": [147987,148622,149242,149854,150460,151059]
    }
   },
   {
@@ -351,8 +694,8 @@
     "id": "utopia-26.62N-054.88E",
     "name": "26.62, 54.88",
     "target_id": "utopia",
-    "score": 0.6726,
-    "robustness": 0.91,
+    "score": 0.6792,
+    "robustness": 0.982,
     "dim_scores": {
      "terrain": 0.951,
      "temperature": 0.0,
@@ -360,50 +703,16 @@
      "aridity": 0.0,
      "albedo": 0.88,
      "ice": 1.0,
-     "dust": 0.855,
+     "dust": 0.907,
      "geology": 0.803
     },
-    "area_km2": 2760,
+    "area_km2": 8959,
     "nearest_known_km": 533,
     "novelty": "under-studied",
     "dossier": null,
     "continent": "Asia",
-    "rank": 2,
-    "cells": [155793,155794,156364,156365]
-   }
-  },
-  {
-   "type": "Feature",
-   "geometry": {
-    "type": "Point",
-    "coordinates": [
-     46.625,
-     24.625
-    ]
-   },
-   "properties": {
-    "id": "utopia-24.62N-046.62E",
-    "name": "24.62, 46.62",
-    "target_id": "utopia",
-    "score": 0.6609,
-    "robustness": 0.868,
-    "dim_scores": {
-     "terrain": 0.835,
-     "temperature": 0.0,
-     "vegetation": 0.905,
-     "aridity": 0.0,
-     "albedo": 0.75,
-     "ice": 1.0,
-     "dust": 0.858,
-     "geology": 0.94
-    },
-    "area_km2": 4917,
-    "nearest_known_km": 1193,
-    "novelty": "under-studied",
-    "dossier": null,
-    "continent": "Asia",
     "rank": 3,
-    "cells": [160222,160223,160224,160750,160751,161271,161791]
+    "cells": [155215,155216,155217,155218,155790,155791,155792,155793,155794,155796,156363,156364,156365]
    }
   },
   {
@@ -419,8 +728,8 @@
     "id": "utopia-24.88N-033.12E",
     "name": "24.88, 33.12",
     "target_id": "utopia",
-    "score": 0.6345,
-    "robustness": 0.552,
+    "score": 0.636,
+    "robustness": 0.88,
     "dim_scores": {
      "terrain": 0.928,
      "temperature": 0.0,
@@ -428,16 +737,152 @@
      "aridity": 0.258,
      "albedo": 0.989,
      "ice": 1.0,
-     "dust": 0.001,
+     "dust": 0.013,
      "geology": 0.995
     },
-    "area_km2": 4202,
+    "area_km2": 5604,
     "nearest_known_km": 1400,
     "novelty": "under-studied",
     "dossier": null,
     "continent": "Africa",
     "rank": 4,
-    "cells": [159113,159654,159655,160179,160180,160706]
+    "cells": [159113,159653,159654,159655,160179,160180,160705,160706]
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     34.625,
+     21.375
+    ]
+   },
+   "properties": {
+    "id": "utopia-21.38N-034.62E",
+    "name": "21.38, 34.62",
+    "target_id": "utopia",
+    "score": 0.607,
+    "robustness": 0.552,
+    "dim_scores": {
+     "terrain": 0.963,
+     "temperature": 0.0,
+     "vegetation": 0.899,
+     "aridity": 0.0,
+     "albedo": 0.995,
+     "ice": 1.0,
+     "dust": 0.001,
+     "geology": 0.998
+    },
+    "area_km2": 7928,
+    "nearest_known_km": 995,
+    "novelty": "under-studied",
+    "dossier": null,
+    "continent": "Africa",
+    "rank": 5,
+    "cells": [166980,166981,167484,167485,167488,167976,167978,168464,168465,168939,168940]
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     10.625,
+     10.875
+    ]
+   },
+   "properties": {
+    "id": "utopia-10.88N-010.62E",
+    "name": "10.88, 10.62",
+    "target_id": "utopia",
+    "score": 0.6034,
+    "robustness": 0.516,
+    "dim_scores": {
+     "terrain": 0.943,
+     "temperature": 0.0,
+     "vegetation": 0.116,
+     "aridity": 0.0,
+     "albedo": 0.995,
+     "ice": 1.0,
+     "dust": 0.776,
+     "geology": 0.998
+    },
+    "area_km2": 12915,
+    "nearest_known_km": 2749,
+    "novelty": "under-studied",
+    "dossier": null,
+    "continent": "Africa",
+    "rank": 6,
+    "cells": [183654,183983,183984,183985,183986,183987,184329,184330,184331,184683,184684,184685,184686,185043,185044,185045,185046]
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     134.375,
+     -28.125
+    ]
+   },
+   "properties": {
+    "id": "utopia-28.12S-134.38E",
+    "name": "-28.12, 134.38",
+    "target_id": "utopia",
+    "score": 0.6027,
+    "robustness": 0.37,
+    "dim_scores": {
+     "terrain": 0.974,
+     "temperature": 0.0,
+     "vegetation": 0.85,
+     "aridity": 0.0,
+     "albedo": 1.0,
+     "ice": 1.0,
+     "dust": 0.0,
+     "geology": 0.998
+    },
+    "area_km2": 2716,
+    "nearest_known_km": 539,
+    "novelty": "under-studied",
+    "dossier": null,
+    "continent": "Oceania",
+    "rank": 7,
+    "cells": [235834,236145,236455,236762]
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -69.625,
+     -20.375
+    ]
+   },
+   "properties": {
+    "id": "utopia-20.38S-069.62W",
+    "name": "-20.38, -69.62",
+    "target_id": "utopia",
+    "score": 0.6012,
+    "robustness": 0.312,
+    "dim_scores": {
+     "terrain": 0.982,
+     "temperature": 0.002,
+     "vegetation": 0.886,
+     "aridity": 0.0,
+     "albedo": 1.0,
+     "ice": 1.0,
+     "dust": 0.0,
+     "geology": 0.94
+    },
+    "area_km2": 4350,
+    "nearest_known_km": 274,
+    "novelty": "under-studied",
+    "dossier": null,
+    "continent": "South America",
+    "rank": 8,
+    "cells": [224012,224349,224686,225029,225380,225731]
    }
   },
   {
@@ -453,7 +898,7 @@
     "id": "arcadia-25.62N-060.12E",
     "name": "25.62, 60.12",
     "target_id": "arcadia",
-    "score": 0.7237,
+    "score": 0.724,
     "robustness": 1.0,
     "dim_scores": {
      "terrain": 0.944,
@@ -462,16 +907,16 @@
      "aridity": 0.0,
      "albedo": 0.995,
      "ice": 1.0,
-     "dust": 0.996,
+     "dust": 0.999,
      "geology": 0.949
     },
-    "area_km2": 13929,
+    "area_km2": 27813,
     "nearest_known_km": 360,
     "novelty": "under-studied",
     "dossier": null,
     "continent": "Asia",
     "rank": 1,
-    "cells": [158066,158067,158068,158069,158070,158071,158072,158073,158623,158624,158626,158627,158628,158629,158630,158631,159179,159180,159182,159183]
+    "cells": [156939,156940,156941,156942,156947,157502,157503,157504,157505,157506,157507,157508,157509,157510,157511,158066,158067,158068,158069,158070,158071,158072,158073,158074,158075,158623,158624,158625,158626,158627,158628,158629,158630,158631,159179,159180,159181,159182,159183,159184]
    }
   },
   {
@@ -487,7 +932,7 @@
     "id": "arcadia-29.12N-065.62E",
     "name": "29.12, 65.62",
     "target_id": "arcadia",
-    "score": 0.7131,
+    "score": 0.7158,
     "robustness": 1.0,
     "dim_scores": {
      "terrain": 0.953,
@@ -496,16 +941,16 @@
      "aridity": 0.0,
      "albedo": 0.968,
      "ice": 1.0,
-     "dust": 0.94,
+     "dust": 0.962,
      "geology": 0.92
     },
-    "area_km2": 18303,
+    "area_km2": 32490,
     "nearest_known_km": 1014,
     "novelty": "under-studied",
     "dossier": null,
     "continent": "Asia",
     "rank": 2,
-    "cells": [149915,150514,150519,150520,150521,151111,151114,151115,151117,151118,151119,151711,151712,151713,151714,151715,151716,151717,151718,152307,152308,152309,152310,152314,152315,152909,152910]
+    "cells": [148686,149299,149305,149306,149906,149908,149909,149910,149915,149916,149917,150513,150514,150515,150516,150519,150520,150521,150522,150523,151111,151114,151115,151116,151117,151118,151119,151120,151711,151712,151713,151714,151715,151716,151717,151718,151719,152310,152314,152315,152316,152908,152909,152910,152912,153499,153500,154088]
    }
   },
   {
@@ -513,33 +958,135 @@
    "geometry": {
     "type": "Point",
     "coordinates": [
-     61.125,
-     31.625
+     60.375,
+     36.125
     ]
    },
    "properties": {
-    "id": "arcadia-31.62N-061.12E",
-    "name": "31.62, 61.12",
+    "id": "arcadia-36.12N-060.38E",
+    "name": "36.12, 60.38",
     "target_id": "arcadia",
-    "score": 0.6906,
-    "robustness": 0.942,
+    "score": 0.7023,
+    "robustness": 1.0,
     "dim_scores": {
-     "terrain": 0.751,
+     "terrain": 0.977,
      "temperature": 0.0,
-     "vegetation": 0.954,
+     "vegetation": 0.879,
      "aridity": 0.0,
-     "albedo": 0.955,
-     "ice": 1.0,
-     "dust": 0.9,
-     "geology": 0.965
+     "albedo": 0.999,
+     "ice": 0.999,
+     "dust": 0.765,
+     "geology": 1.0
     },
-    "area_km2": 6548,
-    "nearest_known_km": 1012,
+    "area_km2": 28807,
+    "nearest_known_km": 1485,
     "novelty": "under-studied",
     "dossier": null,
     "continent": "Asia",
     "rank": 3,
-    "cells": [141127,141731,142338,142339,142340,142952,143568,144185,144813,145451]
+    "cells": [131495,131496,132102,132103,132105,132106,132107,132108,132717,132718,132719,132720,132721,133315,133317,133318,133319,133320,133909,133910,133911,133912,133913,133914,133915,133916,133917,134513,134514,134515,134516,134517,134518,135126,135127,135129,135130,135750,135751,135752,135754,135756,135758,135759,136383,136384]
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     6.375,
+     22.875
+    ]
+   },
+   "properties": {
+    "id": "arcadia-22.88N-006.38E",
+    "name": "22.88, 6.38",
+    "target_id": "arcadia",
+    "score": 0.6452,
+    "robustness": 0.728,
+    "dim_scores": {
+     "terrain": 0.939,
+     "temperature": 0.0,
+     "vegetation": 0.899,
+     "aridity": 0.0,
+     "albedo": 0.98,
+     "ice": 1.0,
+     "dust": 0.346,
+     "geology": 0.998
+    },
+    "area_km2": 20601,
+    "nearest_known_km": 1415,
+    "novelty": "under-studied",
+    "dossier": null,
+    "continent": "Africa",
+    "rank": 4,
+    "cells": [162159,162161,162162,162678,162679,162680,162682,162683,163201,163204,163206,163207,163724,163728,163729,163730,163731,164257,164260,164261,164262,164263,164264,164265,164787,164788,164789,164790,164791]
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     33.125,
+     25.125
+    ]
+   },
+   "properties": {
+    "id": "arcadia-25.12N-033.12E",
+    "name": "25.12, 33.12",
+    "target_id": "arcadia",
+    "score": 0.6315,
+    "robustness": 0.482,
+    "dim_scores": {
+     "terrain": 0.597,
+     "temperature": 0.0,
+     "vegetation": 0.923,
+     "aridity": 0.406,
+     "albedo": 0.955,
+     "ice": 1.0,
+     "dust": 0.262,
+     "geology": 0.909
+    },
+    "area_km2": 9075,
+    "nearest_known_km": 1424,
+    "novelty": "under-studied",
+    "dossier": null,
+    "continent": "Africa",
+    "rank": 5,
+    "cells": [157430,157993,158552,158553,158554,158555,159110,159113,159653,159654,159655,160179,160705]
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     5.875,
+     34.875
+    ]
+   },
+   "properties": {
+    "id": "arcadia-34.88N-005.88E",
+    "name": "34.88, 5.88",
+    "target_id": "arcadia",
+    "score": 0.6337,
+    "robustness": 0.336,
+    "dim_scores": {
+     "terrain": 0.967,
+     "temperature": 0.0,
+     "vegetation": 0.872,
+     "aridity": 0.0,
+     "albedo": 0.69,
+     "ice": 1.0,
+     "dust": 0.632,
+     "geology": 0.909
+    },
+    "area_km2": 2536,
+    "nearest_known_km": 968,
+    "novelty": "under-studied",
+    "dossier": null,
+    "continent": "Africa",
+    "rank": 6,
+    "cells": [136259,136260,136261,136262]
    }
   },
   {
@@ -565,13 +1112,45 @@
      "albedo": 0.987,
      "ice": 0.997
     },
-    "area_km2": 25574,
+    "area_km2": 36345,
     "nearest_known_km": 499,
     "novelty": "under-studied",
     "dossier": null,
     "continent": "South America",
     "rank": 1,
-    "cells": [236229,236230,236231,236535,236536,236537,236538,236539,236540,236541,236840,236841,236842,236843,236844,236845,237143,237144,237146,237147,237148,237441,237442,237444,237445,237446,237736,237737,237738,237739,237741,238030,238031,238032,238033,238035,238326,238329]
+    "cells": [236229,236230,236231,236232,236534,236535,236536,236537,236538,236539,236540,236541,236542,236543,236840,236841,236842,236843,236844,236845,236847,236848,236849,237143,237144,237146,237147,237148,237149,237150,237151,237441,237442,237444,237445,237446,237447,237448,237737,237738,237739,237740,237741,237742,237743,238032,238033,238034,238035,238036,238327,238328,238329,238330]
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -66.125,
+     -24.625
+    ]
+   },
+   "properties": {
+    "id": "shackleton-24.62S-066.12W",
+    "name": "-24.62, -66.12",
+    "target_id": "shackleton",
+    "score": 0.5906,
+    "robustness": 1.0,
+    "dim_scores": {
+     "terrain": 0.859,
+     "temperature": 0.0,
+     "vegetation": 0.699,
+     "aridity": 0.0,
+     "albedo": 0.987,
+     "ice": 0.999
+    },
+    "area_km2": 19646,
+    "nearest_known_km": 268,
+    "novelty": "under-studied",
+    "dossier": null,
+    "continent": "South America",
+    "rank": 2,
+    "cells": [230063,230064,230409,230410,230411,230412,230755,230756,230758,230759,230760,231102,231103,231104,231105,231444,231445,231446,231782,231783,231785,232114,232115,232116,232441,232442,232443,232761]
    }
   },
   {
@@ -588,7 +1167,7 @@
     "name": "42.62, 88.12",
     "target_id": "shackleton",
     "score": 0.5846,
-    "robustness": 1.0,
+    "robustness": 0.96,
     "dim_scores": {
      "terrain": 0.67,
      "temperature": 0.0,
@@ -597,45 +1176,13 @@
      "albedo": 0.916,
      "ice": 0.992
     },
-    "area_km2": 7942,
+    "area_km2": 16388,
     "nearest_known_km": 530,
     "novelty": "under-studied",
     "dossier": null,
     "continent": "Asia",
-    "rank": 2,
-    "cells": [114861,115555,115556,115557,115558,116244,116909,116910,116911,116912,117560,117562,117563,117564]
-   }
-  },
-  {
-   "type": "Feature",
-   "geometry": {
-    "type": "Point",
-    "coordinates": [
-     93.875,
-     43.875
-    ]
-   },
-   "properties": {
-    "id": "shackleton-43.88N-093.88E",
-    "name": "43.88, 93.88",
-    "target_id": "shackleton",
-    "score": 0.5829,
-    "robustness": 1.0,
-    "dim_scores": {
-     "terrain": 0.63,
-     "temperature": 0.0,
-     "vegetation": 0.923,
-     "aridity": 0.0,
-     "albedo": 0.965,
-     "ice": 0.979
-    },
-    "area_km2": 26569,
-    "nearest_known_km": 619,
-    "novelty": "under-studied",
-    "dossier": null,
-    "continent": "Asia",
     "rank": 3,
-    "cells": [110005,110719,110720,110721,110722,110723,110724,110725,110726,111425,111426,111427,111428,111429,111430,111432,111433,111434,111436,112123,112124,112125,112126,112127,112132,112133,112134,112135,112817,112818,112819,112820,112821,112827,113508,113509,113510,114194,114195,114196,114197,114200,114887,114888,114889,114890,115584,115585]
+    "cells": [114169,114170,114171,114860,114861,114864,114865,115554,115555,115556,115557,115558,115559,115560,115561,115562,115563,115564,116243,116244,116908,116909,116910,116911,116912,117560,117562,117563,117564]
    }
   },
   {
@@ -643,31 +1190,31 @@
    "geometry": {
     "type": "Point",
     "coordinates": [
-     -66.375,
-     -24.625
+     -73.125,
+     -15.625
     ]
    },
    "properties": {
-    "id": "shackleton-24.62S-066.38W",
-    "name": "-24.62, -66.38",
+    "id": "shackleton-15.62S-073.12W",
+    "name": "-15.62, -73.12",
     "target_id": "shackleton",
-    "score": 0.5761,
-    "robustness": 0.992,
+    "score": 0.5746,
+    "robustness": 0.966,
     "dim_scores": {
-     "terrain": 0.721,
+     "terrain": 0.945,
      "temperature": 0.0,
-     "vegetation": 0.872,
+     "vegetation": 0.606,
      "aridity": 0.0,
-     "albedo": 0.874,
-     "ice": 0.99
+     "albedo": 0.896,
+     "ice": 1.0
     },
-    "area_km2": 2110,
-    "nearest_known_km": 252,
+    "area_km2": 11913,
+    "nearest_known_km": 919,
     "novelty": "under-studied",
     "dossier": null,
     "continent": "South America",
     "rank": 4,
-    "cells": [230755,230756,231102]
+    "cells": [217867,217868,217869,218202,218203,218204,218207,218540,218541,218542,218543,218544,218871,218872,218873,218874]
    }
   },
   {
@@ -684,7 +1231,7 @@
     "name": "30.12, 57.62",
     "target_id": "shackleton",
     "score": 0.5747,
-    "robustness": 0.968,
+    "robustness": 0.92,
     "dim_scores": {
      "terrain": 0.761,
      "temperature": 0.0,
@@ -693,13 +1240,13 @@
      "albedo": 0.798,
      "ice": 0.997
     },
-    "area_km2": 12034,
+    "area_km2": 20105,
     "nearest_known_km": 805,
     "novelty": "under-studied",
     "dossier": null,
     "continent": "Asia",
     "rank": 5,
-    "cells": [145435,146082,146083,146084,146736,146737,147385,148019,148020,148652,148653,149268,149269,149270,149272,149882,149884,150490]
+    "cells": [145435,146082,146083,146084,146735,146736,146737,147385,148014,148019,148020,148647,148652,148653,149267,149268,149269,149270,149272,149878,149879,149880,149881,149882,149884,150487,150488,150489,150490,151088]
    }
   },
   {
@@ -707,31 +1254,95 @@
    "geometry": {
     "type": "Point",
     "coordinates": [
-     -69.125,
-     -20.125
+     93.875,
+     43.875
     ]
    },
    "properties": {
-    "id": "shackleton-20.12S-069.12W",
-    "name": "-20.12, -69.12",
+    "id": "shackleton-43.88N-093.88E",
+    "name": "43.88, 93.88",
     "target_id": "shackleton",
-    "score": 0.5685,
-    "robustness": 0.952,
+    "score": 0.5829,
+    "robustness": 0.9,
     "dim_scores": {
-     "terrain": 0.733,
+     "terrain": 0.63,
      "temperature": 0.0,
-     "vegetation": 0.879,
+     "vegetation": 0.923,
      "aridity": 0.0,
-     "albedo": 0.798,
-     "ice": 1.0
+     "albedo": 0.965,
+     "ice": 0.979
     },
-    "area_km2": 13797,
-    "nearest_known_km": 271,
+    "area_km2": 27690,
+    "nearest_known_km": 619,
     "novelty": "under-studied",
     "dossier": null,
-    "continent": "South America",
+    "continent": "Asia",
     "rank": 6,
-    "cells": [223347,223678,223679,223680,223681,224014,224016,224017,224351,224352,224353,224687,224688,225031,225382,225385,225733,225734,226090]
+    "cells": [110005,110719,110720,110721,110722,110723,110724,110725,110726,111425,111426,111427,111428,111429,111430,111432,111433,111434,111436,112123,112124,112125,112126,112127,112132,112133,112134,112135,112817,112818,112819,112820,112821,112827,113507,113508,113509,113510,114194,114195,114196,114197,114200,114887,114888,114889,114890,115583,115584,115585]
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -7.875,
+     31.125
+    ]
+   },
+   "properties": {
+    "id": "shackleton-31.12N-007.88W",
+    "name": "31.12, -7.88",
+    "target_id": "shackleton",
+    "score": 0.557,
+    "robustness": 0.902,
+    "dim_scores": {
+     "terrain": 0.9,
+     "temperature": 0.0,
+     "vegetation": 0.625,
+     "aridity": 0.0,
+     "albedo": 0.951,
+     "ice": 0.865
+    },
+    "area_km2": 11234,
+    "nearest_known_km": 348,
+    "novelty": "under-studied",
+    "dossier": null,
+    "continent": "Africa",
+    "rank": 7,
+    "cells": [143968,143969,143970,144576,144577,144578,144579,144580,145195,145196,145197,145198,145199,145829,145830,145831,145832]
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     37.875,
+     17.625
+    ]
+   },
+   "properties": {
+    "id": "shackleton-17.62N-037.88E",
+    "name": "17.62, 37.88",
+    "target_id": "shackleton",
+    "score": 0.5683,
+    "robustness": 0.874,
+    "dim_scores": {
+     "terrain": 0.724,
+     "temperature": 0.0,
+     "vegetation": 0.812,
+     "aridity": 0.0,
+     "albedo": 0.874,
+     "ice": 1.0
+    },
+    "area_km2": 7378,
+    "nearest_known_km": 457,
+    "novelty": "under-studied",
+    "dossier": null,
+    "continent": "Africa",
+    "rank": 8,
+    "cells": [173959,174385,174386,174806,174807,175224,175225,175226,175637,175641]
    }
   },
   {
@@ -748,7 +1359,7 @@
     "name": "28.38, 34.38",
     "target_id": "shackleton",
     "score": 0.548,
-    "robustness": 0.924,
+    "robustness": 0.766,
     "dim_scores": {
      "terrain": 0.443,
      "temperature": 0.0,
@@ -762,40 +1373,8 @@
     "novelty": "under-studied",
     "dossier": null,
     "continent": "Africa",
-    "rank": 7,
+    "rank": 9,
     "cells": [151005,151006,151603,152199,152200,152201,152795]
-   }
-  },
-  {
-   "type": "Feature",
-   "geometry": {
-    "type": "Point",
-    "coordinates": [
-     17.625,
-     20.625
-    ]
-   },
-   "properties": {
-    "id": "shackleton-20.62N-017.62E",
-    "name": "20.62, 17.62",
-    "target_id": "shackleton",
-    "score": 0.5457,
-    "robustness": 0.72,
-    "dim_scores": {
-     "terrain": 0.455,
-     "temperature": 0.0,
-     "vegetation": 0.923,
-     "aridity": 0.0,
-     "albedo": 0.896,
-     "ice": 1.0
-    },
-    "area_km2": 14468,
-    "nearest_known_km": 2485,
-    "novelty": "under-studied",
-    "dossier": null,
-    "continent": "Africa",
-    "rank": 8,
-    "cells": [167420,167421,167908,167910,167912,168395,168396,168869,168870,168871,168872,168873,169337,169338,169341,169804,169805,170257,170258,170719]
    }
   },
   {
@@ -812,7 +1391,7 @@
     "name": "-85.38, -168.38",
     "target_id": "shackleton",
     "score": 0.5253,
-    "robustness": 0.472,
+    "robustness": 0.476,
     "dim_scores": {
      "terrain": 0.673,
      "temperature": 0.429,
@@ -824,40 +1403,8 @@
     "novelty": "under-studied",
     "dossier": null,
     "continent": "Antarctica",
-    "rank": 9,
-    "cells": [317087,317088,317089,317090,317091]
-   }
-  },
-  {
-   "type": "Feature",
-   "geometry": {
-    "type": "Point",
-    "coordinates": [
-     28.875,
-     24.375
-    ]
-   },
-   "properties": {
-    "id": "shackleton-24.38N-028.88E",
-    "name": "24.38, 28.88",
-    "target_id": "shackleton",
-    "score": 0.4878,
-    "robustness": 0.324,
-    "dim_scores": {
-     "terrain": 0.002,
-     "temperature": 0.0,
-     "vegetation": 0.929,
-     "aridity": 0.996,
-     "albedo": 0.0,
-     "ice": 1.0
-    },
-    "area_km2": 17538,
-    "nearest_known_km": 1644,
-    "novelty": "under-studied",
-    "dossier": null,
-    "continent": "Africa",
     "rank": 10,
-    "cells": [159097,159098,159100,159637,159638,159639,159640,159641,159642,159643,160165,160166,160167,160169,160689,160690,160691,160692,161207,161208,161209,161210,161213,161730,162250]
+    "cells": [317087,317088,317089,317090,317091]
    }
   },
   {
@@ -884,13 +1431,13 @@
      "ice": 1.0,
      "geology": 1.0
     },
-    "area_km2": 8676,
+    "area_km2": 10855,
     "nearest_known_km": 261,
     "novelty": "under-studied",
     "dossier": null,
     "continent": "Africa",
     "rank": 1,
-    "cells": [224806,224807,225148,225149,225498,225499,225500,225847,225849,225850,226206,226564]
+    "cells": [224137,224472,224806,224807,225148,225149,225150,225498,225499,225500,225847,225849,225850,226206,226564]
    }
   },
   {
@@ -898,32 +1445,32 @@
    "geometry": {
     "type": "Point",
     "coordinates": [
-     33.875,
-     25.625
+     36.375,
+     2.875
     ]
    },
    "properties": {
-    "id": "marius_hills-25.62N-033.88E",
-    "name": "25.62, 33.88",
+    "id": "marius_hills-02.88N-036.38E",
+    "name": "2.88, 36.38",
     "target_id": "marius_hills",
-    "score": 0.678,
-    "robustness": 0.998,
+    "score": 0.6863,
+    "robustness": 1.0,
     "dim_scores": {
-     "terrain": 0.989,
+     "terrain": 0.974,
      "temperature": 0.0,
-     "vegetation": 0.949,
-     "aridity": 0.338,
-     "albedo": 0.683,
+     "vegetation": 0.923,
+     "aridity": 0.0,
+     "albedo": 0.998,
      "ice": 1.0,
-     "geology": 0.787
+     "geology": 0.909
     },
-    "area_km2": 18109,
-    "nearest_known_km": 1432,
+    "area_km2": 4629,
+    "nearest_known_km": 1335,
     "novelty": "under-studied",
     "dossier": null,
     "continent": "Africa",
     "rank": 2,
-    "cells": [156306,156307,156872,156873,156874,157434,157435,157436,157997,157998,157999,158000,158558,158559,158560,159115,159116,159117,159118,159657,159660,159661,160184,160185,160186,160709]
+    "cells": [193991,194283,194574,194575,194865,194866]
    }
   },
   {
@@ -950,13 +1497,13 @@
      "ice": 1.0,
      "geology": 0.965
     },
-    "area_km2": 19515,
+    "area_km2": 31439,
     "nearest_known_km": 1244,
     "novelty": "under-studied",
     "dossier": null,
     "continent": "Asia",
     "rank": 3,
-    "cells": [157444,157445,157446,157447,157448,158006,158007,158008,158009,158010,158565,158566,158567,158568,158569,158570,159121,159122,159124,159125,159126,159127,159663,159665,159666,159670,159671,160194]
+    "cells": [157444,157445,157446,157447,157448,158006,158007,158008,158009,158010,158565,158566,158567,158568,158569,158570,158575,159121,159122,159124,159125,159126,159127,159133,159663,159665,159666,159667,159669,159670,159671,159674,159675,160194,160195,160196,160197,160198,160721,160722,160723,160724,161241,161762,162281]
    }
   },
   {
@@ -997,6 +1544,39 @@
    "geometry": {
     "type": "Point",
     "coordinates": [
+     33.875,
+     25.625
+    ]
+   },
+   "properties": {
+    "id": "marius_hills-25.62N-033.88E",
+    "name": "25.62, 33.88",
+    "target_id": "marius_hills",
+    "score": 0.678,
+    "robustness": 0.994,
+    "dim_scores": {
+     "terrain": 0.989,
+     "temperature": 0.0,
+     "vegetation": 0.949,
+     "aridity": 0.338,
+     "albedo": 0.683,
+     "ice": 1.0,
+     "geology": 0.787
+    },
+    "area_km2": 18109,
+    "nearest_known_km": 1432,
+    "novelty": "under-studied",
+    "dossier": null,
+    "continent": "Africa",
+    "rank": 5,
+    "cells": [156306,156307,156872,156873,156874,157434,157435,157436,157997,157998,157999,158000,158558,158559,158560,159115,159116,159117,159118,159657,159660,159661,160184,160185,160186,160709]
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
      58.875,
      31.875
     ]
@@ -1006,7 +1586,7 @@
     "name": "31.88, 58.88",
     "target_id": "marius_hills",
     "score": 0.6748,
-    "robustness": 1.0,
+    "robustness": 0.996,
     "dim_scores": {
      "terrain": 0.987,
      "temperature": 0.0,
@@ -1021,7 +1601,7 @@
     "novelty": "under-studied",
     "dossier": null,
     "continent": "Asia",
-    "rank": 5,
+    "rank": 6,
     "cells": [141118,141721,141722,141723,141724,142326,142327,142328,142329,142330,142334,142938,142941,142942,142943,142944,142945,142946,142947,143558,143559,143560,143562,144175,144176,144177,144805]
    }
   },
@@ -1030,32 +1610,197 @@
    "geometry": {
     "type": "Point",
     "coordinates": [
-     17.625,
-     -28.625
+     -114.625,
+     33.125
     ]
    },
    "properties": {
-    "id": "marius_hills-28.62S-017.62E",
-    "name": "-28.62, 17.62",
+    "id": "marius_hills-33.12N-114.62W",
+    "name": "33.12, -114.62",
     "target_id": "marius_hills",
-    "score": 0.6729,
-    "robustness": 1.0,
+    "score": 0.6518,
+    "robustness": 0.942,
     "dim_scores": {
-     "terrain": 0.854,
+     "terrain": 0.965,
      "temperature": 0.0,
-     "vegetation": 0.944,
+     "vegetation": 0.858,
      "aridity": 0.0,
-     "albedo": 0.916,
+     "albedo": 0.742,
      "ice": 1.0,
-     "geology": 0.995
+     "geology": 0.998
     },
-    "area_km2": 4759,
-    "nearest_known_km": 619,
+    "area_km2": 9046,
+    "nearest_known_km": 320,
     "novelty": "under-studied",
     "dossier": null,
-    "continent": "Africa",
-    "rank": 6,
-    "cells": [235693,235696,236006,236007,236008,236316,236317]
+    "continent": "North America",
+    "rank": 7,
+    "cells": [139039,139618,139619,139620,139621,139622,139623,140205,140206,140207,140208,140209,140211,140212]
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -68.625,
+     -36.625
+    ]
+   },
+   "properties": {
+    "id": "marius_hills-36.62S-068.62W",
+    "name": "-36.62, -68.62",
+    "target_id": "marius_hills",
+    "score": 0.6512,
+    "robustness": 0.902,
+    "dim_scores": {
+     "terrain": 0.963,
+     "temperature": 0.0,
+     "vegetation": 0.753,
+     "aridity": 0.0,
+     "albedo": 0.935,
+     "ice": 1.0,
+     "geology": 0.909
+    },
+    "area_km2": 45262,
+    "nearest_known_km": 1276,
+    "novelty": "under-studied",
+    "dossier": null,
+    "continent": "South America",
+    "rank": 8,
+    "cells": [242632,242636,242752,242753,242755,242756,242865,242867,242871,242872,242979,242980,242981,242983,242984,242985,243094,243095,243096,243097,243098,243099,243100,243101,243202,243203,243204,243205,243206,243207,243208,243311,243312,243313,243314,243315,243316,243317,243318,243418,243419,243420,243421,243422,243423,243424,243425,243426,243528,243529,243530,243532,243533,243534,243535,243642,243643,243644,243645,243646,243647,243648,243753,243755,243756,243757,243758,243759,243864,243865,243869,243870,243871]
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -69.875,
+     -46.625
+    ]
+   },
+   "properties": {
+    "id": "marius_hills-46.62S-069.88W",
+    "name": "-46.62, -69.88",
+    "target_id": "marius_hills",
+    "score": 0.6406,
+    "robustness": 0.736,
+    "dim_scores": {
+     "terrain": 0.969,
+     "temperature": 0.0,
+     "vegetation": 0.726,
+     "aridity": 0.0,
+     "albedo": 0.825,
+     "ice": 0.999,
+     "geology": 0.965
+    },
+    "area_km2": 20243,
+    "nearest_known_km": 2390,
+    "novelty": "under-studied",
+    "dossier": null,
+    "continent": "South America",
+    "rank": 9,
+    "cells": [245731,245732,245780,245781,245782,245783,245827,245828,245829,245831,245868,245869,245870,245871,245872,245873,245874,245875,245876,245877,245878,245879,245909,245910,245912,245913,245914,245915,245916,245917,245918,245919,245947,245950,245951,245952,245978,246015]
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -68.375,
+     -40.625
+    ]
+   },
+   "properties": {
+    "id": "marius_hills-40.62S-068.38W",
+    "name": "-40.62, -68.38",
+    "target_id": "marius_hills",
+    "score": 0.6432,
+    "robustness": 0.716,
+    "dim_scores": {
+     "terrain": 0.955,
+     "temperature": 0.0,
+     "vegetation": 0.778,
+     "aridity": 0.0,
+     "albedo": 0.896,
+     "ice": 1.0,
+     "geology": 0.873
+    },
+    "area_km2": 48767,
+    "nearest_known_km": 1721,
+    "novelty": "under-studied",
+    "dossier": null,
+    "continent": "South America",
+    "rank": 10,
+    "cells": [244490,244491,244550,244553,244600,244601,244602,244606,244607,244608,244609,244610,244653,244657,244658,244659,244660,244661,244662,244663,244664,244665,244709,244710,244711,244712,244713,244714,244715,244716,244717,244718,244767,244768,244769,244770,244771,244772,244773,244774,244775,244776,244777,244832,244833,244834,244835,244836,244838,244839,244889,244892,244893,244894,244895,244896,244897,244898,244899,244900,244946,244947,244948,244949,244950,244951,244953,244954,244957,245005,245006,245007,245014,245065,245066,245067,245070,245071,245072,245073,245125,245127,245128,245131]
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     117.875,
+     -23.375
+    ]
+   },
+   "properties": {
+    "id": "marius_hills-23.38S-117.88E",
+    "name": "-23.38, 117.88",
+    "target_id": "marius_hills",
+    "score": 0.6436,
+    "robustness": 0.66,
+    "dim_scores": {
+     "terrain": 0.975,
+     "temperature": 0.0,
+     "vegetation": 0.569,
+     "aridity": 0.0,
+     "albedo": 0.977,
+     "ice": 1.0,
+     "geology": 0.983
+    },
+    "area_km2": 42559,
+    "nearest_known_km": 294,
+    "novelty": "under-studied",
+    "dossier": null,
+    "continent": "Oceania",
+    "rank": 11,
+    "cells": [228128,228129,228492,228493,228495,228496,228497,228852,228853,228854,228856,228857,228858,228859,228860,228861,228862,228863,229205,229206,229207,229208,229209,229210,229211,229212,229213,229214,229215,229216,229557,229561,229562,229563,229564,229565,229566,229567,229906,229907,229912,229915,230255,230256,230257,230258,230259,230260,230261,230602,230603,230604,230605,230606,230607,230945,230948,230949,230950,231288]
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -114.125,
+     28.625
+    ]
+   },
+   "properties": {
+    "id": "marius_hills-28.62N-114.12W",
+    "name": "28.62, -114.12",
+    "target_id": "marius_hills",
+    "score": 0.6365,
+    "robustness": 0.538,
+    "dim_scores": {
+     "terrain": 0.97,
+     "temperature": 0.0,
+     "vegetation": 0.69,
+     "aridity": 0.0,
+     "albedo": 0.798,
+     "ice": 1.0,
+     "geology": 0.998
+    },
+    "area_km2": 4054,
+    "nearest_known_km": 770,
+    "novelty": "under-studied",
+    "dossier": null,
+    "continent": "North America",
+    "rank": 12,
+    "cells": [149529,149531,150140,150745,150746,151343]
    }
   }
  ]

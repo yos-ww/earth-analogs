@@ -11,7 +11,7 @@ import json
 
 import numpy as np
 
-from .common import BARREN_NDVI, DIMENSIONS, FEATURES, INTERIM, NCOLS, NROWS, RES_DEG, ROOT, WEB_DATA, cell_weights
+from .common import DIMENSIONS, FEATURES, INTERIM, NCOLS, NROWS, RES_DEG, ROOT, WEB_DATA, cell_weights
 
 SIGMA_FLOOR_FRAC = 0.05  # sigma is at least 5% of (p99 - p1), so mostly-zero features keep sigma > 0
 
@@ -130,9 +130,6 @@ def main():
         if not path.exists():
             continue
         raw = np.load(path).ravel()[cells].astype(np.float64)
-        if fid == "aod":  # aerosol is dust only over bare ground; over plants and cities it is mostly smoke and haze
-            ndvi = np.load(INTERIM / "ndvi_max.npy").ravel()[cells]
-            raw[np.nan_to_num(ndvi, nan=0.0) >= BARREN_NDVI] = np.nan
         x = transform(raw, kind)
         ok = np.isfinite(x)
         lo, hi = float(x[ok].min()), float(x[ok].max())

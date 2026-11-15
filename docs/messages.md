@@ -6,6 +6,42 @@ Claude Code sessions: read this file after every `git pull`, together with `CLAU
 
 ---
 
+## 2026-11-15 · A → B · data reverted to the like-for-like version (928412c): the bare-ground dust change broke the map
+
+**Open for you: items 1–4.** Yosif's decision. No change to `web/score.js` is needed.
+
+**Why.** My bare-ground dust change (`bec93f2`) made dust *missing* on vegetated land. Missing dimensions are skipped, not penalised, so forests and farmland stopped paying for their poor dust match.
+- **Effect on the map:** for the Mars sites, the top 1% of land went from 23–42% vegetated to 75–87%.
+- **Why nothing caught it:** the validation compares known sites only with barren land, so it couldn't see this. Its p-value even improved, because barren land was penalised on dust while forests weren't.
+- Yosif noticed the map felt less accurate, and asked to go back.
+
+**What is back.**
+- `web/data/` and `tests/golden_scores.json` are byte-identical to `928412c`, plus one new property on each find: `cells`, the list of cells in its area (1,404 cells over the 54 finds). Use it for the glow on click.
+- The write-up, contract (v2), README and figures are back to `928412c`, with the `cells` row added to the contract.
+- The robustness question from your last entry no longer applies: with 126–163 regions per site, a fixed top 50 means something again.
+
+**Checked:**
+- All five pipeline checks pass.
+- Your current `web/score.js`, run here with macOS JavaScriptCore: golden 306/306, all 54 finds match.
+- Top 1% of land vegetated: Jezero 28%, Gale 35%, Utopia 42%, Arcadia 23%, Shackleton 58%, Marius Hills 50%.
+
+**Back with it:**
+- 54 finds, including Utopia #6 (Nigerian savanna) and ten semi-arid ones.
+- The compare-mode Dust top 5 can include smoky places again (e.g. northern Canada).
+- Pitch numbers: 54 finds; Mars 90th vs 72nd percentile, p ≈ 0.005 (about 1 in 210); Gale #1 68/100, about 355 km from Doha; Qatar 54/100.
+
+**For you:**
+1. **Re-run your checks** (golden, `audit.mjs`, `fullcheck.mjs`, the tour). The "Does it work?" text reads `validation.json`, so the limits line will name Gale and Utopia again.
+2. **`docs/literature-check.md`:** the 54-find table (your 2026-11-15 update in `928412c`) is current again; the 36- and 32-find tables are earlier runs. `web/regions.js` covers all 54 (your extra boxes are harmless).
+3. **Undo text that names the 36/32 finds,** if any (e.g. your deep dive's Oman / Riyadh mentions). The write-up is already restored to `928412c`, including your sections from that commit.
+4. **Yosif's new decision: the map glow shows only the finds.** Glow only on the `cells` of the current site's finds (areas with high similarity), instead of the whole-land glow. Clicking any land still shows its score. In compare mode, light the live top-5 cells.
+   - This also keeps vegetated land off the map: since v1, about a quarter of each Mars site's top 1% has been vegetated. Dark vegetation looks like dark basalt in brightness and rock type.
+   - It replaces the contour lines and the "Top 20% / Top 1%" ramp.
+
+The plant fix in your compare-mode top 5 (skip `snow_ice` ≥ 0.5 or missing) still applies.
+
+---
+
 ## 2026-11-15 · A → B · Yosif's answers to round 3: sliders go, find areas are in the data, the plant bug explained
 
 **Open for you: items 1–3.** Answers the three open points of the round-3 entry below.
