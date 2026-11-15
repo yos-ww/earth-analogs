@@ -6,28 +6,43 @@ Claude Code sessions: read this file after every `git pull`, together with `CLAU
 
 ---
 
-## 2026-11-15 · A → B · Yosif's feedback after your UI pass
+## 2026-11-15 · A → B · Yosif's feedback after your UI pass, and a phone pass before the pitch
 
 **Open for you: your call on each item.** These are Yosif's own ideas from using the live app. Claude added notes on how each one fits what's already built. None of them touches `web/data/` or the contract, and item 1 doesn't need a change to `score.js` either.
 
 Yosif likes the six site cards (Jezero etc.) as buttons.
 
-1. **"Compare only…" mode under the site cards.** Today every place gets one overall score from all 8 dimensions. This mode would let you tick one or more dimensions (e.g. only Dust, or Dust + Temperature) and list the **top 10 places** most like the site on just those.
+1. **"Compare only…" mode under the site cards.** Today every place gets one overall score from all 8 dimensions. This mode would let you tick one or more dimensions (e.g. only Dust, or Dust + Temperature): the glow shows the match on just those, and a list gives the **top 5 places**. Yosif sees it as a tool for researchers who need a site that matches specific properties, and as a visible check that the model behaves sensibly when the question changes.
    - The scoring already supports it. A weight of 0 drops a dimension from the weighted mean, so ticked = 1 and unticked = 0 is just another setting of the existing sliders. The difference is that the control sits up front instead of being hidden in "Map options".
-   - It works per dimension (8, one per slider), not per feature (12). Temperature has three features inside it, and splitting them would change the contract's within-dimension mean rule.
-   - The top 10 needs a live ranking over all cells, because the current "Top finds" uses the precomputed candidates. With only one or two dimensions, many neighbouring cells tie near 100. The list should keep places at least ~200 km apart, as the candidates do, or it will show ten cells of the same desert.
+   - It works per dimension (8, one per slider), not per feature (12). Claude checked this on `web/data/`: relief and roughness are 0.99 correlated and slope 0.89, so splitting terrain adds little. Coldest night is one-sided for all six sites and day–night range for five, so ticked alone they would give the same map for every site.
+   - The top 5 needs a live ranking over all cells, because the current "Top finds" uses the precomputed candidates. With only one or two dimensions, many neighbouring cells tie near 100. The list should keep places at least ~200 km apart, as the candidates do, or it will show five cells of the same desert.
+   - Ties: some dimensions alone act as yes/no filters. Surface snow/ice alone is near-perfect on about 57% of land for every site (none of our six has surface ice, so ice-free land matches), and vegetation and rainfall alone on 2–5%. When the tie is large, the list should say so (e.g. "one of many equally good places") instead of looking precise.
+   - One-sided features: label them, e.g. "Earth never gets as cold as Mars nights, so this shows Earth's coldest places".
+   - Rainfall alone goes 100% to Antarctica, because IMERG reads 0 there (known caveat). A short note on that dimension would help.
+   - One caption for the mode: "Our validated score uses all 8 dimensions; this view is for exploring."
+   - Good demos, from Claude's quick check of where the top 1% goes: **Temperature** (Mars sites → Greenland ice sheet, Shackleton → Antarctica, Marius Hills → Tibet and the Sahara), **Terrain** (Gale and Shackleton → Tibet and the Andes, flat Utopia → flat plains), **Dust** (Mars sites → Sahara and Arabia). These are rough lat/lon boxes, so they're fine for choosing demos but not for quoting.
    - This takes the "one-dimension view" in `docs/presentation-plan.md` (accepted, not built yet) and extends it to several dimensions. It isn't a weight preset, because the user picks the dimensions.
 2. **Glow in red instead of copper.** This means the similarity glow on the globe (the ramp from the site's top 20% to its top 1%), not the accent colour of the buttons and headings. Yosif would like it red rather than the current copper/orange.
 3. **Two dot colours instead of five.** Today the globe has green (new find), yellow (little studied), blue (not checked yet), grey (known area our search found too), and rust / grey-blue for the known Mars / Moon sites. Yosif would like just two:
    - **White:** well-known analog sites (the known Mars and Moon sites, and "known area our search found too").
    - **Green:** our finds that aren't well known (new, little studied, not checked yet).
-   - Claude's note: the finer verdict ("No analog study found yet" vs "little studied") should stay in the result panel text. The pitch relies on the careful wording, even if the dot no longer shows it.
+   - Claude's notes:
+     - The finer verdict ("No analog study found yet" vs "little studied") should stay in the result panel text. The pitch relies on the careful wording, even if the dot no longer shows it.
+     - White dots need a dark outline, or they vanish on the white-hot glow and on ice.
 4. **"by Team Sol"** under the "Analog Atlas" title.
-5. **Remove the country search** ("How Mars-like is your place?"). Nothing in the tour depends on it. The Qatar line (55/100) can still be said in the pitch, and Qatar can still be clicked on the globe.
+5. **Remove the country search** ("How Mars-like is your place?"). Yosif has decided on this; it may come back later. Nothing in the tour depends on it. The Qatar line (55/100) is now optional, to be mentioned in the pitch only if we want to, and Qatar can still be clicked on the globe.
 6. **Simple location info on click.** Clicking any place should show its coordinates and its present-day country up front, not only under "More details".
    - Coordinates: `fmtLatLon` already exists, so this just means moving it under the heading.
    - Country: there's no lookup for arbitrary clicks today. The boxes in `places.js` overlap and cover only a few countries. One option is a small public-domain country-outline file (Natural Earth 1:110m, about 100 KB as TopoJSON from a CDN) with a point-in-polygon check in the browser, so no geocoding service is needed. Borders are de facto and approximate. Antarctica and the ocean get no country.
-7. **Remove the floating map key**, the "Glows where Earth is like …" box over the globe. Yosif likes the glow itself but not the floating box with the colour bar. Suggested default: move what it carries into the side panel instead of dropping it. That would be a thin red ramp line, the two dot colours from item 3 (short enough to fit now), and the "What does the glow mean?" fold-out.
+7. **Remove the floating map key**, the "Glows where Earth is like …" box over the globe. Yosif likes the glow itself but not the floating box. Replace it with **one small line in the side panel**: a thin red ramp with the two scores, and the two dot colours from item 3. The "What does the glow mean?" text can stay behind a small fold-out there.
+8. **Remove the first-visit welcome pop-up** ("▶ Watch the 50-second tour / Explore myself"). It feels like a pop-up ad. The Tour button in the header stays. (Claude had suggested the welcome in its earlier list; Yosif has overruled that.)
+
+**Last step before the pitch: phone pass.** Do this after items 1–8, once the layout is final. Judges may open the live demo from a QR code on their phones, so it must be smooth there. Yosif tested on an iPhone:
+
+- **The glow flickers when zoomed out and is stable when zoomed in.** Most likely depth fighting: the glow shell is only 0.2% above the Earth (`overlay.scale.setScalar(1.002)` in `ensureOverlay`), and phone GPUs have coarser depth precision at a distance. First thing to try: `polygonOffset: true, polygonOffsetFactor: -2, polygonOffsetUnits: -2` on `glowMat`. If that's not enough, try a slightly larger gap or `rendererConfig({ logarithmicDepthBuffer: true })`. Re-test on the iPhone; it can't be checked on a laptop.
+- **The panel takes about half the screen.** Under 700 px it's a fixed bottom sheet (`max-height: 46%`), and the map key adds a box at the top. Suggestion: the globe fills the screen on first load, with the six sites as one swipeable chip row at the bottom. The panel becomes a sheet you can pull up: small by default (site and score), half height when a place is tapped, full height for details.
+- Possibly related: the glow blur uses `ctx.filter`, which the code notes is "ignored where unsupported". Check the glow looks smooth, not blocky, on iPhone Safari.
+- Test on an iPhone and an Android phone: the first load from a real QR scan, rotating the globe and pinching to zoom, picking each site, tapping a find, the compare mode, and `?tour=1`.
 
 **Checks if you build any of it:** golden 306/306 unchanged; the tour runs start to finish with `?tour=1`; Gale #1 and the Makran finds still show green.
 
