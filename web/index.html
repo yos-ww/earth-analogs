@@ -22,7 +22,7 @@
   <aside id="panel">
     <header>
       <div class="title-row">
-        <h1>Analog Atlas</h1>
+        <div><h1>Analog Atlas</h1><p class="byline">by Team Sol</p></div>
         <button id="tour-btn" type="button" title="A 50-second guided tour">
           <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M5 3.5v9l7-4.5z"/></svg> Tour</button>
       </div>
@@ -33,10 +33,28 @@
       <h2 class="sec-title">Search Earth for places like…</h2>
       <div id="sites" class="sites" role="radiogroup" aria-label="Mars or Moon site"></div>
       <p id="target-blurb" class="blurb"></p>
+      <div id="compare" class="compare">
+        <p class="compare-title" id="compare-title">Compare only…</p>
+        <div id="compare-chips" class="compare-chips" role="group" aria-labelledby="compare-title"></div>
+        <p id="compare-note" class="note compare-note" hidden></p>
+      </div>
+      <div id="map-key" class="map-key">
+        <div class="mk-row">
+          <span class="mk-num" id="map-key-lo" title="Score where the glow starts: the top 20% of land">–</span>
+          <div class="ramp" aria-hidden="true"></div>
+          <span class="mk-num" id="map-key-hi" title="Score where it is white-hot: the top 1% of land">–</span>
+        </div>
+        <p class="mk-legend"><span><i class="dot new"></i>Our finds</span><span><i class="dot ring"></i>Known sites</span></p>
+        <details id="mk-help" class="mk-help">
+          <summary>What does the glow mean?</summary>
+          <div id="mk-help-body"></div>
+        </details>
+      </div>
     </section>
 
     <section id="top-finds" class="top-finds" hidden>
-      <h2 class="sec-title">Top finds for <span id="top-finds-site"></span></h2>
+      <h2 class="sec-title" id="top-finds-title">Top finds for <span id="top-finds-site"></span></h2>
+      <p id="top-finds-note" class="note top-finds-note" hidden></p>
       <ol id="top-finds-list"></ol>
     </section>
 
@@ -47,20 +65,6 @@
           <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M4 4l8 8M12 4l-8 8"/></svg></button>
       </div>
       <div id="place-body"></div>
-    </section>
-
-    <section class="ask">
-      <h2 class="sec-title"><label for="ask-input">How Mars-like is your place?</label></h2>
-      <form id="ask-form" class="ask-row" autocomplete="off">
-        <input id="ask-input" list="ask-list" placeholder="Country or city, e.g. Qatar" aria-describedby="ask-error">
-        <datalist id="ask-list"></datalist>
-        <button type="submit" aria-label="Show">
-          <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h9M8.5 4.5L12 8l-3.5 3.5"/></svg></button>
-      </form>
-      <p id="ask-error" class="ask-error" role="alert" hidden></p>
-      <p class="ask-quick"><button type="button" class="chip-btn" data-ask="Qatar">Qatar</button>
-        <button type="button" class="chip-btn" data-ask="Egypt">Egypt</button>
-        <button type="button" class="chip-btn" data-ask="Saudi Arabia">Saudi Arabia</button></p>
     </section>
 
     <p id="hint" class="hint">Click a find or any land to see how it compares.</p>
@@ -80,11 +84,11 @@
     <details id="options" class="fold">
       <summary>Map options</summary>
       <label class="check"><input id="show-candidates" type="checkbox" checked>
-        <span class="dot new"></span><span class="dot under"></span> Our finds</label>
+        <span class="dot new"></span> Our finds</label>
       <label class="check"><input id="show-confirms" type="checkbox" checked>
-        <span class="dot confirm"></span> Known areas our search found too</label>
+        <span class="dot ring"></span> Known areas our search found too</label>
       <label class="check"><input id="show-analogs" type="checkbox" checked>
-        <span class="dot mars"></span><span class="dot moon"></span> Places scientists already use</label>
+        <span class="dot ring"></span> Places scientists already use</label>
       <label class="check" title="Antarctica, inner Greenland and ice caps. On by default for Mars sites, which have no ice on the surface."><input id="hide-ice" type="checkbox">
         Hide ice sheets</label>
       <label class="check"><input id="day-night" type="checkbox" checked> Day and night</label>
@@ -100,34 +104,7 @@
     </footer>
   </aside>
 
-  <div id="map-key" class="map-key">
-    <p class="mk-title">Glows where Earth is like <span id="map-key-site">…</span></p>
-    <div class="ramp" aria-hidden="true"></div>
-    <p class="mk-scale"><span>Top 20% of land <b id="map-key-lo">–</b></span><span>Top 1% <b id="map-key-hi">–</b>+</span></p>
-    <ul class="mk-dots">
-      <li><span class="dot new"></span>New find</li>
-      <li><span class="dot under"></span>Little studied</li>
-      <li><span class="dot confirm"></span>Known area</li>
-    </ul>
-    <details id="mk-help" class="mk-help">
-      <summary>What does the glow mean?</summary>
-      <div id="mk-help-body"></div>
-    </details>
-  </div>
-
   <div id="hud" class="hud" aria-hidden="true"></div>
-
-  <div id="welcome" class="welcome" hidden role="dialog" aria-modal="false" aria-labelledby="welcome-title">
-    <div class="welcome-card">
-      <h2 id="welcome-title">Where on Earth is most like Mars?</h2>
-      <p>Pick a Mars or Moon landing site and Earth glows where it matches: landscape, temperature, rock, dust and more. Green dots are places no one has studied as an analog yet.</p>
-      <div class="welcome-btns">
-        <button id="welcome-tour" type="button" class="btn-primary">
-          <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M5 3.5v9l7-4.5z"/></svg> Watch the 50-second tour</button>
-        <button id="welcome-explore" type="button">Explore myself</button>
-      </div>
-    </div>
-  </div>
 
   <div id="tour" hidden role="dialog" aria-label="Guided tour">
     <div class="tour-card">
@@ -147,6 +124,7 @@
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/globe.gl@2.46.2/dist/globe.gl.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/topojson-client@3.1.0/dist/topojson-client.min.js"></script>
   <script type="module" src="app.js"></script>
 </body>
 </html>

@@ -4,7 +4,6 @@ import { decodeGrid, dimensionScores, overallScores, cellScores, cellIndex, targ
 import { regionOf, VERDICT_TEXT } from "./regions.js";
 import { MISSIONS, USE } from "./missions.js";
 import { initTour } from "./tour.js";
-import { COUNTRIES, CITIES } from "./places.js";
 
 const DATA_DIR = "data"; // "mock" to test against web/mock/*
 // Earth: NASA Blue Marble Next Generation (topography and bathymetry, December 2004), 8192 or 4096 px wide.
@@ -20,7 +19,7 @@ const IMG = {
 // The glow is scaled to each site: it starts at the site's top SHOW_TOP of Earth's land (by area)
 // and is white-hot from its top FULL_TOP, so Moon sites light up too. Display only: scores and
 // percentiles elsewhere are unchanged, and the map key states the scores behind the scale.
-const RAMP_STOPS = ["#6e1a0e", "#b5320c", "#e8612a", "#ffa14d", "#ffdc9e", "#fff8ea"]; // low -> high match
+const RAMP_STOPS = ["#5c0710", "#a10f18", "#e0201f", "#ff5a3c", "#ffb29e", "#fff6f2"]; // low -> high match: red to white-hot
 const SHOW_TOP = 0.20;          // glow starts at the top 20% of land for this site
 const FULL_TOP = 0.01;          // ... and is white-hot from the top 1%
 const SHOW_FLOOR = 0.2;         // never glow below this score, whatever the site
@@ -35,19 +34,27 @@ const TEX_SCALE = 2;            // texture = 2x the score grid (2880 x 1440), sm
 const FADE_MS = 550;            // cross-fade when the target changes
 const RESUME_ROTATE_MS = 2500;  // auto-rotation resumes this long after the user lets go
 const ICE_SHEET_FROM = 0.9;     // snow_ice fraction from which a cell counts as permanent ice sheet
-const COLOURS = { mars: "#e2683c", moon: "#dfe6f0", click: "226,104,60" };
-// Candidates are styled by their literature verdict (web/regions.js), so real discoveries stand out
-// from places where our search only re-found an area scientists already use.
+const COLOURS = { click: "255,255,255" };
+// Two kinds of dot, matching the story: our finds (the discoveries) are filled bright cyan dots that
+// pulse; known sites (the test) are small hollow light rings with a dark outline. Cyan stands out on the
+// whole red -> white-hot glow and is safe for red-green colour blindness. The finer literature verdict
+// stays in the panel text (heading).
+const FIND = { colour: "#2ee8ff", rgb: "46,232,255" };
+const RING = { outline: "#0b0e14", ring: "#eef2f7" };
 const CAND_STYLE = {
-  none:      { colour: "#3ddc84", rgb: "61,220,132",  radius: 0.55, alt: 0.035, pulse: 0.75, heading: "New find",
-               tag: "new find", group: "finds" },
-  under:     { colour: "#f2c14e", rgb: "242,193,78",  radius: 0.5,  alt: 0.03,  pulse: 0.45, heading: "Little-studied find",
-               tag: "little-studied find", group: "finds" },
-  unchecked: { colour: "#7fb2ff", rgb: "127,178,255", radius: 0.32, alt: 0.015, pulse: 0,    heading: "Candidate (not checked yet)",
-               tag: "candidate, not checked yet", group: "finds" },
-  known:     { colour: "#8b93a5", rgb: "139,147,165", radius: 0.3,  alt: 0.015, pulse: 0,    heading: "Known area our search found too",
-               tag: "known area", group: "confirms" },
+  none:      { ...FIND, radius: 0.5, alt: 0.012, pulse: 0.75, heading: "New find", group: "finds" },
+  under:     { ...FIND, radius: 0.5, alt: 0.012, pulse: 0.75, heading: "Little-studied find", group: "finds" },
+  unchecked: { ...FIND, radius: 0.5, alt: 0.012, pulse: 0.75, heading: "Candidate (not checked yet)", group: "finds" },
+  known:     { ...RING, heading: "Known area our search found too", group: "confirms" },
 };
+// A hollow ring from three stacked discs (globe.gl points have no outline): dark rim, light ring, dark centre.
+function ringDiscs(d, size = 1) {
+  return [
+    { ...d, colour: RING.outline, radius: 0.36 * size, alt: 0.003 },
+    { ...d, colour: RING.ring,    radius: 0.29 * size, alt: 0.0045 },
+    { ...d, colour: RING.outline, radius: 0.17 * size, alt: 0.006 },
+  ];
+}
 // Short axis names for the fingerprint radar.
 const DIM_SHORT = {
   terrain: "Terrain", temperature: "Temp", vegetation: "Plants", aridity: "Rain",
@@ -86,6 +93,8 @@ const state = {
   overall: null, shown: null, fade: null, clicked: null,
   analogs: [], candidates: [], showAnalogs: true, showCandidates: true, showConfirms: true,
   iceSheet: null, hideIce: false, cellWeight: null, arc: null,
+  compare: new Set(),   // dimensions ticked in "Compare only…" (empty = all, normal scoring)
+  live: null,           // live top 5 shown as globe dots while "Compare only…" is on
 };
 
 // ---------- colours ----------
@@ -155,7 +164,7 @@ const globe = new Globe($("globe"))
   .labelColor((d) => d.colour || "#ffffff").labelResolution(2).labelAltitude(0.02)
   // arc from a selected find to the nearest place scientists already use
   .arcStartLat((d) => d.sLat).arcStartLng((d) => d.sLng).arcEndLat((d) => d.eLat).arcEndLng((d) => d.eLng)
-  .arcColor(() => ["rgba(61,220,132,0.95)", "rgba(226,104,60,0.95)"])
+  .arcColor(() => ["rgba(46,232,255,0.95)", "rgba(238,242,247,0.95)"])
   .arcStroke(0.45).arcAltitudeAutoScale(0.35)
   .arcDashLength(0.35).arcDashGap(0.12).arcDashInitialGap(1).arcDashAnimateTime(2200);
 
@@ -262,8 +271,14 @@ function targetCandidates() {
 function updateLayers() {
   const cands = targetCandidates().filter((c) =>
     (c.style.group === "finds" && state.showCandidates) || (c.style.group === "confirms" && state.showConfirms));
-  globe.pointsData([...(state.showAnalogs ? state.analogs : []), ...cands]);
-  const rings = cands.filter((c) => c.style.pulse > 0).map((c) => ({
+  // known sites of the current body only (Mars sites when a Mars site is picked): less clutter
+  const analogs = state.showAnalogs ? state.analogs.filter((a) => a.bodyList.includes(state.target?.body)) : [];
+  const knownDiscs = [...analogs, ...cands.filter((c) => c.style.group === "confirms")].flatMap((d) => ringDiscs(d));
+  // "Compare only…": the cyan dots are the live top 5 on the ticked dimensions, not the precomputed
+  // finds (those were chosen on all dimensions together).
+  const finds = state.live ? (state.showCandidates ? state.live : []) : cands.filter((c) => c.style.group === "finds");
+  globe.pointsData([...knownDiscs, ...finds]);
+  const rings = finds.filter((c) => c.style.pulse > 0).map((c) => ({
     lat: c.lat, lng: c.lng, rgb: c.style.rgb, strength: c.style.pulse, maxR: 2.4, speed: 1.2, period: 2200,
   }));
   if (state.clicked) rings.push({ lat: state.clicked[0], lng: state.clicked[1], rgb: COLOURS.click, strength: 1, maxR: 3, speed: 2.2, period: 1100 });
@@ -300,9 +315,8 @@ function displayRange(values) {
 }
 function updateMapKey(lo, hi) {
   if (!state.target) return;
-  $("map-key-site").textContent = shortName(state.target);
   $("map-key-lo").textContent = Math.round(lo * 100);
-  $("map-key-hi").textContent = Math.round(hi * 100);
+  $("map-key-hi").textContent = `${Math.round(hi * 100)}+`;
   // Plain-words explanation of the glow, with this site's own numbers (rebuilt only when they change).
   const t = state.target, tn = esc(shortName(t)), body = t.body === "moon" ? "the Moon" : "Mars";
   const L = Math.round(lo * 100), H = Math.round(hi * 100), key = `${t.id}|${L}|${H}`;
@@ -319,8 +333,11 @@ function updateMapKey(lo, hi) {
       <li><b>Dark red:</b> among the 20% of land most like ${tn} (score ${L} or more).</li>
       <li><b>White-hot:</b> the top 1% (score ${H} or more): the best places on Earth to practise for ${tn}.</li>
     </ul>
+    <p>The numbers at both ends of the bar are those two scores for ${tn}.</p>
+    <p><b>Cyan dots</b> are our finds: places that match well and are far from any site scientists already use.
+      <b>Light rings</b> are known analog sites, the test: if the method works, they should glow too.</p>
     <p>The scale is set for each site, so compare <b>scores</b>, not colours, between sites. No place on Earth can copy
-      gravity, air or radiation: see “About ${tn}”. Click any land for its score, or change what counts in “Map options”.</p>`;
+      gravity, air or radiation: see “About ${tn}”. Click any land for its score, or use “Compare only…” to see one property at a time.</p>`;
 }
 
 let raster = null;       // displayed score per grid pixel (NaN = not shown), for the contours
@@ -438,7 +455,10 @@ function ensureOverlay() {
   tex.source = new mat.map.source.constructor(texCanvas);
   tex.anisotropy = renderer.capabilities.getMaxAnisotropy();
   tex.needsUpdate = true;
-  const glowMat = new mat.constructor({ map: tex, emissiveMap: tex, transparent: true, depthWrite: false, shininess: 0 });
+  // polygonOffset pulls the shell towards the camera in depth, so phone GPUs (coarser depth buffer)
+  // do not flicker between it and the Earth when zoomed out.
+  const glowMat = new mat.constructor({ map: tex, emissiveMap: tex, transparent: true, depthWrite: false, shininess: 0,
+    polygonOffset: true, polygonOffsetFactor: -2, polygonOffsetUnits: -2 });
   glowMat.color.setRGB(0, 0, 0);
   glowMat.emissive.setRGB(1, 1, 1);
   glowMat.onBeforeCompile = (shader) => {
@@ -503,6 +523,7 @@ function buildSliders() {
       <span>${state.weights[k].toFixed(1)}</span>`;
     const input = row.querySelector("input"), out = row.querySelector("span");
     input.addEventListener("input", () => {
+      if (state.compare.size) clearCompare();   // a slider move leaves "compare only" (weights kept)
       state.weights[k] = Number(input.value);
       out.textContent = state.weights[k].toFixed(1);
       rescore();
@@ -519,8 +540,11 @@ function selectTarget(id) {
     b.setAttribute("aria-checked", on ? "true" : "false");
     b.tabIndex = on ? 0 : -1;
   }
-  state.weights = state.grid.meta.dimensions.map((d) => t.weights?.[d] ?? 1);
   state.dims = dimensionScores(state.grid, t);
+  // a new site keeps the "compare only" choice, so one property can be compared across sites
+  state.weights = state.compare.size ? state.grid.meta.dimensions.map((d) => (state.compare.has(d) ? 1 : 0))
+    : state.grid.meta.dimensions.map((d) => t.weights?.[d] ?? 1);
+  syncCompareUI();
   state.hideIce = t.body === "mars";
   $("hide-ice").checked = state.hideIce;
   const count = (v) => targetCandidates().filter((c) => c.verdict === v).length;
@@ -542,6 +566,7 @@ function selectTarget(id) {
 }
 
 $("reset").addEventListener("click", () => {
+  clearCompare();
   state.weights = state.grid.meta.dimensions.map(() => 1);
   buildSliders();
   rescore({ fade: true });
@@ -685,8 +710,8 @@ const andList = (xs) => (xs.length < 2 ? xs.join("") : `${xs.slice(0, -1).join("
 
 const verdictWord = (s) => (s >= 0.8 ? "very similar" : s >= 0.6 ? "similar" : s >= 0.4 ? "partly similar" : "different");
 
-function areaPercentile(s) {
-  const { overall } = state, w = state.cellWeight;
+function areaPercentile(s, overall = state.overall) {
+  const w = state.cellWeight;
   let below = 0, total = 0;
   for (let i = 0; i < overall.length; i++) {
     const v = overall[i];
@@ -719,7 +744,8 @@ function detailsBlock(i) {
     const note = f.id === "precip" ? ` <span class="sub" title="Satellite rain estimates are too high in deserts">(estimate)</span>` : "";
     return `<tr><td>${esc(f.label || f.id)}${note}</td><td>${fmtValue(f.id, f.unit, cellValue(i, f.id))}</td><td>${there}${beyond}</td></tr>`;
   }).join("");
-  const all = state.targets.map((t) => ({ t, s: cellScores(grid, t, i, state.weights).overall }))
+  // every site on its full score ("compare only" weights would make most of them 100)
+  const all = state.targets.map((t) => ({ t, s: cellScores(grid, t, i, state.compare.size ? undefined : state.weights).overall }))
     .sort((a, b) => (Number.isNaN(b.s) ? -1 : b.s) - (Number.isNaN(a.s) ? -1 : a.s))
     .map(({ t, s }) => bar(`${esc(shortName(t))} <span class="sub">${t.body === "moon" ? "Moon" : "Mars"}</span>`, s)).join("");
   return `<details class="more"><summary>See all the numbers</summary>
@@ -776,36 +802,39 @@ function showPlace(lat, lng, { quiet = false, point = null } = {}) {
   const reg = regionOf(lat, lng);
   let simple = "", more = "";
   $("place-label").textContent = "Result";
+  // where it is, up front: country (de facto borders) and coordinates
+  const country = point?.kind === "analog" ? point.country : countryAt(lat, lng);
+  const locLine = `<p class="loc"${country ? ` title="Present-day country; borders are de facto and approximate (Natural Earth)"` : ""}>${
+    country ? `<b>${esc(country)}</b> · ` : ""}${fmtLatLon(lat, lng)}</p>`;
 
-  // --- name and one badge ---
-  if (point?.kind === "ask") {
-    simple += `<h3>${esc(point.name)}</h3>${point.summary ? `<p class="ask-note">${point.summary}</p>` : ""}`;
-    more += `<p class="note">${fmtLatLon(lat, lng)}${point.note ? ` · ${esc(point.note)}` : ""}</p>`;
-  } else if (point?.kind === "analog") {
-    simple += `<h3>${esc(point.name)}</h3><p class="badge-line"><span class="tag ${point.bodyKey}">Already used for ${point.bodies}</span></p>`;
+  // --- name, where, one badge ---
+  if (point?.kind === "analog") {
+    simple += `<h3>${esc(point.name)}</h3>${locLine}<p class="badge-line"><span class="tag known">Already used for ${point.bodies}</span></p>`;
     const ref = point.url ? `<a href="${esc(point.url)}" target="_blank" rel="noopener">${esc(point.reference)}</a>` : esc(point.reference);
-    more += `<p>${esc(point.why)}</p><p class="note">${esc(point.country)} · ${fmtLatLon(lat, lng)} · Source: ${ref}</p>`;
+    more += `<p>${esc(point.why)}</p><p class="note">Source: ${ref}</p>`;
   } else if (point?.kind === "candidate") {
     const v = VERDICT_TEXT[reg.verdict], st = point.style;
-    simple += `<h3>${esc(reg.name || "Candidate place")}</h3>
-      <p class="badge-line"><span class="tag" style="background:${st.colour}">${st.heading}</span></p>`;
+    simple += `<h3>${esc(reg.name || "Candidate place")}</h3>${locLine}
+      <p class="badge-line"><span class="tag ${st.group === "finds" ? "find" : "known"}">${st.heading}</span></p>`;
     if (state.arc) simple += `<p class="note">${state.arc.km.toLocaleString("en-US")} km from the nearest place scientists already use (${esc(state.arc.name)}).</p>`;
     more += `<div class="newness ${v.tone}"><b>Is it new? ${v.label}.</b> ${esc(reg.note || v.text)}</div>
-      <p class="note">${fmtLatLon(lat, lng)} · #${point.rank} for ${tn} · area about ${Math.round(point.area_km2).toLocaleString("en-US")} km² ·
+      <p class="note">#${point.rank} for ${tn} · area about ${Math.round(point.area_km2).toLocaleString("en-US")} km² ·
         ${Math.round(point.nearest_known_km)} km from the nearest place scientists already use ·
         stays in the top list in ${Math.round(point.robustness * 100)}% of tests with changed weights.</p>`;
   } else {
-    simple += `<h3>${reg.name ? esc(reg.name) : fmtLatLon(lat, lng)}</h3>`;
-    more += `<p class="note">${fmtLatLon(lat, lng)}</p>`;
+    simple += `<h3>${esc(reg.name || country || "Selected place")}</h3>${locLine}`;
   }
 
   // --- score, good for, different in ---
   if (i < 0) {
     simple += `<p class="note">Sea, or outside our land map: no score.</p>`;
-  } else if (Number.isNaN(state.overall[i])) {
+  } else if (Number.isNaN((state.compare.size ? fullScores() : state.overall)[i])) {
     simple += `<p class="note">Not enough satellite data here to compare with ${tn}.</p>`;
   } else {
-    const s = state.overall[i], pct = areaPercentile(s);
+    // In "Compare only…" the headline stays the full score on all dimensions; the score on the ticked
+    // ones is its own line (it is often 100 where the site is beyond anything on Earth).
+    const headline = state.compare.size ? fullScores() : state.overall;
+    const s = headline[i], pct = areaPercentile(s, headline);
     // Rainfall (aridity) is kept out of the lists: the satellite estimate cannot tell dry from extremely
     // dry deserts, so it would be "different" almost everywhere (decision in CLAUDE.md, 2026-11-14).
     const scored = state.grid.meta.dimensions.map((d, k) => ({ d, s: state.dims.dimScores[i * state.dims.nd + k] }))
@@ -818,13 +847,18 @@ function showPlace(lat, lng, { quiet = false, point = null } = {}) {
     simple += `<div class="place-top"><div class="score-big"><strong>${Math.round(s * 100)}<small>/100</small></strong>
       <span>similar to ${tn}</span>
       <em class="pct">${pct >= 0.5 ? `Top ${topShare}% of Earth's land` : `More similar than ${Math.round(pct * 100)}% of land`}</em></div><div>${fingerprintSVG(i)}<p class="fp-note">dashed ring = ${tn}</p></div></div>`;
+    if (state.compare.size) {
+      const c = state.overall[i], names = andList([...state.compare].map((d) => dimName(d).toLowerCase()));
+      simple += `<p class="compare-score"><b>${Number.isNaN(c) ? "–" : Math.round(c * 100)}</b>/100 on ${esc(names)} only
+        <span class="sub">(the big number is the score on all 8 properties)</span></p>`;
+    }
     const uses = good.filter((x) => USE[x.d]).slice(0, 2).map((x) => USE[x.d]);
     if (s >= 0.5 && uses.length) simple += `<p class="line good">${ICON.good}<span><b>Good for practising</b> ${andList(uses)}</span></p>`;
     else if (s < 0.5) simple += `<p class="line muted">Too different from ${tn} to be a useful practice site.</p>`;
     if (bad.length) simple += `<p class="line bad">${ICON.bad}<span><b>Different in</b> ${andList(bad.slice(0, 2).map((x) => dimName(x.d).toLowerCase()))}</span></p>`;
     if (state.hideIce && state.iceSheet[i]) simple += `<p class="note">Ice sheet: not coloured for a Mars site.</p>`;
 
-    more += `<p class="note">More similar to ${tn} than ${Math.round(pct * 100)}% of Earth's land.</p>`;
+    more += `<p class="note">More similar to ${tn} than ${Math.min(99, Math.round(pct * 100))}% of Earth's land.</p>`;
     if (good.length) more += `<h4>What is similar</h4><ul class="why good">${good.map((x) =>
       `<li><b>${dimName(x.d)}</b> (${verdictWord(x.s)}): ${describe(x.d, i)}</li>`).join("")}</ul>`;
     if (bad.length) more += `<h4>Where it breaks down</h4><ul class="why bad">${bad.map((x) =>
@@ -863,7 +897,6 @@ function refreshPanel() {
     showPlace(lat, lng, { quiet: true });
     return;
   }
-  if (point?.kind === "ask") { askPlace(point.query, { fly: false }); return; } // recompute for the new target/weights
   showPlace(lat, lng, { quiet: true, point });
 }
 
@@ -881,81 +914,160 @@ function setupHud() {
       if (!c) { hud.classList.remove("on"); return; }
       const i = cellIndex(state.grid, c.lat, c.lng);
       const s = i >= 0 ? state.overall[i] : NaN;
-      hud.innerHTML = `${fmtLatLon(c.lat, c.lng)} · ${esc(shortName(state.target))} <b>${Number.isNaN(s) ? "—" : Math.round(s * 100)}</b>`;
+      const what = state.compare.size ? ` on ${[...state.compare].map((d) => dimName(d).toLowerCase()).join(" + ")}` : "";
+      hud.innerHTML = `${fmtLatLon(c.lat, c.lng)} · ${esc(shortName(state.target))}${esc(what)} <b>${Number.isNaN(s) ? "—" : Math.round(s * 100)}</b>`;
       hud.classList.add("on");
     });
   });
   el.addEventListener("mouseleave", () => hud.classList.remove("on"));
 }
 
-// ---------- "How Mars-like is…" a country or city ----------
-function nearestLandCell(lat, lng) {
-  for (let r = 0; r <= 3; r++) {          // search up to 0.75° away (coastal cities can sit in a sea cell)
-    let best = -1, bestD = Infinity;
-    for (let dy = -r; dy <= r; dy++) for (let dx = -r; dx <= r; dx++) {
-      const la = lat + dy * 0.25, lo = lng + dx * 0.25, i = cellIndex(state.grid, la, lo);
-      if (i >= 0) { const d = dx * dx + dy * dy; if (d < bestD) { bestD = d; best = i; } }
-    }
-    if (best >= 0) return best;
-  }
-  return -1;
-}
 const cellLatLng = (i) => {
   const c = state.grid.cells[i], nc = state.grid.meta.grid.ncols, res = state.grid.meta.grid.res_deg;
   return [90 - (Math.floor(c / nc) + 0.5) * res, -180 + ((c % nc) + 0.5) * res];
 };
 
-function askPlace(query, { fly = true } = {}) {
-  const q = query.trim().toLowerCase();
-  const body = state.target.body === "moon" ? "Moon" : "Mars";
-  const name = Object.keys(COUNTRIES).find((k) => k.toLowerCase() === q) || Object.keys(CITIES).find((k) => k.toLowerCase() === q)
-    || Object.keys(COUNTRIES).find((k) => k.toLowerCase().startsWith(q)) || Object.keys(CITIES).find((k) => k.toLowerCase().startsWith(q));
-  const err = $("ask-error");
-  if (!name) {
-    const hints = [...Object.keys(COUNTRIES), ...Object.keys(CITIES)].filter((k) => q && k.toLowerCase().includes(q.slice(0, 3))).slice(0, 3);
-    err.textContent = `"${query.trim()}" is not in our list of countries and big cities.${hints.length ? ` Try ${hints.join(", ")}.` : " Try Qatar, Cairo or Chile."}`;
-    err.hidden = false;
-    $("ask-input").setAttribute("aria-invalid", "true");
-    return;
+// ---------- present-day country of any clicked point ----------
+// Natural Earth 1:110m country outlines (public domain, ~100 KB), checked in the browser: no
+// geocoding service. Borders are de facto and approximate; the ocean gets no country.
+const COUNTRY_URL = "https://cdn.jsdelivr.net/npm/world-atlas@2.0.2/countries-110m.json";
+const COUNTRY_FIX = { "W. Sahara": "Western Sahara", "Dem. Rep. Congo": "DR Congo", "Central African Rep.": "Central African Republic",
+  "Bosnia and Herz.": "Bosnia and Herzegovina", "Dominican Rep.": "Dominican Republic", "Eq. Guinea": "Equatorial Guinea",
+  "S. Sudan": "South Sudan", "Solomon Is.": "Solomon Islands", "Falkland Is.": "Falkland Islands",
+  "Fr. S. Antarctic Lands": "French Southern Lands", "N. Cyprus": "Northern Cyprus", "eSwatini": "Eswatini",
+  "United States of America": "United States" };
+let countries = null; // [{ name, bbox: [w, s, e, n], rings: [[[lng, lat], ...], ...] }]
+function loadCountries() {
+  if (!window.topojson) return;
+  fetch(COUNTRY_URL).then((r) => r.json()).then((topo) => {
+    const fc = window.topojson.feature(topo, topo.objects.countries);
+    countries = fc.features.filter((f) => f.geometry).map((f) => {
+      const polys = f.geometry.type === "Polygon" ? [f.geometry.coordinates] : f.geometry.coordinates;
+      const rings = polys.flat();
+      let w = 180, s = 90, e = -180, n = -90;
+      for (const r of rings) for (const [x, y] of r) { w = Math.min(w, x); e = Math.max(e, x); s = Math.min(s, y); n = Math.max(n, y); }
+      const name = f.properties.name;
+      return { name: COUNTRY_FIX[name] || name, bbox: [w, s, e, n], rings };
+    });
+    refreshPanel();
+  }).catch(() => {});                       // optional: the panel then shows coordinates only
+}
+function inRing(r, x, y) {
+  let inside = false;
+  for (let a = 0, b = r.length - 1; a < r.length; b = a++) {
+    const [xa, ya] = r[a], [xb, yb] = r[b];
+    if ((ya > y) !== (yb > y) && x < ((xb - xa) * (y - ya)) / (yb - ya) + xa) inside = !inside;
   }
-  err.hidden = true;
-  $("ask-input").removeAttribute("aria-invalid");
-  $("ask-input").value = name;
-  const tn = shortName(state.target);
-  if (COUNTRIES[name]) {
-    const [s, n, w, e] = COUNTRIES[name];
-    let best = -1, sum = 0, wsum = 0;
-    for (let i = 0; i < state.grid.n; i++) {
-      const v = state.overall[i];
-      if (Number.isNaN(v)) continue;
-      const [la, lo] = cellLatLng(i);
-      if (la < s || la > n || lo < w || lo > e) continue;
-      sum += v * state.cellWeight[i]; wsum += state.cellWeight[i];
-      if (best < 0 || v > state.overall[best]) best = i;
+  return inside;
+}
+function countryExact(lat, lng) {
+  for (const c of countries) {
+    const [w, s, e, n] = c.bbox;
+    if (lng < w || lng > e || lat < s || lat > n) continue;
+    let inside = false;                     // even-odd over all rings handles holes (e.g. Lesotho in South Africa)
+    for (const r of c.rings) if (inRing(r, lng, lat)) inside = !inside;
+    if (inside) return c.name;
+  }
+  return null;
+}
+function countryAt(lat, lng) {
+  if (!countries) return null;
+  // the 1:110m coast is coarse: a coastal land cell can fall just outside, so look up to ~0.5° around
+  for (const d of [0, 0.25, 0.5]) {
+    const offsets = d ? [[d, 0], [-d, 0], [0, d], [0, -d], [d, d], [d, -d], [-d, d], [-d, -d]] : [[0, 0]];
+    for (const [dy, dx] of offsets) {
+      const name = countryExact(lat + dy, lng + dx);
+      if (name) return name;
     }
-    if (best < 0) return;
-    const [la, lo] = cellLatLng(best), avg = sum / wsum, pct = areaPercentile(state.overall[best]);
-    showPlace(la, lo, { quiet: !fly, point: { kind: "ask", query: name, name: `How ${body}-like is ${name}?`,
-      summary: `Compared with ${esc(tn)}: its most similar spot scores <b>${Math.round(state.overall[best] * 100)}/100</b>, more similar than ${Math.round(pct * 100)}% of Earth's land. Average across ${esc(name)}: ${Math.round(avg * 100)}/100.`,
-      note: "country area is approximate" } });
-    if (fly) flyTo(la, lo, 1.2);
-  } else {
-    const [la0, lo0] = CITIES[name], i = nearestLandCell(la0, lo0);
-    if (i < 0) return;
-    const [la, lo] = cellLatLng(i), v = state.overall[i];
-    showPlace(la, lo, { quiet: !fly, point: { kind: "ask", query: name, name: `How ${body}-like is ${name}?`,
-      summary: Number.isNaN(v) ? "" : `Compared with ${esc(tn)}: more similar than ${Math.round(areaPercentile(v) * 100)}% of Earth's land.` } });
-    if (fly) flyTo(la, lo, 1.2);
   }
+  return null;
 }
 
-function setupAsk() {
-  $("ask-list").innerHTML = [...Object.keys(COUNTRIES), ...Object.keys(CITIES)].sort().map((k) => `<option value="${esc(k)}">`).join("");
-  $("ask-form").addEventListener("submit", (e) => { e.preventDefault(); askPlace($("ask-input").value); });
-  document.querySelectorAll("[data-ask]").forEach((b) => b.addEventListener("click", () => askPlace(b.dataset.ask)));
+// ---------- "Compare only…": score on chosen dimensions ----------
+// Ticked = weight 1, unticked = weight 0: just another setting of the existing sliders (score.js
+// drops weight-0 dimensions from the weighted mean). The glow and a live top 5 then show which
+// places match the site on those dimensions alone.
+const COMPARE_SPACING_KM = 200;           // same minimum spacing as the precomputed candidates
+function buildCompare() {
+  const box = $("compare-chips");
+  box.innerHTML = state.grid.meta.dimensions.map((d) =>
+    `<button type="button" class="chip-btn" data-dim="${d}" aria-pressed="false">${esc(dimName(d))}</button>`).join("");
+  box.querySelectorAll("[data-dim]").forEach((b) => b.addEventListener("click", () => {
+    const d = b.dataset.dim;
+    if (state.compare.has(d)) state.compare.delete(d); else state.compare.add(d);
+    applyCompare();
+  }));
+}
+function applyCompare() {
+  const dims = state.grid.meta.dimensions, on = state.compare.size > 0;
+  state.weights = on ? dims.map((d) => (state.compare.has(d) ? 1 : 0))
+    : dims.map((d) => state.target.weights?.[d] ?? 1);
+  syncCompareUI();
+  buildSliders();
+  rescore({ fade: true });
+}
+function syncCompareUI() {
+  const on = state.compare.size > 0;
+  for (const b of $("compare-chips").querySelectorAll("[data-dim]")) {
+    b.setAttribute("aria-pressed", state.compare.has(b.dataset.dim) ? "true" : "false");
+  }
+  $("compare").classList.toggle("on", on);
+  $("compare-title").textContent = on ? "Comparing only:" : "Compare only…";
+  // notes: one-sided features (target beyond Earth's range) and the rainfall caveat
+  const notes = [], t = state.target, tn = esc(shortName(t)), feats = state.grid.meta.features;
+  for (const d of state.compare) {
+    const dir = feats.filter((f) => f.dimension === d && state.dims.directional[f.id]);
+    if (!dir.length) continue;
+    if (d === "temperature" && dir.some((f) => state.dims.directional[f.id] === "low")) {
+      notes.push(`Earth never gets as cold as ${tn}, so this shows Earth's coldest places.`);
+    } else {
+      notes.push(`${esc(dimName(d))}: ${tn} is beyond anything on Earth, so this shows Earth's most extreme places.`);
+    }
+  }
+  if (state.compare.has("aridity")) {
+    notes.push("Rainfall: the rain satellite reads 0 over Antarctica, so it comes first; in deserts its estimate is too high.");
+  }
+  $("compare-note").innerHTML = notes.join("<br>");
+  $("compare-note").hidden = !notes.length;
+}
+function clearCompare() { state.compare.clear(); if (state.grid) syncCompareUI(); }
+
+// Score on all dimensions with the site's default weights (cached per site), for tie-breaking.
+let fullCache = { id: null, s: null };
+function fullScores() {
+  const t = state.target;
+  if (fullCache.id !== t.id) {
+    fullCache = { id: t.id, s: overallScores(state.dims.dimScores, state.dims.nd, state.grid.meta.dimensions.map((d) => t.weights?.[d] ?? 1)) };
+  }
+  return fullCache.s;
 }
 
-// ---------- site cards, top finds, welcome ----------
+// The best places on the current scores, at least COMPARE_SPACING_KM apart (else five cells of one desert).
+function liveTop(k = 5) {
+  const s = state.overall, idx = [];
+  let cut = displayRange(s).hi;
+  for (let tries = 0; tries < 5 && idx.length < 200; tries++, cut -= 0.1) {
+    idx.length = 0;
+    for (let i = 0; i < s.length; i++) {
+      if (Number.isNaN(s[i]) || s[i] < cut || (state.hideIce && state.iceSheet[i])) continue;
+      idx.push(i);
+    }
+  }
+  // Ties are common (e.g. every place dustier than Earth's p99 scores 100 on dust), so places with the
+  // same shown score are ordered by their full score on all dimensions.
+  const full = fullScores(), bin = (i) => Math.round(s[i] * 100);   // the score as shown
+  idx.sort((a, b) => bin(b) - bin(a) || (full[b] || 0) - (full[a] || 0));
+  const picked = [];
+  for (const i of idx) {
+    const [lat, lng] = cellLatLng(i);
+    if (picked.some((p) => distanceKm(lat, lng, p.lat, p.lng) < COMPARE_SPACING_KM)) continue;
+    picked.push({ i, lat, lng, s: s[i] });
+    if (picked.length === k) break;
+  }
+  return picked;
+}
+
+// ---------- site cards, top finds ----------
 const SITE_LINE = {
   jezero: "Perseverance · 2021", gale: "Curiosity · 2012", utopia: "Zhurong · 2021",
   arcadia: "First crews?", shackleton: "Artemis south pole", marius_hills: "Lava tubes",
@@ -1006,14 +1118,17 @@ function buildSites(meta) {
 function renderTopFinds() {
   const t = state.target;
   if (!t || !state.overall) return;
+  if (state.compare.size) { renderLiveTop(); return; }
+  $("top-finds-note").hidden = true;
+  if (state.live) { state.live = null; updateLayers(); }   // back to the precomputed finds on the globe
+  $("top-finds-title").innerHTML = `Top finds for <span id="top-finds-site"></span>`;
   const list = targetCandidates().filter((c) => c.verdict !== "known").sort((a, b) => a.rank - b.rank).slice(0, 5);
   $("top-finds").hidden = !list.length;
   $("top-finds-site").textContent = shortName(t);
   $("top-finds-list").innerHTML = list.map((c, k) => {
     const i = cellIndex(state.grid, c.lat, c.lng), s = i >= 0 ? state.overall[i] : NaN;
-    const dot = c.verdict === "none" ? "new" : c.verdict === "under" ? "under" : "unchecked";
     return `<li><button type="button" class="find-row" data-k="${k}">
-      <span class="dot ${dot}"></span>
+      <span class="dot new"></span>
       <span class="find-name">${esc(c.title)}<small>${esc(VERDICT_TEXT[c.verdict].label)}${list.filter((x) => x.title === c.title).length > 1 ? ` · ${fmtLatLon(c.lat, c.lng)}` : ""}</small></span>
       <b>${Number.isNaN(s) ? "–" : Math.round(s * 100)}</b></button></li>`;
   }).join("");
@@ -1025,30 +1140,45 @@ function renderTopFinds() {
   }));
 }
 
+// "Compare only…": the five best places on the ticked dimensions, ranked live over every land cell.
+function renderLiveTop() {
+  const t = state.target, list = liveTop(5);
+  const names = [...state.compare].map((d) => dimName(d).toLowerCase());
+  $("top-finds").hidden = !list.length;
+  $("top-finds-title").textContent = `Top 5 like ${shortName(t)} on ${andList(names)}`;
+  const full = fullScores();
+  for (const [k, p] of list.entries()) {
+    const reg = regionOf(p.lat, p.lng), country = countryAt(p.lat, p.lng);
+    p.name = reg.name || country || fmtLatLon(p.lat, p.lng);
+    p.sub = [reg.name && country !== reg.name ? country : null, fmtLatLon(p.lat, p.lng)].filter(Boolean).join(" · ");
+    p.full = full[p.i];
+    // globe dot (cyan, pulsing) for this live result
+    Object.assign(p, { kind: "live", colour: FIND.colour, radius: 0.5, alt: 0.012, style: { pulse: 0.75, rgb: FIND.rgb },
+      title: `#${k + 1} on ${andList(names)}`, subtitle: p.name });
+  }
+  // Ties: when several places share the top score (the site is beyond anything on Earth on this
+  // property), say so: they are then ordered by their score on all 8 properties.
+  const ties = list.filter((p) => Math.round(p.s * 100) === Math.round(list[0].s * 100)).length;
+  $("top-finds-note").hidden = ties < 2;
+  $("top-finds-note").textContent = ties < 2 ? "" : `${ties === list.length ? "All five" : `The first ${ties}`} score ${Math.round(list[0].s * 100)} on ${andList(names)}${
+    Math.round(list[0].s * 100) === 100 ? ` (many places on Earth reach the closest possible value to ${shortName(t)})` : ""}, so they are ordered by their score on all 8 properties.`;
+  $("top-finds-list").innerHTML = list.map((p, k) => `<li><button type="button" class="find-row" data-k="${k}">
+      <span class="rank">${k + 1}</span>
+      <span class="find-name">${esc(p.name)}<small>${esc(p.sub)}</small></span>
+      <span class="score-pair"><b>${Math.round(p.s * 100)}</b><small>${Number.isNaN(p.full) ? "–" : Math.round(p.full * 100)} on all 8</small></span></button></li>`).join("");
+  state.live = list;
+  updateLayers();
+  $("top-finds-list").querySelectorAll(".find-row").forEach((b) => b.addEventListener("click", () => {
+    const p = list[+b.dataset.k];
+    flyTo(p.lat, p.lng, 1.1);
+    showPlace(p.lat, p.lng);
+  }));
+}
+
 function closePlace() {
   state.clicked = null; state.arc = null;
   $("place").hidden = true; $("hint").hidden = false;
   updateLayers();
-}
-
-// First visit: one sentence and two choices. Never in tour mode; remembered per browser.
-function setupWelcome(tour) {
-  const KEY = "analog-atlas-welcomed";
-  let seen = false;
-  try { seen = localStorage.getItem(KEY) === "1"; } catch { /* storage blocked: show it */ }
-  if (seen || new URLSearchParams(location.search).get("tour") === "1") return;
-  const box = $("welcome");
-  const close = () => {
-    box.hidden = true;
-    document.body.classList.remove("welcoming");
-    try { localStorage.setItem(KEY, "1"); } catch { /* fine */ }
-  };
-  box.hidden = false;
-  document.body.classList.add("welcoming");
-  $("welcome-tour").focus({ preventScroll: true });
-  $("welcome-tour").addEventListener("click", () => { close(); tour.start(); });
-  $("welcome-explore").addEventListener("click", () => { close(); $("sites").querySelector('[aria-checked="true"]')?.focus(); });
-  document.addEventListener("keydown", (e) => { if (e.key === "Escape" && !box.hidden) close(); });
 }
 
 // ---------- load ----------
@@ -1091,7 +1221,7 @@ async function main() {
       name: p.name, country: p.country, bodies, bodyKey: p.body[0], why: p.why_analog,
       reference: p.reference, url: p.source_url,
       title: p.name, subtitle: `Already used to prepare for ${bodies}`,
-      colour: COLOURS[p.body[0]] || "#ffffff", radius: 0.28, alt: 0.012,
+      bodyList: p.body,
     };
   });
   state.candidates = candidates.features.map((f) => {
@@ -1105,6 +1235,7 @@ async function main() {
   });
 
   buildSites(meta);
+  buildCompare();
   const first = state.targets.find((t) => targetCoverage(meta, t).have >= MIN_DIMENSIONS) || state.targets[0];
   selectTarget(first.id);
   $("scope-cells").textContent = meta.n_cells.toLocaleString("en-US");
@@ -1113,11 +1244,11 @@ async function main() {
   $("loader").classList.add("done");
 
   setupHud();
-  setupAsk();
+  loadCountries();
 
   // A small "remote control" for the guided tour (web/tour.js): it can only steer the app, not change data.
-  const tour = initTour({
-    selectTarget(id) { selectTarget(id); },
+  initTour({
+    selectTarget(id) { clearCompare(); selectTarget(id); },   // the tour always shows the full score
     flyTo(lat, lng, altitude = 1.6, ms = 1800) { flyTo(lat, lng, altitude, ms); clearTimeout(resumeTimer); },
     rotate(on) { clearTimeout(resumeTimer); controls.autoRotate = on; },
     candidate: (targetId, rank) => state.candidates.find((c) => c.target_id === targetId && c.rank === rank),
@@ -1137,7 +1268,6 @@ async function main() {
     distanceKm,
     shortName,
   });
-  setupWelcome(tour);
 }
 
 main().catch((e) => {

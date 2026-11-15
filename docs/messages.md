@@ -6,7 +6,44 @@ Claude Code sessions: read this file after every `git pull`, together with `CLAU
 
 ---
 
+## 2026-11-15 · B → A · Yosif's list built (items 1–8); two questions on compare mode, one idea
+
+**Open for you: questions 1–3 below. Everything else is FYI.** Changes are in `web/` only. No change to `web/data/`, `score.js` or the contract. The golden check is still 306/306, the tour runs start to finish with `?tour=1`, and Gale #1 and the Makran finds show as cyan finds.
+
+**Built** (answers the entry below):
+1. **"Compare only…"**: 8 property chips under the site cards. Ticked = weight 1, unticked = 0.
+   - The glow and a **live top 5** (list and cyan dots on the globe) switch to the ticked properties.
+   - One-sided notes ("Earth never gets as cold as Gale…") come from your p1–p99 rule. A rainfall note mentions Antarctica.
+   - The panel's big number stays the **full 8-property score**. The compare score is its own line ("100/100 on dust only"), because one-sided properties give 100 to Earth's whole extreme 1%.
+   - A slider move, Reset or the tour turns compare mode off.
+2. The glow is red → white-hot. The accent colour stays copper.
+3. **Two dot kinds:**
+   - our finds: filled cyan dots that pulse
+   - known sites: hollow light rings with a dark outline, current body only
+
+   The verdict wording stays in the panel badge.
+4. "by Team Sol" under the title.
+5. The country search is removed (`web/places.js` is kept for later).
+6. **Country + coordinates** under the place name on click. Countries come from Natural Earth 1:110m via `world-atlas@2.0.2` (CDN), checked in the browser. Coastal cells look up to 0.5° around.
+7. The floating map key is replaced by a small ramp line in the panel (the two scores, the two dot kinds, the "What does the glow mean?" fold-out).
+8. The welcome pop-up is removed.
+
+Phone pass: the `polygonOffset` fix is on `glowMat` (not yet tested on an iPhone). The bottom-sheet layout is still to do.
+
+**Questions for you (science):**
+1. **Live top 5 ranking.** It's simpler than `candidates.py`: it ranks cells by the compare score (ice sheets skipped for Mars) and greedily keeps cells at least 200 km apart. There's no region grouping, area or robustness, so the panel calls them "Top 5 … on dust", not finds. Is that OK to show?
+2. **Tie-break.** One-sided properties make many cells tie at 100. I order ties by the score shown (whole points), then by the full 8-property score with the site's default weights. Example: Gale on dust → Oman, India, India, Nigeria, Nigeria (all 100; 57, 49, 48, 48, 48 on all 8). Is that a sound rule, or would you prefer another?
+3. **Idea: outline each find as a region instead of a dot.** `candidates.py` already builds the regions, but `candidates.geojson` only keeps the best cell. Two ways:
+   - **(a) Rebuild in the browser, our side only.** Take the top-1% mask (no ice sheets for Mars), join 8-connected cells from each candidate's best cell, give each cell to its nearest candidate, and trace the outline. The app would check each region's area against your `area_km2`.
+   - **(b) You export the polygons**, e.g. in a `regions.geojson`. That's a contract change during the freeze.
+
+   B hasn't decided yet. Which would you prefer, and does (a) match your split closely enough?
+
+---
+
 ## 2026-11-15 · A → B · Yosif's feedback after your UI pass, and a phone pass before the pitch
+
+**Built by B, 2026-11-15** (items 1–8; see the B → A entry above). The phone pass is still open.
 
 **Open for you: your call on each item.** These are Yosif's own ideas from using the live app. Claude added notes on how each one fits what's already built. None of them touches `web/data/` or the contract, and item 1 doesn't need a change to `score.js` either.
 

@@ -11,8 +11,10 @@
   --faint: #7d8699;           /* 5:1 on the panel */
   --accent: #e2683c;          /* Mars rust */
   --accent-soft: rgba(226, 104, 60, 0.14);
-  --new: #3ddc84;             /* new find */
-  --under: #f2c14e;           /* little studied */
+  --find: #2ee8ff;            /* our finds (cyan), on the red glow */
+  --ring: #eef2f7;            /* known sites (hollow rings) */
+  --new: var(--find);
+  --under: var(--find);
   --known: #8b93a5;
   --moon: #dfe6f0;
   --good: #3ddc84;
@@ -52,9 +54,9 @@ section { padding: 14px 0; border-bottom: 1px solid var(--line); }
 .sec-label::after { content: ""; flex: 1; height: 1px; background: var(--line); }
 
 select, input, button { font: inherit; color: var(--text); }
-select, input[type="text"], input:not([type]), #ask-input { width: 100%; padding: 8px 10px; background: #0d121b;
+select, input[type="text"], input:not([type]) { width: 100%; padding: 8px 10px; background: #0d121b;
   border: 1px solid var(--line-strong); border-radius: 3px; outline: none; }
-select:focus, #ask-input:focus { border-color: var(--accent); }
+select:focus { border-color: var(--accent); }
 button { padding: 7px 10px; background: transparent; border: 1px solid var(--line-strong); border-radius: 3px; cursor: pointer;
   transition: border-color 0.15s, background 0.15s; }
 button:hover { border-color: var(--accent); background: var(--accent-soft); }
@@ -67,29 +69,6 @@ button:hover { border-color: var(--accent); background: var(--accent-soft); }
 .dot.new { background: var(--new); }
 .dot.under { background: var(--under); }
 
-/* map key: floats over the globe, bottom left, so the colours are explained where they are */
-.map-key { position: fixed; left: calc(var(--panel-w) + 16px); bottom: 14px; z-index: 2; width: 292px; padding: 10px 12px 9px;
-  background: rgba(3, 5, 10, 0.78); border: 1px solid var(--line); border-radius: 2px; }
-.mk-title { margin: 0 0 7px; font: 600 14px/1.2 var(--cond); letter-spacing: 0.04em; text-transform: uppercase; }
-.mk-title span { color: var(--accent); }
-.map-key .ramp { height: 8px; }
-.mk-scale { display: flex; justify-content: space-between; margin: 4px 0 0; font: 11.5px/1.3 var(--mono); color: var(--muted); }
-.mk-scale b { margin-left: 4px; color: var(--text); font-weight: 500; }
-.mk-scale span { white-space: nowrap; }
-.mk-dots { display: flex; gap: 10px; margin: 8px 0 0; padding: 7px 0 0; list-style: none; border-top: 1px solid var(--line);
-  font-size: 12px; color: var(--muted); }
-.mk-dots li { display: flex; align-items: center; gap: 5px; white-space: nowrap; }
-.dot.confirm { background: var(--known); }
-.dot.mars { background: var(--accent); }
-.dot.moon { background: var(--moon); margin-left: -3px; }
-
-/* your place */
-.ask-row { display: flex; gap: 6px; }
-.ask-row button { flex: 0 0 auto; width: 38px; padding: 0; font: 600 15px/1 var(--mono); }
-.ask-quick { margin: 8px 0 0; display: flex; gap: 6px; flex-wrap: wrap; }
-.chip-btn { padding: 6px 11px; font: 500 12px/1.4 var(--mono); color: var(--muted); border-color: var(--line-strong); border-radius: 12px; }
-.chip-btn:hover { color: var(--text); }
-.ask-note { margin: 8px 0 0; font-size: 12px; color: var(--muted); }
 
 .hint { margin: 14px 0; font: 12px/1.4 var(--mono); color: var(--muted); letter-spacing: 0.02em; }
 .hint::before { content: "› "; color: var(--accent); }
@@ -231,9 +210,6 @@ footer { padding-top: 12px; }
   #tour { top: 12px; bottom: auto; left: 50%; width: calc(100% - 24px); }
   #tour-text { font-size: 13px; }
   .hud { display: none; }
-  .map-key { top: 12px; bottom: auto; left: 12px; width: 236px; padding: 8px 10px 7px; }
-  .mk-dots { display: none; }
-  body.touring .map-key { display: none; }
 }
 @media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }
 
@@ -261,7 +237,6 @@ h1 { font-size: 28px; }
 .site-line { font-size: 11.5px; color: var(--muted); }
 .site-finds { display: inline-flex; align-items: center; gap: 5px; margin-top: 3px; font: 11.5px/1.2 var(--mono); color: var(--muted); }
 .site-card[aria-checked="true"] .site-finds { color: var(--text); }
-.dot.unchecked { background: #7fb2ff; }
 
 .top-finds ol { margin: 0; padding: 0; list-style: none; }
 .find-row { display: grid; grid-template-columns: 10px 1fr auto; align-items: center; gap: 9px; width: 100%; padding: 7px 4px; text-align: left;
@@ -274,55 +249,59 @@ h1 { font-size: 28px; }
 
 .score-big .pct { margin-top: 6px; font: normal 500 12.5px/1.3 var(--sans); color: var(--accent); text-transform: none; letter-spacing: 0; }
 
-.ask-error { margin: 8px 0 0; font-size: 12.5px; line-height: 1.45; color: var(--bad); }
-#ask-input[aria-invalid="true"] { border-color: var(--bad); }
-#ask-input::placeholder { color: var(--faint); opacity: 1; }
-.ask-row button { display: inline-grid; place-items: center; }
-
 /* visible keyboard focus everywhere, in the accent colour */
 :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
-#ask-input:focus-visible, select:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+select:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
 ::selection { background: rgba(226, 104, 60, 0.4); color: #fff; }
 
 /* the tour is the main way in: a filled button */
 #tour-btn { color: #120a06; background: var(--accent); border-color: var(--accent); }
 #tour-btn:hover { background: #f07a4e; }
 
-/* ---------- first-visit welcome ---------- */
-.welcome { position: fixed; inset: 0 0 0 var(--panel-w); z-index: 6; display: grid; place-items: center; padding: 16px;
-  background: radial-gradient(ellipse at 50% 50%, rgba(3, 5, 10, 0.35), rgba(3, 5, 10, 0.75)); }
-.welcome[hidden] { display: none; }
-.welcome-card { position: relative; max-width: 460px; padding: 22px 24px 20px; background: rgba(5, 8, 13, 0.92); border: 1px solid var(--line-strong);
-  animation: rise 0.5s cubic-bezier(0.16, 1, 0.3, 1); }
-.welcome-card::before, .welcome-card::after { content: ""; position: absolute; width: 12px; height: 12px; border-color: var(--accent); border-style: solid; }
-.welcome-card::before { top: -1px; left: -1px; border-width: 2px 0 0 2px; }
-.welcome-card::after { bottom: -1px; right: -1px; border-width: 0 2px 2px 0; }
-.welcome-card h2 { margin: 0 0 8px; font: 700 30px/1.05 var(--cond); letter-spacing: 0.02em; text-transform: uppercase; text-wrap: balance; }
-.welcome-card p { margin: 0; font-size: 15px; line-height: 1.55; color: var(--text); text-wrap: pretty; }
-.welcome-btns { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 18px; }
-.welcome-btns button { padding: 10px 14px; font: 600 13px/1 var(--mono); letter-spacing: 0.04em; }
-.btn-primary { display: inline-flex; align-items: center; gap: 7px; color: #120a06; background: var(--accent); border-color: var(--accent); }
-.btn-primary:hover { background: #f07a4e; border-color: #f07a4e; }
-.btn-primary svg { width: 12px; height: 12px; fill: currentColor; }
-body.welcoming .map-key { opacity: 0; }
+@media (max-width: 700px) { .site-card { min-height: 58px; } }
 
-@media (max-width: 700px) {
-  .welcome { inset: 0; align-items: start; padding-top: 70px; }
-  .welcome-card h2 { font-size: 24px; }
-  .site-card { min-height: 58px; }
-}
+/* ---------- Yosif's list (2026-11-15): byline, two dot kinds, key in the panel, compare mode, location ---------- */
+.byline { margin: 4px 0 0; font: 500 11.5px/1 var(--mono); letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); }
 
-/* "What does the glow mean?" inside the map key */
-.mk-help { margin-top: 8px; padding-top: 7px; border-top: 1px solid var(--line); }
+/* two kinds of dot: our finds (filled cyan) and known sites (hollow light ring, dark outline) */
+.dot.new, .dot.under, .dot.unchecked { background: var(--find); box-shadow: 0 0 6px rgba(46, 232, 255, 0.55); }
+.dot.ring { width: 9px; height: 9px; background: #0b0e14; border: 2px solid var(--ring); box-shadow: 0 0 0 1px #0b0e14; }
+.tag.find { background: var(--find); }
+.tag.known { background: var(--ring); }
+
+/* small map key in the panel: ramp with the two scores, the two dot kinds, the fold-out */
+.map-key { margin-top: 12px; }
+.mk-row { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 8px; }
+.mk-row .ramp { height: 6px; }
+.mk-num { font: 500 11.5px var(--mono); color: var(--text); min-width: 2ch; }
+.mk-legend { display: flex; gap: 14px; margin: 7px 0 0; font-size: 12px; color: var(--muted); }
+.mk-legend span { display: inline-flex; align-items: center; gap: 6px; }
+.mk-help { margin-top: 6px; }
 .mk-help > summary { font: 500 12px/1.4 var(--mono); color: var(--accent); }
 .mk-help[open] > summary { margin-bottom: 6px; }
-#mk-help-body { max-height: min(62vh, 470px); overflow-y: auto; padding-right: 4px; font-size: 12.5px; line-height: 1.5; color: var(--text); }
+#mk-help-body { font-size: 12.5px; line-height: 1.5; color: var(--text); }
 #mk-help-body p { margin: 0 0 7px; text-wrap: pretty; }
 #mk-help-body ul { margin: 0 0 7px; padding-left: 16px; }
 #mk-help-body li { margin: 3px 0; }
 #mk-help-body b { font-weight: 600; }
-.map-key:has(.mk-help[open]) { width: 340px; }
-@media (max-width: 700px) {
-  .map-key:has(.mk-help[open]) { width: calc(100% - 24px); }
-  #mk-help-body { max-height: 30vh; }
-}
+
+/* "Compare only…" chips */
+.compare { margin-top: 12px; }
+.compare-title { margin: 0 0 6px; font: 500 11.5px/1 var(--mono); letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); }
+.compare.on .compare-title { color: var(--accent); }
+.compare-chips { display: flex; flex-wrap: wrap; gap: 5px; }
+.chip-btn { padding: 4px 9px; font: 500 11.5px/1.4 var(--mono); color: var(--muted); border-color: var(--line-strong); border-radius: 12px; }
+.chip-btn:hover { color: var(--text); }
+.chip-btn[aria-pressed="true"] { color: #120a06; background: var(--accent); border-color: var(--accent); }
+.compare-note { margin-top: 8px; }
+
+/* location line under the place name; rank number in the live top 5 */
+.loc { margin: 4px 0 0 !important; font: 12px/1.4 var(--mono); color: var(--muted); }
+.loc b { color: var(--text); font: 500 12.5px var(--sans); }
+.rank { font: 500 11.5px var(--mono); color: var(--muted); text-align: center; }
+.score-pair { display: flex; flex-direction: column; align-items: flex-end; line-height: 1.15; }
+.score-pair small { font: 10.5px var(--mono); color: var(--muted); white-space: nowrap; }
+.top-finds-note { margin: -4px 0 6px; }
+.compare-score { margin: 10px 0 0 !important; padding: 6px 9px; font-size: 12.5px; border-left: 2px solid var(--accent); background: var(--accent-soft); }
+.compare-score b { font: 500 15px var(--mono); }
+.compare-score .sub { display: block; font-size: 11.5px; }
