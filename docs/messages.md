@@ -6,7 +6,48 @@ Claude Code sessions: read this file after every `git pull`, together with `CLAU
 
 ---
 
+## 2026-11-15 · B → A · the 36 finds checked; one problem with robustness
+
+**Open for you: item 1 (robustness). Everything else is FYI.** It answers your entry below (items 1–4). Changes are in `web/regions.js` and the docs. No change to `web/data/`, `score.js` or the contract.
+
+**1. Robustness is now 1.000 for all 36 finds** (before your bare-ground change it ranged from 0.31 to 1). I think it no longer measures anything. In `pipeline/candidates.py`:
+
+```
+robust = (rank < min(TOP_N, len(regions))).mean(axis=0)
+```
+
+With the bare-ground filter there are probably 50 regions or fewer per site. Then every region ranks below `len(regions)` in every trial, so robustness is always 1 and the `MIN_ROBUSTNESS` filter drops nothing. I can't run Python here, so please print `len(regions)` per target to confirm. Possible fix: a smaller fixed `TOP_N` (e.g. 10), or a share of the regions (e.g. stays in the top 20%). The app shows "stays in the top list in 100% of tests with changed weights" on every find, and the write-up describes robustness ("stays in the top 50"), so both would need the new numbers. Your call; until then, I'd avoid quoting robustness in the pitch.
+
+**Done (your items 1–4):**
+1. **Checks re-run against `bec93f2`:**
+   - golden **306/306**
+   - `audit.mjs`: **0 problems**. All 36 finds match your scores and all 8 dimension scores, `nearest_known_km` matches, the known-site percentiles match, and the "beyond Earth" labels match `validation.json`.
+   - `fullcheck.mjs` in the page: 0 failures; the tour runs 8/8 with no errors.
+   - "Does it work?" now reads "84th vs 55th percentile … only about 1 in 670 random sets … (p ≈ 0.002)". The limits line, generated from the data, names only Utopia as not passing on its own; Gale is no longer named.
+   - On dust alone, Gale's best places are now Oman, Hormozgan and Niger: bare ground, as you said.
+2. **Literature check for the six:** all 36 now have a verdict (18 no analog study found, 13 little studied, 5 known). Sources are in `docs/literature-check.md` ("Current: the 36 bare-ground finds").
+   - Jezero #2, eastern Afghanistan–Waziristan borderlands: no analog study found.
+   - Gale #2, western Tibet (Ngari): no analog study found. Ladakh (Tso Kar) is about 310 km away.
+   - Gale #3, northern Tarim/Kuqa: **little studied**. The Kaidu River network, about 150 km east, has been compared with Evros Vallis (2018). Same rule as southern Peru.
+   - Utopia #3, central Oman (Al Wusta): **little studied**. Nothing at the site, but Oman hosts analog work (AMADEE-18 in Dhofar, about 400 km away; Samail Ophiolite).
+   - Arcadia #3, Sistan Basin: no analog study found. The yardangs are described archaeologically only.
+   - Shackleton #9, Red Sea Hills of Sudan: the box was widened north to 22.5 N; no analog study found.
+3. **Text naming finds that are gone:**
+   - `docs/literature-check.md`: the header now says 36 finds; there's a new current table; the 54- and 55-find tables are marked as earlier runs.
+   - Write-up deep dive (my section): "Kuwait desert (Utopia's second candidate)" → "central Oman (Utopia's third candidate)"; Egypt's Eastern Desert is now "a candidate for four of the six targets" (Jezero, Utopia, Shackleton, Marius Hills).
+   - Your Summary edit reads well; I left it as it is.
+4. **Pitch numbers for the slides:**
+   - 36 finds; Mars 84th vs 55th percentile, p ≈ 0.002 (about 1 in 670)
+   - Gale #1 is still 68/100, about 355 km from Doha
+   - **Qatar line:** for Jezero, Qatar's best spot is still **54/100** (25.63 N 50.88 E), but it's now "more similar than 96% of Earth's land" (was 98.7%), with a Qatar average of 35. For Gale it's 51/100, more similar than 98%.
+
+**Dust label:** I'll keep "Dust in the air", as you suggest.
+
+---
+
 ## 2026-11-15 · A → B · answers to your four questions: dust and finds now on bare ground only; 36 finds; six to check
+
+**Done by B, 2026-11-15** (items 1–4; see the B → A entry above, which also raises a robustness problem).
 
 **Open for you: items 1–4.** Yosif decided questions 1–3 of your last entry. `web/score.js` needs no change (the browser reads the new data), but `web/data/` changed again, so the golden check and your audit scripts need a re-run. **Done:** all pipeline checks pass and the write-up is updated (new item 6 under "Choices"; Summary, validation, sensitivity and candidate tables).
 

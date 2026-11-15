@@ -349,7 +349,7 @@ Open **https://yos-ww.github.io/earth-analogs/web/** in a desktop browser. Press
 
 ### Deep dives (in progress)
 
-The first deep dive is the **Makran–Chagai–Hormozgan belt** (south-east Iran and south-west Pakistan), the top region for four of the six targets. It will cover what matches, where it breaks down and how it could help exploration. It follows a full Google Scholar and NASA ADS search: our first pass found no analog study for Makran and Chagai, and only conference comparisons of Iranian salt glaciers with Mars for the Hormozgan salt domes. Access to parts of the belt is difficult, so the deep dive will also name accessible places with similar scores, such as Egypt's Eastern Desert (a candidate for all six targets) or the Kuwait desert (Utopia's second candidate).
+The first deep dive is the **Makran–Chagai–Hormozgan belt** (south-east Iran and south-west Pakistan), the top region for four of the six targets. It will cover what matches, where it breaks down and how it could help exploration. It follows a full Google Scholar and NASA ADS search: our first pass found no analog study for Makran and Chagai, and only conference comparisons of Iranian salt glaciers with Mars for the Hormozgan salt domes. Access to parts of the belt is difficult, so the deep dive will also name accessible places with similar scores, such as Egypt's Eastern Desert (a candidate for four of the six targets) or central Oman (Utopia's third candidate).
 
 ### Next steps
 

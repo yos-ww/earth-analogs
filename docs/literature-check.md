@@ -1,12 +1,49 @@
-# Literature check of the candidate regions (B, 2026-11-14)
+# Literature check of the candidate regions (B, 2026-11-14; updated 2026-11-15)
 
-Question for each candidate region in `web/data/candidates.geojson` (55 candidates, A's run of 2026-11-14): is the place already used or published as a Mars or Moon analog? This decides the `novelty` label (`docs/contract.md`, `plan.md` "Novelty is checked by a person").
+Question for each candidate region in `web/data/candidates.geojson` (now 36 finds, A's run of 2026-11-15, commit `bec93f2`; earlier runs had 55 and 54): is the place already used or published as a Mars or Moon analog? This decides the `novelty` label (`docs/contract.md`, `plan.md` "Novelty is checked by a person").
 
 **Method and limits.** One or two targeted web searches per region ("<place> Mars analog", "… planetary analogue", "… Moon analog"), reading titles and abstracts only. This is a first pass, not a full literature review:
 - "No analog study found" means none turned up in this pass. It does **not** yet justify the word `unrecognized`.
 - Before any site is called `unrecognized` in the app or the write-up, repeat the search in Google Scholar and NASA ADS, in English and the local language.
 
-## Update 2026-11-15: the 54 finds of contract version 2
+## Current: the 36 bare-ground finds (A's commit `bec93f2`, 2026-11-15)
+
+A restricted finds to bare ground (`ndvi_max` < 0.15) and scored dust on bare ground only, which left 36 finds. Six were in no region box. B searched them the same way and widened one box (Red Sea Hills of Sudan, north to 22.5 N). **All 36 now have a verdict:** 18 no analog study found, 13 little studied, 5 known. The 2026-11-15 table below and the 2026-11-14 table further down are earlier runs: their ranks are out of date, but their evidence still holds for the same regions. Regions that no longer hold a find (e.g. Kuwait, northeast Nigeria) keep their box in `web/regions.js`; it does no harm.
+
+| Region | Finds (target #rank) | Verdict |
+|---|---|---|
+| Makran coast (Iran–Pakistan) | Jezero #1 · Jezero #3 · Utopia #1 · Arcadia #1 · Marius Hills #4 | No analog study found |
+| **Eastern Afghanistan–Waziristan borderlands** (new) | Jezero #2 | No analog study found |
+| Eastern Desert of Egypt, Red Sea Hills and Sinai | Jezero #4 · Utopia #4 · Shackleton #7 · Marius Hills #2 | No analog study found |
+| Red Sea Hills of Sudan and western Eritrea (box widened) | Jezero #6 · Shackleton #9 | No analog study found |
+| **Western Tibet, Ngari** (new) | Gale #2 | No analog study found |
+| Chagai and Registan deserts (Pakistan–Afghanistan) | Arcadia #2 | No analog study found |
+| **Sistan Basin, Afghanistan–Iran** (new) | Arcadia #3 | No analog study found |
+| Hami Basin (China) | Shackleton #3 | No analog study found |
+| Western Saudi lava fields (Harrat Khaybar area) | Marius Hills #3 | No analog study found |
+| Richtersveld and Namaqualand | Marius Hills #6 | No analog study found |
+| Southern Iran, Zagros salt domes | Gale #1 · Utopia #2 | Little studied |
+| **Northern Tarim Basin and Tianshan foothills, Kuqa** (new) | Gale #3 | Little studied |
+| Southern coast of Peru | Gale #5 · Shackleton #4 | Little studied |
+| **Central Oman, Al Wusta** (new) | Utopia #3 | Little studied |
+| Tibesti and southern Libya | Utopia #5 · Shackleton #8 | Little studied |
+| Hoggar and Tassili (Algeria) | Arcadia #4 | Little studied |
+| Turpan Depression (China) | Shackleton #2 | Little studied |
+| Lut Desert and central Iran | Shackleton #6 · Marius Hills #5 | Little studied |
+| Damaraland (Namibia) | Marius Hills #1 | Little studied |
+| Altiplano and Atacama | Jezero #5 · Gale #4 · Shackleton #1 | Known |
+| Puna (Argentina) | Shackleton #5 | Known |
+| Antarctica | Shackleton #10 | Known |
+
+**Evidence for the five new regions:**
+
+- **Eastern Afghanistan–Waziristan borderlands** (32.1 N, 69.1 E): nothing. A 2025 review of analog sites on the Indian subcontinent turned up, but its excerpt doesn't cover this area. The only other hit is a viral 2012 comparison of a Kandahar desert photo with a Curiosity image, which is not a study.
+- **Western Tibet, Ngari** (32.4 N, 81.1 E): nothing. Popular geography sites call Ngari a natural laboratory "as an analog for Mars" without citing research. The Tibetan Plateau analog work is in the Qaidam Basin (Xiao et al. 2017), and Ladakh (Tso Kar, in our known list) is about 310 km away.
+- **Northern Tarim Basin, Kuqa** (42.1 N, 84.6 E) → little studied: nothing at this site. A 2018 study (Journal of Remote Sensing, in Chinese) compared the river network of the Kaidu River in the Tarim Basin, about 150 km east, with Mars' Evros Vallis. We count that as nearby work, the same rule we used for southern Peru.
+- **Central Oman, Al Wusta** (19.9 N, 57.6 E) → little studied: nothing at this site. Oman hosts analog work elsewhere: the AMADEE-18 Mars simulation in Dhofar (2018, about 400 km away), a Dhofar–Eridania Basin mineral comparison, the Samail Ophiolite (in our known list, 342 km away), and a 2025 announcement of further Moon/Mars analog missions (location not stated).
+- **Sistan Basin** (31.6 N, 61.1 E): the yardangs ("kaluts") and wind erosion are described by the Helmand Sistan archaeology project, but no Mars analog study was found. Yardang analog work is in the Qaidam Basin and Egypt's Western Desert.
+
+## Update 2026-11-15: the 54 finds of contract version 2 (earlier run)
 
 A's scoring change (like-for-like for every feature, `docs/messages.md` 2026-11-15) regenerated the finds: 54, of which 17 were outside every region box. B searched the new areas the same way, one or two first-pass searches each, and widened two boxes. **All 54 finds now have a verdict:** 24 "no analog study found", 15 little studied, 15 known area. The summary table further down is the 2026-11-14 run; its ranks are out of date, but its evidence still holds for the same regions.
 

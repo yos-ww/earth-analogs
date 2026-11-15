@@ -37,7 +37,7 @@ export const REGIONS = [
   { name: "Moroccan Sahara and Anti-Atlas", verdict: "known", box: [29, 32.5, -9.5, -5] },   // widened 2026-11-15 for Gale #8
   { name: "Antarctica", verdict: "known", box: [-90, -60, -180, 180] },
   // Added 2026-11-15 for the finds of contract version 2 (first-pass web search; docs/literature-check.md).
-  { name: "Red Sea Hills of Sudan and western Eritrea", verdict: "none", box: [17, 19, 36.5, 38.5] },
+  { name: "Red Sea Hills of Sudan and western Eritrea", verdict: "none", box: [17, 22.5, 35.5, 38.5] },   // north to 22.5 for Shackleton #9 (bec93f2)
   { name: "Mojave Desert and lower Colorado River (USA)", verdict: "known", box: [34, 35.5, -116, -114] },
   { name: "Kuwait desert", verdict: "under", box: [28.5, 30.1, 46.5, 48.6],
     note: "A 2025 GIS study proposes Jal Az-Zor in Kuwait (about 50 km away) as a Mars analog site, and NASA/JPL tested Mars-style radar sounding over northern Kuwait. No field analog work found at this site." },
@@ -57,6 +57,16 @@ export const REGIONS = [
   { name: "Northern Patagonian basalt plateaus (Río Negro)", verdict: "none", box: [-41.5, -40, -69.5, -67] },
   { name: "Central Baja California (Mexico)", verdict: "known", box: [27.5, 29.5, -115, -113],
     note: "NASA Ames has long studied the microbial mats of Guerrero Negro, about 75 km away, for biosignatures relevant to Mars." },
+  // Added 2026-11-15 (later) for the 36 bare-ground finds (A's commit bec93f2).
+  { name: "Eastern Afghanistan–Waziristan borderlands", verdict: "none", box: [31.5, 33, 68.5, 70] },
+  { name: "Western Tibet (Ngari)", verdict: "none", box: [31.5, 33.5, 80, 82.5],
+    note: "No analog study found here. The nearest known site is Ladakh (Tso Kar), about 310 km away." },
+  { name: "Northern Tarim Basin and Tianshan foothills (Kuqa, China)", verdict: "under", box: [41.5, 42.8, 83.5, 85.5],
+    note: "No analog study at this site, but a nearby river network (the Kaidu River, about 150 km east) has been compared with Mars' Evros Vallis." },
+  { name: "Central Oman (Al Wusta)", verdict: "under", box: [19, 21, 56.5, 58.5],
+    note: "No analog study at this site, but Oman hosts analog work elsewhere: the AMADEE-18 Mars simulation in Dhofar (about 400 km away) and the Samail Ophiolite (in our known list)." },
+  { name: "Sistan Basin (Afghanistan–Iran)", verdict: "none", box: [30.5, 32.5, 60.5, 62],
+    note: "Sistan's wind-carved yardangs are described by archaeologists and geographers, but our first-pass search found no Mars analog study." },
 ];
 
 export function regionOf(lat, lng) {
