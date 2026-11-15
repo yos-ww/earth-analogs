@@ -248,7 +248,67 @@ function flyTo(lat, lng, altitude = null, ms = 1100) {
   resumeRotationSoon(far ? ms * 1.3 : ms);
 }
 
-window.addEventListener("resize", () => globe.width($("globe").clientWidth).height($("globe").clientHeight));
+// ---------- phones: the panel is a bottom sheet (peek / half / full) ----------
+// Peek shows the title and the row of site buttons, so the globe fills the rest of the screen. Drag or tap
+// the handle (or drag the title) to resize; tapping a place opens it to half height. Wider screens: unchanged.
+const MOBILE = window.matchMedia("(max-width: 700px)");
+const panelEl = $("panel"), handleEl = $("sheet-handle");
+function fitGlobe() { globe.width($("globe").clientWidth).height($("globe").clientHeight); }
+function setSheet(s) {
+  panelEl.dataset.sheet = s;
+  if (s === "peek") panelEl.scrollTop = 0;
+  handleEl.setAttribute("aria-expanded", s === "peek" ? "false" : "true");
+  handleEl.setAttribute("aria-label", s === "full" ? "Show less" : "Show more");
+}
+// Peek height = everything down to the row of site buttons (measured, so fonts and wrapping are right).
+function measurePeek() {
+  if (!MOBILE.matches || panelEl.dataset.sheet !== "peek") return;
+  const sites = $("sites");
+  if (!sites.offsetHeight) return;
+  document.documentElement.style.setProperty("--peek-h", `${Math.ceil(sites.offsetTop + sites.offsetHeight + 12)}px`);
+  fitGlobe();
+}
+function cycleSheet() { setSheet({ peek: "half", half: "full", full: "peek" }[panelEl.dataset.sheet] || "half"); }
+let sheetDrag = null;
+function sheetDown(e) {
+  if (!MOBILE.matches || e.target.closest("button:not(#sheet-handle), a, input, summary")) return;
+  sheetDrag = { id: e.pointerId, y: e.clientY, h: panelEl.getBoundingClientRect().height, moved: false };
+  try { e.currentTarget.setPointerCapture(e.pointerId); } catch { /* not every pointer can be captured; dragging still works */ }
+}
+function sheetMove(e) {
+  if (!sheetDrag || e.pointerId !== sheetDrag.id) return;
+  const dy = e.clientY - sheetDrag.y;
+  if (!sheetDrag.moved && Math.abs(dy) < 6) return;
+  sheetDrag.moved = true;
+  panelEl.classList.add("dragging");
+  const peek = parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--peek-h")) || 150;
+  panelEl.style.height = `${Math.max(peek, Math.min(window.innerHeight - 40, sheetDrag.h - dy))}px`;
+  e.preventDefault();
+}
+function sheetUp(e) {
+  if (!sheetDrag || e.pointerId !== sheetDrag.id) return;
+  const d = sheetDrag;
+  sheetDrag = null;
+  if (!d.moved) { if (e.currentTarget === handleEl) cycleSheet(); return; }
+  const h = panelEl.getBoundingClientRect().height, vh = window.innerHeight;
+  const peek = parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--peek-h")) || 150;
+  const snaps = { peek, half: vh * 0.56, full: vh - 56 };
+  const next = Object.keys(snaps).reduce((a, b) => (Math.abs(snaps[b] - h) < Math.abs(snaps[a] - h) ? b : a));
+  panelEl.classList.remove("dragging");
+  panelEl.style.height = "";
+  setSheet(next);
+}
+for (const el of [handleEl, panelEl.querySelector("header")]) {
+  el.addEventListener("pointerdown", sheetDown);
+  el.addEventListener("pointermove", sheetMove);
+  el.addEventListener("pointerup", sheetUp);
+  el.addEventListener("pointercancel", sheetUp);
+}
+handleEl.addEventListener("keydown", (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); cycleSheet(); } });
+MOBILE.addEventListener?.("change", () => { setSheet("peek"); measurePeek(); fitGlobe(); });
+window.addEventListener("resize", () => { measurePeek(); fitGlobe(); });
+if (MOBILE.matches) globe.pointOfView({ lat: 22, lng: 40, altitude: 3.1 });   // the whole globe fits a narrow screen
+if (window.matchMedia("(pointer: coarse)").matches) $("hint").textContent = "Tap a find or any land to see how it compares.";
 
 // Labels shown on the globe: tour labels (e.g. Doha) plus the distance label of the selected find.
 const labelSets = { tour: [], arc: [] };
@@ -852,7 +912,8 @@ function showPlace(lat, lng, { quiet = false, point = null } = {}) {
         ${Math.round(point.nearest_known_km)} km from the nearest place scientists already use ·
         stays in the top list in ${Math.round(point.robustness * 100)}% of tests with changed weights.</p>`;
   } else {
-    simple += `<h3>${esc(reg.name || country || "Selected place")}</h3>${locLine}`;
+    // when the heading already is the country, the location line shows only the coordinates
+    simple += `<h3>${esc(reg.name || country || "Selected place")}</h3>${reg.name ? locLine : `<p class="loc">${fmtLatLon(lat, lng)}</p>`}`;
   }
 
   // --- score, good for, different in ---
@@ -911,6 +972,7 @@ function showPlace(lat, lng, { quiet = false, point = null } = {}) {
   const wasHidden = $("place").hidden;
   $("place").hidden = false;
   $("hint").hidden = true;
+  if (!quiet && MOBILE.matches && panelEl.dataset.sheet === "peek") setSheet("half");   // phones: open the sheet
   if (!quiet || wasHidden) $("place").scrollIntoView({ behavior: "smooth", block: "start" });
 }
 
@@ -1233,6 +1295,7 @@ function renderLiveTop() {
 function closePlace() {
   state.clicked = null; state.arc = null;
   $("place").hidden = true; $("hint").hidden = false;
+  if (MOBILE.matches) setSheet("peek");
   updateLayers();
 }
 
@@ -1302,6 +1365,10 @@ async function main() {
   // Map options are hidden from visitors; ?options=1 shows them (for us: layers, ice sheets, day/night, weights).
   if (new URLSearchParams(location.search).get("options") === "1") $("options").hidden = false;
   loadCountries();
+  // phones: measure the small sheet once the site buttons exist, and again when the web fonts have loaded
+  measurePeek();
+  document.fonts?.ready.then(measurePeek);
+  $("tour-btn").addEventListener("click", () => { if (MOBILE.matches) setSheet("peek"); });
 
   // A small "remote control" for the guided tour (web/tour.js): it can only steer the app, not change data.
   initTour({
@@ -1315,9 +1382,10 @@ async function main() {
       const el = $(id);
       if (!el) return;
       el.open = open;
+      if (open && MOBILE.matches) setSheet("half");   // phones: the fold is inside the sheet
       if (open) el.scrollIntoView({ behavior: "smooth", block: "nearest" });
     },
-    closeFolds() { for (const id of ["site-more", "trust", "options"]) $(id).open = false; },
+    closeFolds() { for (const id of ["site-more", "trust", "options"]) $(id).open = false; if (MOBILE.matches) setSheet("peek"); },
     labels(list) { labelSets.tour = list || []; applyLabels(); },
     validation: () => state.validation,
     target: (id) => state.targets.find((t) => t.id === id),

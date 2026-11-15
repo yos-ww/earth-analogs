@@ -2,14 +2,14 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>Analog Atlas</title>
   <meta name="description" content="Find the places on Earth most like Mars or the Moon.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
   <!-- ?v= forces browsers to fetch new code with a new page: bump it (e.g. to the date and time) on every push to web/ -->
-  <link rel="stylesheet" href="style.css?v=20261115-1625">
+  <link rel="stylesheet" href="style.css?v=20261115-1800">
 </head>
 <body>
   <div id="globe" aria-label="3D globe: places on Earth that are similar to the chosen Mars or Moon site glow"></div>
@@ -20,7 +20,9 @@
     <p>Loading Earth, Mars and Moon data</p>
   </div>
 
-  <aside id="panel">
+  <aside id="panel" data-sheet="peek">
+    <!-- phones: grab handle of the bottom sheet (drag or tap); hidden on wider screens -->
+    <div id="sheet-handle" class="sheet-handle" role="button" tabindex="0" aria-label="Show more" aria-expanded="false"><span></span></div>
     <header>
       <div class="title-row">
         <div><h1>Analog Atlas</h1><p class="byline">by Team Sol</p></div>
@@ -126,6 +128,6 @@
 
   <script src="https://cdn.jsdelivr.net/npm/globe.gl@2.46.2/dist/globe.gl.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/topojson-client@3.1.0/dist/topojson-client.min.js"></script>
-  <script type="module" src="app.js?v=20261115-1625"></script>
+  <script type="module" src="app.js?v=20261115-1800"></script>
 </body>
 </html>

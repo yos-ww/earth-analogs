@@ -305,3 +305,49 @@ select:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
 .compare-score { margin: 10px 0 0 !important; padding: 6px 9px; font-size: 12.5px; border-left: 2px solid var(--accent); background: var(--accent-soft); }
 .compare-score b { font: 500 15px var(--mono); }
 .compare-score .sub { display: block; font-size: 11.5px; }
+
+/* ---------- phones (2026-11-15): bottom sheet, globe above it, touch-sized controls ----------
+   The panel is a sheet with three heights set by app.js (data-sheet): peek (title + site buttons, measured
+   into --peek-h), half and full. The globe fills the screen above the peek height. env(safe-area-inset-*)
+   keeps clear of the iPhone notch and home bar (viewport-fit=cover in index.html). */
+.sheet-handle { display: none; }
+@media (max-width: 700px) {
+  #globe, #vignette { inset: 0 0 calc(var(--peek-h, 150px) + env(safe-area-inset-bottom)) 0; }
+  #panel { top: auto; right: 0; bottom: 0; left: 0; width: auto; max-height: none;
+    height: calc(var(--peek-h, 150px) + env(safe-area-inset-bottom));
+    padding: 0 16px calc(16px + env(safe-area-inset-bottom));
+    border-right: none; border-top: 1px solid var(--line-strong); border-radius: 14px 14px 0 0;
+    box-shadow: 0 -10px 28px rgba(0, 0, 0, 0.5);
+    overflow-y: auto; overscroll-behavior: contain; -webkit-overflow-scrolling: touch;
+    transition: height 0.28s cubic-bezier(0.2, 0.8, 0.2, 1); }
+  #panel[data-sheet="peek"] { overflow: hidden; }
+  #panel[data-sheet="half"] { height: 56vh; height: 56dvh; }
+  #panel[data-sheet="full"] { height: calc(100vh - 56px); height: calc(100dvh - 56px - env(safe-area-inset-top)); }
+  #panel.dragging { transition: none; }
+  .sheet-handle { display: flex; position: sticky; top: 0; z-index: 2; align-items: center; justify-content: center;
+    height: 24px; margin: 0 -16px; background: var(--panel-solid); border-radius: 14px 14px 0 0;
+    touch-action: none; cursor: grab; }
+  .sheet-handle span { width: 42px; height: 5px; border-radius: 3px; background: rgba(255, 255, 255, 0.32); }
+  #panel header { padding: 0 0 10px; touch-action: none; }
+  h1 { font-size: 22px; }
+  #tour-btn { padding: 8px 12px; }
+  #panel[data-sheet="peek"] .tagline, #panel[data-sheet="peek"] .main > .sec-title { display: none; }
+  section.main { padding-top: 10px; }
+  /* site buttons: one row that scrolls sideways */
+  .sites { flex-direction: row; gap: 12px; overflow-x: auto; margin: 0 -16px; padding: 0 16px 2px; scrollbar-width: none; }
+  .sites::-webkit-scrollbar { display: none; }
+  .site-row { display: flex; align-items: center; gap: 6px; flex: 0 0 auto; }
+  .site-body { margin: 0 2px 0 0; font-size: 10.5px; }
+  .site-grid { display: flex; gap: 6px; }
+  .site-card { flex: 0 0 auto; min-height: 0; padding: 10px 12px; white-space: nowrap; }
+  .site-name { font-size: 15px; }
+  /* touch-sized controls */
+  .chip-btn { padding: 8px 12px; font-size: 12.5px; }
+  .find-row { padding: 11px 4px; }
+  .icon-btn { width: 40px; height: 40px; }
+  details summary { padding: 4px 0; }
+  #tour { top: calc(10px + env(safe-area-inset-top)); }
+  #place, .fold { scroll-margin-top: 30px; }   /* scrolled-to sections stay clear of the sticky handle */
+  .tour-btns button { padding: 8px 11px; white-space: nowrap; }
+  .tour-foot { gap: 8px; }
+}

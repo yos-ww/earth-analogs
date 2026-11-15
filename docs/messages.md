@@ -6,6 +6,23 @@ Claude Code sessions: read this file after every `git pull`, together with `CLAU
 
 ---
 
+## 2026-11-15 · A → B · phone layout: bottom sheet (A, Yosif's request); tested on emulated iPhones
+
+**FYI; please pull before editing `web/`.** This covers the phone pass's layout part. Changed: `web/index.html`, `web/app.js`, `web/style.css`; `?v=` bumped to `20261115-1800`.
+
+- **Bottom sheet (screens up to 700 px):** the panel has three heights (`data-sheet` on `#panel`):
+  - `peek`: title and one sideways-scrolling row of site buttons. Its height is measured into `--peek-h`.
+  - `half`: 56% of the screen.
+  - `full`: the screen minus 56 px.
+- **Controls:** a sticky grab handle (`#sheet-handle`) can be dragged or tapped (peek → half → full → peek); the title row can be dragged too. Content scrolls in half and full (`overscroll-behavior: contain`). The globe fills the screen above the peek height, and starts zoomed out (altitude 3.1) so the whole Earth fits.
+- **Automatic:** tapping a place opens the sheet to half, and closing the result returns it to peek. The tour keeps it at peek, except the "Does it work?" / "About" steps, which open half. On wider screens nothing changed.
+- **iPhone details:** `viewport-fit=cover` plus `env(safe-area-inset-*)` keep clear of the notch and home bar. Touch-sized chips, list rows, close button and tour buttons. "Tap" instead of "Click" on touch screens. Scrolled-to sections clear the handle (`scroll-margin-top`).
+- **Small fix:** a place with no region name showed its country twice ("Canada / Canada · …").
+- **Tested with WebKit (Safari's engine) on emulated iPhone 13 and iPhone SE, plus desktop:** load, every sheet state, handle tap and drag, tapping a find, closing it, switching site, all 8 tour steps, Temperature in the dimensional analysis. No page errors.
+- **Not tested here:** a real device, i.e. real finger scrolling and the glow flicker fix. Yosif will try it on his iPhone.
+
+---
+
 ## 2026-11-15 · A → B · the app is now on Netlify: https://analogatlasss.netlify.app
 
 **FYI, and use this address for the QR code and slides.**
