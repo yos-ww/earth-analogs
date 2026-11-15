@@ -138,7 +138,7 @@ A `FeatureCollection` of `Point`s at the region's best cell. Properties:
 | `name` | string | Place name |
 | `target_id` | string | Matches `targets.json` |
 | `score` | number 0–1 | Overall score at default weights |
-| `robustness` | number 0–1 | Share of random weight changes in which the region stays in the top 50 |
+| `robustness` | number 0–1 | Share of random weight changes in which the region stays in the top 38% of the target's regions (at least 3) |
 | `dim_scores` | object | Dimension → score 0–1; missing dimensions are left out |
 | `area_km2` | number | Region area |
 | `nearest_known_km` | number | Distance to the nearest known analog |
@@ -147,7 +147,7 @@ A `FeatureCollection` of `Point`s at the region's best cell. Properties:
 | `continent` | string | Natural Earth continent of the best cell (used for the per-continent cap) |
 | `rank` | integer | Rank within the target by score × robustness, 1 = best |
 
-How candidates are chosen (`pipeline/candidates.py`): per target, remove permanent ice-sheet cells (`snow_ice` ≥ 0.9) for the Mars targets, take the top 1% of the remaining land area, keep only bare-ground cells (`ndvi_max` < 0.15, or no NDVI: ice), group the cells into regions (8-connected, joined across the antimeridian), split each region at its local maxima (maxima at least 200 km apart; each cell joins its nearest maximum; pieces of at least 3 cells), drop pieces whose best cell is within 200 km of any known analog, compute robustness over 500 random weight changes (each dimension weight × exp(N(0, 0.5)); "stays in the top 50" = the region's best score ranks in the top 50 of the regions that remain), drop pieces with robustness below 0.25, rank by score × robustness, and keep at most 3 per continent per target, at least 400 km apart. A target without enough values to score at least 4 dimensions gets no candidates.
+How candidates are chosen (`pipeline/candidates.py`): per target, remove permanent ice-sheet cells (`snow_ice` ≥ 0.9) for the Mars targets, take the top 1% of the remaining land area, keep only bare-ground cells (`ndvi_max` < 0.15, or no NDVI: ice), group the cells into regions (8-connected, joined across the antimeridian), split each region at its local maxima (maxima at least 200 km apart; each cell joins its nearest maximum; pieces of at least 3 cells), drop pieces whose best cell is within 200 km of any known analog, compute robustness over 500 random weight changes (each dimension weight × exp(N(0, 0.5)); "stays in the top" = the region's best score ranks in the top 38% of the regions that remain, at least 3; a fixed top 50 until 2026-11-15), drop pieces with robustness below 0.25, rank by score × robustness, and keep at most 3 per continent per target, at least 400 km apart. A target without enough values to score at least 4 dimensions gets no candidates.
 
 `web/data/` is generated, so B does not edit this file. B's input is `data/candidate_notes.csv` (owner: B), with columns `id, name, novelty, dossier`, where `id` matches a candidate `id`. `export.py` merges it in. A candidate with no row gets `name` = "lat, lon", `novelty` = `under-studied` and `dossier` = null.
 

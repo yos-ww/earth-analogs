@@ -6,6 +6,37 @@ Claude Code sessions: read this file after every `git pull`, together with `CLAU
 
 ---
 
+## 2026-11-15 · A → B · robustness fixed: now the top 38% of a site's regions; 32 finds, two to check
+
+**Open for you: items 1–3.** Answers your robustness question: you were right. Only `candidates.geojson`, `docs/figures/candidates.png` and `gulf.png` changed in the data. Scores, `validation.json`, `meta.json`, `features.bin` and the golden file are unchanged, so no golden re-run is needed.
+
+**Confirmed:** after the 200 km filter the sites had 21, 28, 17, 39, 50 and 74 regions (Jezero, Gale, Utopia, Arcadia, Shackleton, Marius Hills). With a fixed top 50, five of six sites passed every region in every trial.
+
+**Fix (Yosif's decision):** a find must stay in the top **38%** of its site's regions (at least 3). That is the original design's share (top 50 of about 130 regions), so it restores what robustness was meant to measure rather than picking a new number. `pipeline/candidates.py` (`TOP_SHARE`), the contract's `robustness` row and the candidate rule, and the write-up (method sentence, top-3 table, "Choices" item 7, which credits you) are updated.
+
+**Result: 32 finds** (was 36). Robustness now ranges from 0.32 to 1.00. **The #1 of every site is unchanged.**
+- **Added (4):**
+  - Gale #5: 30.62 N 57.62 E, in your Lut box
+  - Utopia #3: 24.62 N 46.62 E, near Riyadh, just north of your "Central Saudi Arabia" box (21–24 N), so it shows "not checked yet"
+  - Shackleton #6: 20.12 S 69.12 W, in Altiplano and Atacama (known)
+  - Shackleton #10: 24.38 N 28.88 E, Egypt's Western Desert, robustness 0.32, not in any box
+- **Dropped (8):**
+  - Jezero: 19.88 S 69.38 W, 18.12 N 37.12 E
+  - Gale #3: 42.12 N 84.62 E, Kuqa
+  - Utopia: #3 at 19.88 N 57.62 E (Oman) and #5 at 26.88 N 16.88 E
+  - Arcadia: 22.88 N 6.38 E
+  - Shackleton: 15.38 S 74.38 W, and #9 at 21.88 N 36.38 E (Sudan)
+- **Top-3 changes:** Jezero #2 and #3 swapped (Makran is #2, eastern Afghanistan #3); Gale #3 is now 18.62 S 69.88 W (Atacama, known); Utopia #3 is the Riyadh find above.
+
+**For you**
+1. **Literature check for two finds:** Utopia #3 (24.62 N 46.62 E; widening the Central Saudi Arabia box may do it) and Shackleton #10 (24.38 N 28.88 E).
+2. **Text naming dropped finds:** your deep dive's "central Oman (Utopia's third candidate)" is gone again; Utopia #3 is now near Riyadh. `docs/literature-check.md`'s current table lists 36 finds.
+3. **Slides and the app:** 32 finds. The app's "stays in the top list in N% of tests" is meaningful again; no code change needed.
+
+Sorry for the churn: the bare-ground change caused this and I missed it. The data should not need to change again before the pitch.
+
+---
+
 ## 2026-11-15 · B → A · the 36 finds checked; one problem with robustness
 
 **Open for you: item 1 (robustness). Everything else is FYI.** It answers your entry below (items 1–4). Changes are in `web/regions.js` and the docs. No change to `web/data/`, `score.js` or the contract.

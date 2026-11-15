@@ -12,7 +12,9 @@ Per target with a complete enough profile (at least 4 scored dimensions):
     candidate is site-scale, not a whole desert. Drop pieces whose best cell is within MIN_KNOWN_KM of
     any known analog site.
  4. Robustness = share of N_PERTURB random weight changes (each dimension weight multiplied by
-    exp(N(0, WEIGHT_SIGMA))) in which the region's best score ranks in the top TOP_N of the regions.
+    exp(N(0, WEIGHT_SIGMA))) in which the region's best score ranks in the top TOP_SHARE of the regions
+    (at least MIN_TOP_N). A share, not a fixed count: with bare ground only a site can have fewer than 50
+    regions, and a fixed top 50 then passed every region (robustness 1.0 for all; fixed 2026-11-15).
  5. Drop pieces with robustness below MIN_ROBUSTNESS. Rank by score x robustness; keep at most PER_CONTINENT regions per continent, and skip a region
     within MIN_SPACING_KM of an already kept higher-ranked one (so three pieces of one desert do not
     fill a continent's quota).
@@ -36,7 +38,8 @@ MIN_CELLS = 3
 MIN_KNOWN_KM = 200.0
 N_PERTURB = 500
 WEIGHT_SIGMA = 0.5
-TOP_N = 50
+TOP_SHARE = 0.38  # the design's share: top 50 of about 130 regions per target before the bare-ground filter
+MIN_TOP_N = 3
 PER_CONTINENT = 3
 MIN_ROBUSTNESS = 0.25  # below this the ranking depends too much on the slider settings to call it a finding
 SPLIT_KM = 200.0  # a region is split at local maxima that are at least this far apart
@@ -174,7 +177,8 @@ def candidates_for(grid, target, known, rng):
     for i in range(len(regions)):
         best_by_region[:, i] = s[:, owner == i].max(axis=1)
     rank = (-best_by_region).argsort(axis=1).argsort(axis=1)  # 0 = best
-    robust = (rank < min(TOP_N, len(regions))).mean(axis=0)
+    top_n = max(MIN_TOP_N, round(TOP_SHARE * len(regions)))
+    robust = (rank < top_n).mean(axis=0)
 
     cont = continents_of(np.array([lat[g["best"]] for g in regions]), np.array([lon[g["best"]] for g in regions]))
     out = []

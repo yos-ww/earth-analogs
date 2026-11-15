@@ -6,7 +6,7 @@ Built for the "Earth Analogs for Lunar and Martian Exploration" hackathon challe
 
 **Live app:** https://yos-ww.github.io/earth-analogs/web/ · **Write-up:** [`docs/writeup.md`](docs/writeup.md)
 
-**Status (2026-11-15):** the data is frozen (regenerated on 2026-11-15: like-for-like scoring, dust on bare ground only, contract version 2). All six Moon and Mars targets are complete, and 12 Earth features are scored for 344,354 land cells. The validation (known analogs vs. random barren land, with a sensitivity analysis) is in `web/data/validation.json`, and the 36 candidate sites are in `web/data/candidates.geojson`. The app and the write-up are being finished.
+**Status (2026-11-15):** the data is frozen (regenerated on 2026-11-15: like-for-like scoring, dust on bare ground only, contract version 2). All six Moon and Mars targets are complete, and 12 Earth features are scored for 344,354 land cells. The validation (known analogs vs. random barren land, with a sensitivity analysis) is in `web/data/validation.json`, and the 32 candidate sites are in `web/data/candidates.geojson`. The app and the write-up are being finished.
 
 ## Where things are
 
