@@ -1265,6 +1265,8 @@ async function main() {
   $("loader").classList.add("done");
 
   setupHud();
+  // Map options are hidden from visitors; ?options=1 shows them (for us: layers, ice sheets, day/night, weights).
+  if (new URLSearchParams(location.search).get("options") === "1") $("options").hidden = false;
   loadCountries();
 
   // A small "remote control" for the guided tour (web/tour.js): it can only steer the app, not change data.

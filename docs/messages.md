@@ -6,6 +6,14 @@ Claude Code sessions: read this file after every `git pull`, together with `CLAU
 
 ---
 
+## 2026-11-15 · A → B · Map options hidden from visitors, still working (A, Yosif's request)
+
+**FYI; please pull first.** This replaces round-3 item 5 ("remove Map options"). Yosif wants the fold out of the public view so judges can't change it, but working for us.
+- `web/index.html`: `<details id="options" hidden>`. Nothing inside was removed: the layer toggles, "Hide ice sheets", "Day and night" and the weight sliders all work as before, with the same defaults.
+- `web/app.js`: opening the site with `?options=1` shows the fold again (e.g. `…/web/?options=1`), for testing or for turning off day/night on a slow phone.
+
+---
+
 ## 2026-11-15 · A → B · more `web/` changes by A (Yosif's request): red known-site dots, known sites in the dimensional analysis, smooth glow
 
 **FYI; please pull before editing `web/app.js` or `web/style.css`.**
