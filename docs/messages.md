@@ -20,18 +20,18 @@ Yosif likes the six site cards (Jezero etc.) as buttons.
    - Good demos, from Claude's quick check of where the top 1% goes: **Temperature** (Mars sites → Greenland ice sheet, Shackleton → Antarctica, Marius Hills → Tibet and the Sahara), **Terrain** (Gale and Shackleton → Tibet and the Andes, flat Utopia → flat plains), **Dust** (Mars sites → Sahara and Arabia). These are rough lat/lon boxes, so they're fine for choosing demos but not for quoting.
    - This takes the "one-dimension view" in `docs/presentation-plan.md` (accepted, not built yet) and extends it to several dimensions. It isn't a weight preset, because the user picks the dimensions.
 2. **Glow in red instead of copper.** This means the similarity glow on the globe (the ramp from the site's top 20% to its top 1%), not the accent colour of the buttons and headings. Yosif would like it red rather than the current copper/orange.
-3. **Two dot colours instead of five.** Today the globe has green (new find), yellow (little studied), blue (not checked yet), grey (known area our search found too), and rust / grey-blue for the known Mars / Moon sites. Yosif would like just two:
-   - **White:** well-known analog sites (the known Mars and Moon sites, and "known area our search found too").
-   - **Green:** our finds that aren't well known (new, little studied, not checked yet).
-   - Claude's notes:
-     - The finer verdict ("No analog study found yet" vs "little studied") should stay in the result panel text. The pitch relies on the careful wording, even if the dot no longer shows it.
-     - White dots need a dark outline, or they vanish on the white-hot glow and on ice.
+3. **Two kinds of dot instead of five colours.** Today the globe has green (new find), yellow (little studied), blue (not checked yet), grey (known area our search found too), and rust / grey-blue for the known Mars / Moon sites. Yosif would like just two groups, matching the story: known sites are the test, our finds are the discoveries. They differ in colour, shape and size, so they work on the red glow, on a projector, on a phone and for colour-blind viewers:
+   - **Our finds** (new, little studied, not checked yet): **filled bright cyan** dots, a bit larger, keeping the pulse they have now. Cyan stands out against the whole red → white-hot glow and the night side. Green on a red glow is the classic red–green colour-blindness pair.
+   - **Known sites** (the known Mars and Moon sites, and "known area our search found too"): **small hollow white rings with a dark outline**, or small light-grey dots with a dark outline if rings are fiddly. Plain white would vanish on the white-hot glow, and known sites score high, so they sit exactly there.
+   - Optional: show only the known sites for the current body (Mars sites when a Mars site is picked). That removes the Mars/Moon colour split and cuts clutter.
+   - globe.gl draws points as small cylinders with no outline. An outline or ring needs a small workaround, e.g. a slightly larger dark point underneath, or the rings/HTML layer.
+   - Keep the finer verdict ("No analog study found yet" vs "little studied") in the result panel text. The pitch relies on the careful wording, even if the dot no longer shows it.
 4. **"by Team Sol"** under the "Analog Atlas" title.
 5. **Remove the country search** ("How Mars-like is your place?"). Yosif has decided on this; it may come back later. Nothing in the tour depends on it. The Qatar line (55/100) is now optional, to be mentioned in the pitch only if we want to, and Qatar can still be clicked on the globe.
 6. **Simple location info on click.** Clicking any place should show its coordinates and its present-day country up front, not only under "More details".
    - Coordinates: `fmtLatLon` already exists, so this just means moving it under the heading.
    - Country: there's no lookup for arbitrary clicks today. The boxes in `places.js` overlap and cover only a few countries. One option is a small public-domain country-outline file (Natural Earth 1:110m, about 100 KB as TopoJSON from a CDN) with a point-in-polygon check in the browser, so no geocoding service is needed. Borders are de facto and approximate. Antarctica and the ocean get no country.
-7. **Remove the floating map key**, the "Glows where Earth is like …" box over the globe. Yosif likes the glow itself but not the floating box. Replace it with **one small line in the side panel**: a thin red ramp with the two scores, and the two dot colours from item 3. The "What does the glow mean?" text can stay behind a small fold-out there.
+7. **Remove the floating map key**, the "Glows where Earth is like …" box over the globe. Yosif likes the glow itself but not the floating box. Replace it with **one small line in the side panel**: a thin red ramp with the two scores, and the two dot kinds from item 3. The "What does the glow mean?" text can stay behind a small fold-out there.
 8. **Remove the first-visit welcome pop-up** ("▶ Watch the 50-second tour / Explore myself"). It feels like a pop-up ad. The Tour button in the header stays. (Claude had suggested the welcome in its earlier list; Yosif has overruled that.)
 
 **Last step before the pitch: phone pass.** Do this after items 1–8, once the layout is final. Judges may open the live demo from a QR code on their phones, so it must be smooth there. Yosif tested on an iPhone:
@@ -41,7 +41,7 @@ Yosif likes the six site cards (Jezero etc.) as buttons.
 - Possibly related: the glow blur uses `ctx.filter`, which the code notes is "ignored where unsupported". Check the glow looks smooth, not blocky, on iPhone Safari.
 - Test on an iPhone and an Android phone: the first load from a real QR scan, rotating the globe and pinching to zoom, picking each site, tapping a find, the compare mode, and `?tour=1`.
 
-**Checks if you build any of it:** golden 306/306 unchanged; the tour runs start to finish with `?tour=1`; Gale #1 and the Makran finds still show green.
+**Checks if you build any of it:** golden 306/306 unchanged; the tour runs start to finish with `?tour=1`; Gale #1 and the Makran finds still show as finds (cyan).
 
 ---
 
