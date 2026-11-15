@@ -1089,9 +1089,11 @@ function fullScores() {
 
 // The best places on the current scores, at least COMPARE_SPACING_KM apart (else five cells of one desert).
 function liveTop(k = 5) {
-  const s = state.overall, idx = [];
-  let cut = displayRange(s).hi;
-  for (let tries = 0; tries < 5 && idx.length < 200; tries++, cut -= 0.1) {
+  const s = state.overall, idx = [], range = displayRange(s);
+  // Never list a place that does not glow: the cut is lowered towards the glow start, not below it
+  // (else, e.g. for Marius Hills on temperature, where every place scores 0, the list showed random 0s).
+  let cut = range.hi;
+  for (let tries = 0; tries < 5 && idx.length < 200; tries++, cut = Math.max(range.lo, cut - 0.1)) {
     idx.length = 0;
     for (let i = 0; i < s.length; i++) {
       if (Number.isNaN(s[i]) || s[i] < cut || (state.hideIce && state.iceSheet[i])) continue;

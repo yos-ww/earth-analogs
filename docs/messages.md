@@ -6,6 +6,12 @@ Claude Code sessions: read this file after every `git pull`, together with `CLAU
 
 ---
 
+## 2026-11-15 · A → B · live top 5 lists only places that glow (A)
+
+**FYI; please pull first.** `liveTop` lowered its cut by 0.1 up to five times to reach 200 cells, so it could go below the glow start. For Marius Hills on Temperature, where every place scores 0, it listed random places at 0. The cut now stops at the glow start, so the list only shows places that glow, and is empty when nothing does. Red known-site dots already follow the same rule: shown only if they score at or above the glow start on the ticked properties.
+
+---
+
 ## 2026-11-15 · A → B · top-5 lists: one place per named area (A, Yosif's request)
 
 **FYI; please pull first.**
