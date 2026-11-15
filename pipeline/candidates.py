@@ -22,6 +22,7 @@ B's data/candidate_notes.csv (id, name, novelty, dossier) is merged in when pres
 """
 import csv
 import json
+import re
 import warnings
 
 import geopandas as gpd
@@ -189,7 +190,7 @@ def candidates_for(grid, target, known, rng):
             "score": float(overall[b]), "robustness": float(robust[i]),
             "dim_scores": {d: round(float(ds[b, k_]), 3) for k_, d in enumerate(dims) if not np.isnan(ds[b, k_])},
             "area_km2": float(cell_area_km2(lat[g["idx"]]).sum()), "nearest_known_km": g["nearest_known_km"],
-            "n_cells": int(len(g["idx"])),
+            "n_cells": int(len(g["idx"])), "cells": sorted(int(x) for x in g["idx"]),
         })
     out = [c for c in out if c["robustness"] >= MIN_ROBUSTNESS]
     out.sort(key=lambda c: -c["score"] * c["robustness"])
@@ -230,11 +231,14 @@ def main():
                 "area_km2": round(c["area_km2"]), "nearest_known_km": round(c["nearest_known_km"]),
                 "novelty": n.get("novelty") or "under-studied", "dossier": n.get("dossier") or None,
                 "continent": c["continent"], "rank": c["rank"],
+                "cells": c["cells"],  # positions in cells.bin of every cell of this find (its area)
             }
             feats.append({"type": "Feature", "geometry": {"type": "Point", "coordinates": [c["lon"], c["lat"]]}, "properties": props})
             print(f"   {c['rank']:2d}. {c['continent']:14s} {c['lat']:7.2f} {c['lon']:8.2f}  score {c['score']:.3f}  "
                   f"robust {c['robustness']:.2f}  {c['area_km2']:8.0f} km2  {c['nearest_known_km']:6.0f} km from known")
-    (WEB_DATA / "candidates.geojson").write_text(json.dumps({"type": "FeatureCollection", "features": feats}, indent=1) + "\n")
+    text = json.dumps({"type": "FeatureCollection", "features": feats}, indent=1)
+    text = re.sub(r'"cells": \[[\d,\s]*\]', lambda m: re.sub(r"\s+", "", m.group(0)).replace('"cells":', '"cells": '), text)  # one line per list
+    (WEB_DATA / "candidates.geojson").write_text(text + "\n")
     print(f"wrote candidates.geojson: {len(feats)} candidates")
 
 

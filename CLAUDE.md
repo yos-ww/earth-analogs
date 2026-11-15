@@ -33,7 +33,7 @@ Shared files (`CLAUDE.md`, `plan.md`, `docs/contract.md`, `docs/tasks.md`, `READ
 
 ## Decisions already made (do not reopen)
 
-- 0.25° global land grid, 12 features in 8 dimensions, one slider per dimension. The eighth, geology, is 8.55 µm emissivity (`Emis_29` in the MOD11C3 files already on disk).
+- 0.25° global land grid, 12 features in 8 dimensions, equal default weights. The eighth, geology, is 8.55 µm emissivity (`Emis_29` in the MOD11C3 files already on disk).
 - Score: `exp(-((f - t)/σ)²)` per feature, mean within a dimension, weighted mean across dimensions. Exact rules in `docs/contract.md`.
 - Every feature is scored like-for-like; a target value beyond Earth's min–max is only labelled "beyond Earth" and scores low everywhere (contract version 2). This replaced the one-sided p1–p99 rule on 2026-11-15, agreed by both, because it gave false 100s. Old and new numbers: `docs/writeup.md`, "Choices, and when they were made", item 5.
 - 3D globe (`globe.gl` from a CDN, no build step) is the main view; the Leaflet flat map is a stretch fallback (see the presentation-plan decision below).
@@ -41,7 +41,7 @@ Shared files (`CLAUDE.md`, `plan.md`, `docs/contract.md`, `docs/tasks.md`, `READ
 - No tuning to the answer: σ from the data rule, equal default weights.
 - A science spike at hour 4 tests the result on five quick features before the full pipeline is built (`plan.md` timeline).
 - Nothing from the stretch tiers starts before Checkpoint 2.
-- Sliders stay the main control (no weight presets). Mission context only explains why a match matters and how the place could be used: a mission card per target, one sentence per dimension, and a "why this place matters" line, all text in `web/missions.js`, not in the contract.
+- No weight sliders (removed 2026-11-15, Yosif's decision): the user picks dimensions in the dimensional analysis (ticked = weight 1, unticked = 0); no weight presets. Mission context only explains why a match matters and how the place could be used: a mission card per target, one sentence per dimension, and a "why this place matters" line, all text in `web/missions.js`, not in the contract.
 - Every place gets a fingerprint radar chart: one axis per dimension from `meta.json`, unweighted dimension scores, target = outer ring.
 
 - The famous analog sites (`data/known_analogs.csv`) exist to **validate** that the method works: if the score is sound, those sites should rank clearly above random barren land. They are the test, not the product. The discoveries are the under-studied candidates, and the 200 km filter only keeps known sites from being listed as discoveries.

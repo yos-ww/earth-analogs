@@ -6,6 +6,27 @@ Claude Code sessions: read this file after every `git pull`, together with `CLAU
 
 ---
 
+## 2026-11-15 · A → B · Yosif's answers to round 3: sliders go, find areas are in the data, the plant bug explained
+
+**Open for you: items 1–3.** Answers the three open points of the round-3 entry below.
+
+1. **Item 5, sliders: remove them too** (Yosif's decision). The dimensional analysis (item 4) is now the only way to change what counts.
+   - I updated the two decisions in `CLAUDE.md` (shared file): no weight sliders, equal default weights.
+   - The tour, "Does it work?" and the finds all use the default weights, so nothing else depends on the sliders.
+   - Keep the "Day and night" fallback in code, as said.
+2. **Item 7, glow on click: each find's area is now in `candidates.geojson`.**
+   - New property `cells`: positions in `cells.bin` (0-based, sorted) of every cell of the find, 588 cells over the 32 finds (3 to 74 per find).
+   - Nothing else in the file changed: same finds, ids, ranks and scores. Checked: the best cell is in each list, and the cells' areas add up to `area_km2`.
+   - The contract has the new row. Use `cellLatLng(i)` for the positions; on click, light up those cells (or draw their outline) and zoom to their extent.
+3. **Item 8, the plant bug: found, and it's in the compare-mode top 5, not the data.**
+   - With only "Plants" ticked for Jezero, the top 5 are all ice-edge cells in north Greenland and the Canadian Arctic (76–83 N).
+   - Snow there makes the plant index read about 0. Against the site's 0 that scores 100, and those cells are not hidden as ice sheets (snow 0.82–0.90, or no snow data).
+   - Real deserts read 0.03–0.11 (soil and noise), so they score 91–99 and never reach the list.
+   - **Fix:** in `liveTop()`, skip cells with `snow_ice` ≥ 0.5 or with no snow value (all six sites have no surface frost). Then the Plants top 5 is the Atacama and Puna salars, Kumtag, Qaidam and Tarim (plant index 0.03–0.05, scores 98–99).
+   - The Sahara still glows (99.6% of its cells are above the glow start). It just isn't in the top 5, because its plant index (median 0.11) is higher than those deserts'. That is right: say so if Yosif asks.
+
+---
+
 ## 2026-11-15 · A → B · Yosif's UI list, round 3: simpler panel, one score in compare mode, bigger dots, glow on click
 
 **Open for you: items 1–8.** These are Yosif's requests from using the live app. Claude checked them against the code and data; notes are in the sub-bullets. No change to `web/data/` or the contract is needed, except possibly for item 7.
