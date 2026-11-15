@@ -6,6 +6,35 @@ Claude Code sessions: read this file after every `git pull`, together with `CLAU
 
 ---
 
+## 2026-11-15 · A → B · Yosif's UI list, round 3: simpler panel, one score in compare mode, bigger dots, glow on click
+
+**Open for you: items 1–8.** These are Yosif's requests from using the live app. Claude checked them against the code and data; notes are in the sub-bullets. No change to `web/data/` or the contract is needed, except possibly for item 7.
+
+1. **One score in compare mode.** Today the big number is the full 8-property score, and the score on the ticked properties is the small line under it. When properties are ticked, show only one score: the score on those properties.
+   - You kept the full score as the headline because the old one-sided rule gave 100s. With contract v2 that reason is gone: a 100 now only means a real match.
+2. **Remove the site description under the site cards** (`#target-blurb`, e.g. "Where NASA's Perseverance rover landed in 2021…"). Yosif doesn't need the landing history.
+3. **Remove the small text on the site buttons** (`SITE_LINE`, e.g. "Perseverance · 2021"). Keep the cards simple: the name only.
+   - Together with item 2 this replaces panel item 10 from the earlier list ("mission line only on the selected card"): there is now no mission line at all.
+4. **Rename "Compare only…"** to something like "Dimensional analysis" or "Specific analysis". The section is for finding places that match the site on the properties you pick. Your choice of the exact name.
+5. **Remove "Map options".**
+   - **Yosif to confirm (Claude asked him):** that fold also holds the weight sliders ("What matters most?") and Reset. `CLAUDE.md` says "Sliders stay the main control". Until Yosif decides, please keep the sliders and Reset somewhere and remove the rest.
+   - **The rest:** the layer checkboxes, "Hide ice sheets" and "Day and night". "Day and night" is the fallback if the shader stutters on a phone, so keep it working in code even if the switch goes. Ice sheets should stay hidden by default for Mars sites, as now.
+6. **Bigger dots for the finds** (the cyan ones). Keep the known-site rings as they are.
+7. **Glow on click:** clicking a find zooms in and makes that find's area glow.
+   - This is the "region outline" idea. The exact area needs each find's cell list, which `candidates.geojson` does not have yet. A can add it as a new property (`cells`: positions in `cells.bin`). It is additive: no score, find or id changes. Tell A if you want it.
+   - A browser-only version (connected top-1% cells around the find) is the fallback, but it won't match the pipeline exactly (see A's earlier answer).
+8. **Bug: plants don't show for low-vegetation places like the Sahara.**
+   - The data is fine. NDVI exists for every Sahara cell (median 0.11), and the plant score at 25 N 20 E is 0.92 for Jezero.
+   - So it's in the display. Possible places: the "Good for practising" line (it shows only the top 2 properties), the fingerprint radar, the "Plants" chip in compare mode, or the "What is similar" list. Yosif will say where he saw it; if you can reproduce it first, fix it.
+
+**Still open from before:**
+- Panel items 9 (result near the top) and 11 (sentence-case headings).
+- Hosting the libraries locally.
+- The phone pass.
+- The dust text ("no dust data here" on vegetated land should say dust is only measured on bare ground).
+
+---
+
 ## 2026-11-15 · A → B · robustness fixed: now the top 38% of a site's regions; 32 finds, two to check
 
 **Open for you: items 1–3.** Answers your robustness question: you were right. Only `candidates.geojson`, `docs/figures/candidates.png` and `gulf.png` changed in the data. Scores, `validation.json`, `meta.json`, `features.bin` and the golden file are unchanged, so no golden re-run is needed.
