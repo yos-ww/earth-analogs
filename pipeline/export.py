@@ -6,6 +6,7 @@ Usage (from the repo root):
 Only features whose data/interim/<id>.npy exists are exported, in contract order, so a
 feature that is not ready (or was dropped) is simply left out of features.bin and meta.json.
 """
+
 import csv
 import json
 
@@ -49,10 +50,15 @@ def export_targets(targets_csv=None, literature_csv=None, out=None):
     targets = {}
     for t in csv.DictReader(open(targets_csv, newline="", encoding="utf-8")):
         targets[t["target_id"]] = {
-            "id": t["target_id"], "name": t["name"], "body": t["body"],
-            "lat": float(t["lat"]), "lon": float(t["lon"]),
-            "features": {}, "weights": {d: 1 for d in DIMENSIONS},
-            "not_scored": {}, "limits": {},
+            "id": t["target_id"],
+            "name": t["name"],
+            "body": t["body"],
+            "lat": float(t["lat"]),
+            "lon": float(t["lon"]),
+            "features": {},
+            "weights": {d: 1 for d in DIMENSIONS},
+            "not_scored": {},
+            "limits": {},
         }
     problems = []
     rows = list(csv.DictReader(open(literature_csv, newline="", encoding="utf-8")))
@@ -104,18 +110,25 @@ def export_known_analogs(src=None, out=None):
     for r in csv.DictReader(open(src, newline="", encoding="utf-8")):
         lat, lon = float(r["lat"]), float(r["lon"])
         assert -90 <= lat <= 90 and -180 <= lon <= 180, r["name"]
-        feats.append({
-            "type": "Feature",
-            "geometry": {"type": "Point", "coordinates": [lon, lat]},
-            "properties": {
-                "name": r["name"], "country": r["country"],
-                "body": [b.strip().lower() for b in r["body"].split("|")],
-                "dimensions": [d.strip() for d in r["dimensions"].split("|")],
-                "why_analog": r["why_analog"], "reference": r["reference"], "source_url": r["source_url"],
-            },
-        })
+        feats.append(
+            {
+                "type": "Feature",
+                "geometry": {"type": "Point", "coordinates": [lon, lat]},
+                "properties": {
+                    "name": r["name"],
+                    "country": r["country"],
+                    "body": [b.strip().lower() for b in r["body"].split("|")],
+                    "dimensions": [d.strip() for d in r["dimensions"].split("|")],
+                    "why_analog": r["why_analog"],
+                    "reference": r["reference"],
+                    "source_url": r["source_url"],
+                },
+            }
+        )
     out.parent.mkdir(parents=True, exist_ok=True)
-    out.write_text(json.dumps({"type": "FeatureCollection", "features": feats}, indent=1, ensure_ascii=False) + "\n")
+    out.write_text(
+        json.dumps({"type": "FeatureCollection", "features": feats}, indent=1, ensure_ascii=False) + "\n"
+    )
     print(f"wrote {out.name}: {len(feats)} sites")
 
 
@@ -138,13 +151,24 @@ def main():
         code = np.full(x.shape, 255, np.uint8)
         code[ok] = np.clip(np.rint((x[ok] - lo) / (hi - lo) * 254), 0, 254).astype(np.uint8)
         cols.append(code)
-        feats.append({
-            "id": fid, "label": label, "dimension": dim, "unit": unit, "transform": kind,
-            "min": round(lo, 6), "max": round(hi, 6), "sigma": round(float(sigma), 6),
-            "p1": round(float(p1), 6), "p99": round(float(p99), 6),
-        })
-        print(f"{fid:14s} valid {ok.sum():6d}/{len(x)}  min {lo:.3f} max {hi:.3f}  "
-              f"p1 {p1:.3f} p99 {p99:.3f}  sigma {sigma:.3f}")
+        feats.append(
+            {
+                "id": fid,
+                "label": label,
+                "dimension": dim,
+                "unit": unit,
+                "transform": kind,
+                "min": round(lo, 6),
+                "max": round(hi, 6),
+                "sigma": round(float(sigma), 6),
+                "p1": round(float(p1), 6),
+                "p99": round(float(p99), 6),
+            }
+        )
+        print(
+            f"{fid:14s} valid {ok.sum():6d}/{len(x)}  min {lo:.3f} max {hi:.3f}  "
+            f"p1 {p1:.3f} p99 {p99:.3f}  sigma {sigma:.3f}"
+        )
 
     WEB_DATA.mkdir(parents=True, exist_ok=True)
     cells.tofile(WEB_DATA / "cells.bin")
@@ -162,6 +186,7 @@ def main():
     export_targets()
     export_known_analogs()
     from .golden import main as golden_main
+
     golden_main()  # expected scores for the browser cross-check; hashes the files just written
 
 

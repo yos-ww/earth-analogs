@@ -1,4 +1,5 @@
 """Shared constants for the pipeline. The feature table mirrors docs/contract.md."""
+
 from pathlib import Path
 
 import numpy as np

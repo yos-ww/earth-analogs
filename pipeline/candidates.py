@@ -17,6 +17,7 @@ Per target with a complete enough profile (at least 4 scored dimensions):
     fill a continent's quota).
 B's data/candidate_notes.csv (id, name, novelty, dossier) is merged in when present.
 """
+
 import csv
 import json
 import re
@@ -87,8 +88,12 @@ def load_known():
 
 
 def continents_of(lats, lons):
-    countries = gpd.read_file(ROOT / "data" / "ref" / "naturalearth_lowres" / "naturalearth_lowres.shp")[["continent", "geometry"]]
-    pts = gpd.GeoDataFrame({"i": range(len(lats))}, geometry=gpd.points_from_xy(lons, lats), crs=countries.crs)
+    countries = gpd.read_file(ROOT / "data" / "ref" / "naturalearth_lowres" / "naturalearth_lowres.shp")[
+        ["continent", "geometry"]
+    ]
+    pts = gpd.GeoDataFrame(
+        {"i": range(len(lats))}, geometry=gpd.points_from_xy(lons, lats), crs=countries.crs
+    )
     j = gpd.sjoin(pts, countries, how="left", predicate="within").drop_duplicates("i").set_index("i")
     cont = j["continent"].reindex(range(len(lats)))
     miss = cont.isna().values
@@ -173,28 +178,45 @@ def candidates_for(grid, target, known, rng):
     rank = (-best_by_region).argsort(axis=1).argsort(axis=1)  # 0 = best
     robust = (rank < min(TOP_N, len(regions))).mean(axis=0)
 
-    cont = continents_of(np.array([lat[g["best"]] for g in regions]), np.array([lon[g["best"]] for g in regions]))
+    cont = continents_of(
+        np.array([lat[g["best"]] for g in regions]), np.array([lon[g["best"]] for g in regions])
+    )
     out = []
     for i, g in enumerate(regions):
         b = g["best"]
-        out.append({
-            "target_id": target["id"], "lat": float(lat[b]), "lon": float(lon[b]), "continent": str(cont[i]),
-            "score": float(overall[b]), "robustness": float(robust[i]),
-            "dim_scores": {d: round(float(ds[b, k_]), 3) for k_, d in enumerate(dims) if not np.isnan(ds[b, k_])},
-            "area_km2": float(cell_area_km2(lat[g["idx"]]).sum()), "nearest_known_km": g["nearest_known_km"],
-            "n_cells": int(len(g["idx"])), "cells": sorted(int(x) for x in g["idx"]),
-        })
+        out.append(
+            {
+                "target_id": target["id"],
+                "lat": float(lat[b]),
+                "lon": float(lon[b]),
+                "continent": str(cont[i]),
+                "score": float(overall[b]),
+                "robustness": float(robust[i]),
+                "dim_scores": {
+                    d: round(float(ds[b, k_]), 3) for k_, d in enumerate(dims) if not np.isnan(ds[b, k_])
+                },
+                "area_km2": float(cell_area_km2(lat[g["idx"]]).sum()),
+                "nearest_known_km": g["nearest_known_km"],
+                "n_cells": int(len(g["idx"])),
+                "cells": sorted(int(x) for x in g["idx"]),
+            }
+        )
     out = [c for c in out if c["robustness"] >= MIN_ROBUSTNESS]
     out.sort(key=lambda c: -c["score"] * c["robustness"])
     kept, count = [], {}
     for c in out:
-        too_close = any(haversine_km(c["lat"], c["lon"], k_["lat"], k_["lon"]) < MIN_SPACING_KM for k_ in kept)
+        too_close = any(
+            haversine_km(c["lat"], c["lon"], k_["lat"], k_["lon"]) < MIN_SPACING_KM for k_ in kept
+        )
         if count.get(c["continent"], 0) < PER_CONTINENT and not too_close:
             count[c["continent"]] = count.get(c["continent"], 0) + 1
             kept.append(c)
     for rank_, c in enumerate(kept, 1):
         c["rank"] = rank_
-    return kept, f"{nreg} regions in the top {TOP_FRAC:.0%}, {n_before} pieces after splitting, {len(regions)} beyond {MIN_KNOWN_KM:.0f} km of a known site"
+    return (
+        kept,
+        f"{nreg} regions in the top {TOP_FRAC:.0%}, {n_before} pieces after splitting, {len(regions)} beyond {MIN_KNOWN_KM:.0f} km of a known site",
+    )
 
 
 def cand_id(c):
@@ -213,23 +235,46 @@ def main():
     feats = []
     for t in targets:
         kept, info = candidates_for(grid, t, known, rng)
-        print(f"{t['id']:13s} {info}" if kept is None or not kept else f"{t['id']:13s} {len(kept)} candidates; {info}")
+        print(
+            f"{t['id']:13s} {info}"
+            if kept is None or not kept
+            else f"{t['id']:13s} {len(kept)} candidates; {info}"
+        )
         for c in kept or []:
             cid = cand_id(c)
             n = notes.get(cid, {})
             props = {
-                "id": cid, "name": n.get("name") or f"{c['lat']:.2f}, {c['lon']:.2f}", "target_id": c["target_id"],
-                "score": round(c["score"], 4), "robustness": round(c["robustness"], 3), "dim_scores": c["dim_scores"],
-                "area_km2": round(c["area_km2"]), "nearest_known_km": round(c["nearest_known_km"]),
-                "novelty": n.get("novelty") or "under-studied", "dossier": n.get("dossier") or None,
-                "continent": c["continent"], "rank": c["rank"],
+                "id": cid,
+                "name": n.get("name") or f"{c['lat']:.2f}, {c['lon']:.2f}",
+                "target_id": c["target_id"],
+                "score": round(c["score"], 4),
+                "robustness": round(c["robustness"], 3),
+                "dim_scores": c["dim_scores"],
+                "area_km2": round(c["area_km2"]),
+                "nearest_known_km": round(c["nearest_known_km"]),
+                "novelty": n.get("novelty") or "under-studied",
+                "dossier": n.get("dossier") or None,
+                "continent": c["continent"],
+                "rank": c["rank"],
                 "cells": c["cells"],  # positions in cells.bin of every cell of this find (its area)
             }
-            feats.append({"type": "Feature", "geometry": {"type": "Point", "coordinates": [c["lon"], c["lat"]]}, "properties": props})
-            print(f"   {c['rank']:2d}. {c['continent']:14s} {c['lat']:7.2f} {c['lon']:8.2f}  score {c['score']:.3f}  "
-                  f"robust {c['robustness']:.2f}  {c['area_km2']:8.0f} km2  {c['nearest_known_km']:6.0f} km from known")
+            feats.append(
+                {
+                    "type": "Feature",
+                    "geometry": {"type": "Point", "coordinates": [c["lon"], c["lat"]]},
+                    "properties": props,
+                }
+            )
+            print(
+                f"   {c['rank']:2d}. {c['continent']:14s} {c['lat']:7.2f} {c['lon']:8.2f}  score {c['score']:.3f}  "
+                f"robust {c['robustness']:.2f}  {c['area_km2']:8.0f} km2  {c['nearest_known_km']:6.0f} km from known"
+            )
     text = json.dumps({"type": "FeatureCollection", "features": feats}, indent=1)
-    text = re.sub(r'"cells": \[[\d,\s]*\]', lambda m: re.sub(r"\s+", "", m.group(0)).replace('"cells":', '"cells": '), text)  # one line per list
+    text = re.sub(
+        r'"cells": \[[\d,\s]*\]',
+        lambda m: re.sub(r"\s+", "", m.group(0)).replace('"cells":', '"cells": '),
+        text,
+    )  # one line per list
     (WEB_DATA / "candidates.geojson").write_text(text + "\n")
     print(f"wrote candidates.geojson: {len(feats)} candidates")
 

@@ -8,6 +8,7 @@ plus the Python result for a set of cells, including cells with missing data and
 A test in Node loads web/data/* with score.js and compares (tolerance 1e-4, float32 arithmetic).
 `data_sha256` is the hash of cells.bin + features.bin + meta.json (CRLF turned into LF in the json) the numbers belong to.
 """
+
 import hashlib
 import json
 
@@ -48,7 +49,13 @@ def golden_target(meta):
         del feats["slope"]
     dims = meta["dimensions"]
     weights = {d: round(0.5 + 0.37 * i, 3) for i, d in enumerate(dims)}
-    return {"id": "golden", "name": "Golden test target", "body": "mars", "features": feats, "weights": weights}
+    return {
+        "id": "golden",
+        "name": "Golden test target",
+        "body": "mars",
+        "features": feats,
+        "weights": weights,
+    }
 
 
 def clean(a, nd=6):
@@ -65,26 +72,40 @@ def main():
     present = (~np.isnan(res["dim_scores"])).sum(axis=1)
     picks = {0, n - 1}
     picks |= set(rng.choice(n, N_RANDOM, replace=False).tolist())
-    picks |= set(np.flatnonzero(np.isnan(res["overall"]))[:10].tolist())                # no score
-    picks |= set(np.flatnonzero(np.isnan(grid["values"]).any(axis=1) & ~np.isnan(res["overall"]))[:20].tolist())  # scored with gaps
-    picks |= set(np.flatnonzero(present == 4)[:10].tolist())                              # exactly at the minimum
-    picks |= set(np.flatnonzero(present == len(meta["dimensions"]))[:15].tolist())                 # every dimension present
+    picks |= set(np.flatnonzero(np.isnan(res["overall"]))[:10].tolist())  # no score
+    picks |= set(
+        np.flatnonzero(np.isnan(grid["values"]).any(axis=1) & ~np.isnan(res["overall"]))[:20].tolist()
+    )  # scored with gaps
+    picks |= set(np.flatnonzero(present == 4)[:10].tolist())  # exactly at the minimum
+    picks |= set(np.flatnonzero(present == len(meta["dimensions"]))[:15].tolist())  # every dimension present
     picks = sorted(picks)
-    cases = [{"position": int(i), "cell": int(grid["cells"][i]), "dim_scores": clean(res["dim_scores"][i]),
-              "overall": None if np.isnan(res["overall"][i]) else round(float(res["overall"][i]), 6)} for i in picks]
+    cases = [
+        {
+            "position": int(i),
+            "cell": int(grid["cells"][i]),
+            "dim_scores": clean(res["dim_scores"][i]),
+            "overall": None if np.isnan(res["overall"][i]) else round(float(res["overall"][i]), 6),
+        }
+        for i in picks
+    ]
     out = {
         "note": "Expected output of pipeline/score.py for web/data/* with this target. Compare with web/score.js: "
-                "dimensionScores() then overallScores() with weights in meta.dimensions order; tolerance 1e-4; null = NaN.",
-        "data_sha256": data_hash(), "dimensions": meta["dimensions"], "target": target,
+        "dimensionScores() then overallScores() with weights in meta.dimensions order; tolerance 1e-4; null = NaN.",
+        "data_sha256": data_hash(),
+        "dimensions": meta["dimensions"],
+        "target": target,
         "weights_in_dimension_order": [target["weights"][d] for d in meta["dimensions"]],
-        "directional": res["directional"], "cases": cases,
+        "directional": res["directional"],
+        "cases": cases,
     }
     path = ROOT / "tests" / "golden_scores.json"
     path.parent.mkdir(exist_ok=True)
     path.write_text(json.dumps(out) + "\n")
     scored = sum(c["overall"] is not None for c in cases)
-    print(f"wrote tests/golden_scores.json: {len(cases)} cells ({scored} scored, {len(cases) - scored} unscored), "
-          f"directional {res['directional']}")
+    print(
+        f"wrote tests/golden_scores.json: {len(cases)} cells ({scored} scored, {len(cases) - scored} unscored), "
+        f"directional {res['directional']}"
+    )
 
 
 if __name__ == "__main__":

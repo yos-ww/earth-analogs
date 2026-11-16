@@ -8,6 +8,7 @@ A file is skipped when its local size equals the server's Content-Length (so a t
 is replaced, which earthaccess does not do for the Earthdata products). Downloads go to
 <name>.part and are renamed when complete. About 2.2 GB in total.
 """
+
 import argparse
 import sys
 import urllib.request
@@ -24,12 +25,23 @@ DIV = DIVBASE + "data_derived_prp/"
 # (folder, url). GDAL reads the PDS3 .img files only when the .lbl sits next to them.
 FILES = (
     [("gmted", USGS + n) for n in ("mn30_grd.zip", "sd30_grd.zip")]
-    + [("mola", MOLA + t + ext) for t in ("megt00n000gb", "megt00n180gb", "megt90n000gb", "megt90n180gb") for ext in (".img", ".lbl")]
+    + [
+        ("mola", MOLA + t + ext)
+        for t in ("megt00n000gb", "megt00n180gb", "megt90n000gb", "megt90n180gb")
+        for ext in (".img", ".lbl")
+    ]
     + [("tes", TES + "mgst_9001.zip")]
     + [("lola", LOLA + "cylindrical/img/ldem_64" + e) for e in (".img", ".lbl")]
-    + [("lola", LOLA + "polar/img/" + n + e) for n in ("ldem_75s_240m", "ldem_80s_80m") for e in (".img", ".lbl")]
+    + [
+        ("lola", LOLA + "polar/img/" + n + e)
+        for n in ("ldem_75s_240m", "ldem_80s_80m")
+        for e in (".img", ".lbl")
+    ]
     + [("diviner", DIV + "dlre_prp_south" + e) for e in (".tab", ".xml", ".lbl")]
-    + [("diviner", DIVBASE + "data_derived_gcp/global_cumul_avg_cyl_10n20n_002" + e) for e in (".tab", ".xml", ".lbl")]
+    + [
+        ("diviner", DIVBASE + "data_derived_gcp/global_cumul_avg_cyl_10n20n_002" + e)
+        for e in (".tab", ".xml", ".lbl")
+    ]
 )
 
 
@@ -75,7 +87,9 @@ def main():
             fetched += 1
     if fetched:
         print(f"downloaded {fetched} file(s)")
-    print("all files present and complete" if not bad else f"{bad} file(s) missing, wrong size or unreachable")
+    print(
+        "all files present and complete" if not bad else f"{bad} file(s) missing, wrong size or unreachable"
+    )
     return 1 if (bad and args.check) else 0
 
 

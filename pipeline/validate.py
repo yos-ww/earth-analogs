@@ -14,6 +14,7 @@ Writes web/data/validation.json (docs/contract.md). Rules:
 - Significance: p = share of same-size random barren sets (drawn with probability proportional to
   area) whose median percentile is at least the observed one.
 """
+
 import csv
 import json
 import warnings
@@ -65,7 +66,11 @@ def nearest_land(grid, lat, lon):
                 continue
             flat = (r0 + dr) * NCOLS + (c0 + dc) % NCOLS
             j = np.searchsorted(grid["cells"], flat)
-            if j < len(grid["cells"]) and grid["cells"][j] == flat and (best is None or dr * dr + dc * dc < best[0]):
+            if (
+                j < len(grid["cells"])
+                and grid["cells"][j] == flat
+                and (best is None or dr * dr + dc * dc < best[0])
+            ):
                 best = (dr * dr + dc * dc, int(j))
     return best[1] if best else None
 
@@ -74,10 +79,14 @@ def load_sites(grid):
     sites = []
     for s in csv.DictReader(open(ROOT / "data" / "known_analogs.csv", newline="", encoding="utf-8")):
         tags = {TAG_TO_DIM.get(t.strip(), t.strip()) for t in s["dimensions"].split("|")}
-        sites.append({
-            "name": s["name"], "bodies": {b.strip().lower() for b in s["body"].split("|")},
-            "dims": tags & set(grid["meta"]["dimensions"]), "cell": nearest_land(grid, float(s["lat"]), float(s["lon"])),
-        })
+        sites.append(
+            {
+                "name": s["name"],
+                "bodies": {b.strip().lower() for b in s["body"].split("|")},
+                "dims": tags & set(grid["meta"]["dimensions"]),
+                "cell": nearest_land(grid, float(s["lat"]), float(s["lon"])),
+            }
+        )
     return sites
 
 
@@ -134,8 +143,15 @@ def main():
             continue
         res[t["id"]] = (t, r)
 
-    out = {"barren_ndvi_below": BARREN_NDVI, "n_permutations": N_PERM, "targets": {}, "bodies": {}, "skipped": skipped,
-           "n_sites_total": len(sites), "n_sites_without_land_cell": sum(s["cell"] is None for s in sites)}
+    out = {
+        "barren_ndvi_below": BARREN_NDVI,
+        "n_permutations": N_PERM,
+        "targets": {},
+        "bodies": {},
+        "skipped": skipped,
+        "n_sites_total": len(sites),
+        "n_sites_without_land_cell": sum(s["cell"] is None for s in sites),
+    }
     for tid, (t, r) in res.items():
         body = t["body"]
         own = lambda s: body in s["bodies"]
@@ -150,8 +166,11 @@ def main():
             sc = r["dim_scores"][:, k]
             sub = summarise(sc, sites, barren, w, rng, lambda s, d=d: own(s) and d in s["dims"])
             if sub:
-                per_dim[d] = {"known": sub["known_percentile_median"], "barren": sub["random_barren_median"],
-                              "n_sites": sub["n_sites"]}
+                per_dim[d] = {
+                    "known": sub["known_percentile_median"],
+                    "barren": sub["random_barren_median"],
+                    "n_sites": sub["n_sites"],
+                }
         entry["per_dimension"] = per_dim
         out["targets"][tid] = entry
     for body in ("mars", "moon"):
@@ -173,20 +192,28 @@ def main():
 
 
 def print_report(out):
-    print(f"validation.json written; barren = ndvi_max < {out['barren_ndvi_below']}; "
-          f"{out['n_sites_total']} sites ({out['n_sites_without_land_cell']} without a land cell nearby)")
+    print(
+        f"validation.json written; barren = ndvi_max < {out['barren_ndvi_below']}; "
+        f"{out['n_sites_total']} sites ({out['n_sites_without_land_cell']} without a land cell nearby)"
+    )
     for tid, e in out["targets"].items():
         if "known_percentile_median" not in e:
             print(f"  {tid}: no scored sites")
             continue
-        print(f"  {tid:13s} {e['n_sites']:2d} sites  known {e['known_percentile_median']:.2f}  "
-              f"random land {e['random_land_median']:.2f}  random barren {e['random_barren_median']:.2f}  "
-              f"p {e['p_vs_barren']:.3f}   directional {list(e['directional'])}")
-        print("                per dimension (known / barren): " +
-              ", ".join(f"{d} {v['known']:.2f}/{v['barren']:.2f}" for d, v in e["per_dimension"].items()))
+        print(
+            f"  {tid:13s} {e['n_sites']:2d} sites  known {e['known_percentile_median']:.2f}  "
+            f"random land {e['random_land_median']:.2f}  random barren {e['random_barren_median']:.2f}  "
+            f"p {e['p_vs_barren']:.3f}   directional {list(e['directional'])}"
+        )
+        print(
+            "                per dimension (known / barren): "
+            + ", ".join(f"{d} {v['known']:.2f}/{v['barren']:.2f}" for d, v in e["per_dimension"].items())
+        )
     for b, e in out["bodies"].items():
-        print(f"  BODY {b}: best of {e['targets']}  {e['n_sites']} sites  known {e['known_percentile_median']:.2f}  "
-              f"random barren {e['random_barren_median']:.2f}  p {e['p_vs_barren']:.3f}")
+        print(
+            f"  BODY {b}: best of {e['targets']}  {e['n_sites']} sites  known {e['known_percentile_median']:.2f}  "
+            f"random barren {e['random_barren_median']:.2f}  p {e['p_vs_barren']:.3f}"
+        )
     for tid, why in out["skipped"].items():
         print(f"  skipped {tid}: {why}")
 

@@ -10,6 +10,7 @@ Command line (needs web/data/targets.json):
     ~/mamba/envs/analogs/bin/python -m pipeline.score jezero     # top cells for one target
     ~/mamba/envs/analogs/bin/python -m pipeline.score --validate  # writes web/data/validation.json
 """
+
 import json
 import sys
 import warnings
@@ -89,8 +90,12 @@ def score_target(grid, target, weights=None):
     den = (present * w).sum(axis=1)
     with np.errstate(all="ignore"):
         overall = np.where((present.sum(axis=1) >= MIN_DIMENSIONS) & (den > 0), num / den, np.nan)
-    return {"feature_scores": fs, "dim_scores": dim_scores, "overall": overall.astype(np.float32),
-            "directional": dirs}
+    return {
+        "feature_scores": fs,
+        "dim_scores": dim_scores,
+        "overall": overall.astype(np.float32),
+        "directional": dirs,
+    }
 
 
 def cell_index(grid, lat, lon):
@@ -103,6 +108,7 @@ def cell_index(grid, lat, lon):
 if __name__ == "__main__":
     if "--validate" in sys.argv:  # known analogs vs random land and barren land -> validation.json
         from .validate import main as validate_main
+
         validate_main()
         sys.exit(0)
     grid = load_grid()

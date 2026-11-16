@@ -7,6 +7,7 @@ Usage (from the repo root):
 Each result is saved as data/interim/<name>.npy with shape (720, 1440), NaN = no data
 (land is a bool array). pipeline/export.py turns these into web/data/*.
 """
+
 import glob
 import re
 import sys
@@ -51,6 +52,7 @@ def to_cells(a05, valid05):
 
 # ---------------------------------------------------------------- land mask
 
+
 def land_mask_005():
     """0.05 deg land mask (3600 x 7200, True = land).
 
@@ -76,6 +78,7 @@ def build_land():
 
 
 # --------------------------------------------------------------------- NDVI
+
 
 def build_ndvi_max():
     """Yearly max NDVI: per 0.05 deg pixel the maximum over the 24 months (2022-2023),
@@ -158,8 +161,13 @@ def build_terrain():
         gx = (np.roll(e, -kx, axis=1) - np.roll(e, kx, axis=1)) / (2 * kx * dx)
         sm = m & M[2:] & M[:-2] & np.roll(m, -kx, axis=1) & np.roll(m, kx, axis=1)
         sl = np.degrees(np.arctan(np.hypot(gx, gy)))
-        T = [uniform_filter1d(x, size=w, mode="wrap")[centres] * w for x in ((sl * sm).sum(axis=0), sm.sum(axis=0).astype(np.float64))]
-        slope[r] = np.where(T[1] >= MIN_WINDOW_PX, np.maximum(T[0], 0.0) / np.maximum(T[1], 1), np.nan)  # clip float residue
+        T = [
+            uniform_filter1d(x, size=w, mode="wrap")[centres] * w
+            for x in ((sl * sm).sum(axis=0), sm.sum(axis=0).astype(np.float64))
+        ]
+        slope[r] = np.where(
+            T[1] >= MIN_WINDOW_PX, np.maximum(T[0], 0.0) / np.maximum(T[1], 1), np.nan
+        )  # clip float residue
         if r % 100 == 0:
             print(f"terrain row {r}/{NROWS}")
     _save("roughness", rough)
@@ -204,6 +212,7 @@ MIN_CLIM_MONTHS = 6  # coldest-month night LST needs at least this many calendar
 def _modis_files(product):
     """Map calendar month (1-12) -> list of file paths, from the .AYYYYDDD. stamp."""
     from datetime import date, timedelta
+
     by_month = {m: [] for m in range(1, 13)}
     for f in sorted(glob.glob(str(RAW / product / "*.hdf"))):
         y, doy = re.search(r"\.A(\d{4})(\d{3})\.", f).groups()
@@ -272,10 +281,10 @@ def build_emis_b29():
     med = np.zeros((3600, 7200), np.uint8)
     nvalid = (stack != 0).sum(axis=0)
     for r0 in range(0, 3600, 300):  # sort in row chunks to keep memory low
-        chunk = np.where(stack[:, r0:r0 + 300] == 0, 255, stack[:, r0:r0 + 300])
+        chunk = np.where(stack[:, r0 : r0 + 300] == 0, 255, stack[:, r0 : r0 + 300])
         chunk.sort(axis=0)
-        idx = np.maximum(nvalid[r0:r0 + 300] - 1, 0) // 2  # lower median of the valid months
-        med[r0:r0 + 300] = np.take_along_axis(chunk, idx[None], axis=0)[0]
+        idx = np.maximum(nvalid[r0 : r0 + 300] - 1, 0) // 2  # lower median of the valid months
+        med[r0 : r0 + 300] = np.take_along_axis(chunk, idx[None], axis=0)[0]
     valid = (nvalid > 0) & land05
     _save("emis_b29", to_cells(np.where(valid, med * 0.002 + 0.49, 0.0), valid))
 
@@ -298,16 +307,17 @@ def build_albedo():
     nvalid = (stack != 32767).sum(axis=0)
     med = np.zeros((3600, 7200), np.float32)
     for r0 in range(0, 3600, 300):  # sort in row chunks to keep memory low
-        chunk = np.sort(stack[:, r0:r0 + 300], axis=0)  # fill (32767) sorts last
-        n = nvalid[r0:r0 + 300]
+        chunk = np.sort(stack[:, r0 : r0 + 300], axis=0)  # fill (32767) sorts last
+        n = nvalid[r0 : r0 + 300]
         lo = np.take_along_axis(chunk, (np.maximum(n - 1, 0) // 2)[None], axis=0)[0]
         hi = np.take_along_axis(chunk, (n // 2)[None], axis=0)[0]
-        med[r0:r0 + 300] = (lo.astype(np.float32) + hi) / 2 * 0.001
+        med[r0 : r0 + 300] = (lo.astype(np.float32) + hi) / 2 * 0.001
     valid = (nvalid >= MIN_ALBEDO_DAYS) & land05
     _save("albedo", to_cells(np.where(valid, med, 0.0), valid))
 
 
 # ----------------------------------------------------------------- snow / ice
+
 
 def build_snow_ice():
     """Snow/ice cover fraction (0-1) from MOD10CM monthly snow cover (2021-2023, 35 files).
@@ -357,11 +367,19 @@ def build_aod():
 
 
 BUILDERS = {
-    "land": build_land, "ndvi_max": build_ndvi_max,
-    "roughness": build_terrain, "relief": build_terrain, "slope": build_terrain,  # one pass
-    "precip": build_precip, "emis_b29": build_emis_b29, "albedo": build_albedo,
-    "snow_ice": build_snow_ice, "aod": build_aod,
-    "lst_night_cold": build_lst, "lst_day_warm": build_lst, "lst_range": build_lst,  # one pass
+    "land": build_land,
+    "ndvi_max": build_ndvi_max,
+    "roughness": build_terrain,
+    "relief": build_terrain,
+    "slope": build_terrain,  # one pass
+    "precip": build_precip,
+    "emis_b29": build_emis_b29,
+    "albedo": build_albedo,
+    "snow_ice": build_snow_ice,
+    "aod": build_aod,
+    "lst_night_cold": build_lst,
+    "lst_day_warm": build_lst,
+    "lst_range": build_lst,  # one pass
 }
 
 if __name__ == "__main__":

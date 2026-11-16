@@ -10,6 +10,7 @@ where possible. Needs data/raw/ (Person A's machine):
 4. Candidates: an independent implementation of the scoring rules in docs/contract.md gives the
    scores in candidates.geojson, and the distances and filters hold.
 """
+
 import csv
 import glob
 import json
@@ -66,8 +67,11 @@ def check_orientation():
 # (lat, lon, {feature: (low, high)}) in physical units
 LANDMARKS = {
     "Amazon near Manaus": (-3.0, -60.0, {"ndvi_max": (0.6, 1), "precip": (1500, 4000), "lst_range": (0, 8)}),
-    "Libyan Great Sand Sea": (25.0, 25.5, {"ndvi_max": (0, 0.15), "precip": (0, 30), "emis_b29": (0.7, 0.88),
-                                           "lst_day_warm": (315, 345)}),
+    "Libyan Great Sand Sea": (
+        25.0,
+        25.5,
+        {"ndvi_max": (0, 0.15), "precip": (0, 30), "emis_b29": (0.7, 0.88), "lst_day_warm": (315, 345)},
+    ),
     "Dome C, Antarctica": (-75.1, 123.35, {"snow_ice": (0.95, 1), "albedo": (0.7, 0.9), "relief": (0, 50)}),
     "Mount Everest": (27.99, 86.93, {"relief": (3000, 8000), "roughness": (400, 2000), "slope": (10, 40)}),
     "Bodele Depression": (17.0, 18.0, {"aod": (0.4, 1.5), "ndvi_max": (0, 0.15)}),
@@ -100,7 +104,7 @@ def independent_score(meta, values, target, i):
             continue
         t = np.log1p(e["value"]) if f["transform"] == "log1p" else e["value"]
         d = x - t  # like-for-like for every feature (contract v2)
-        dims.setdefault(f["dimension"], []).append(np.exp(-(d / f["sigma"]) ** 2))
+        dims.setdefault(f["dimension"], []).append(np.exp(-((d / f["sigma"]) ** 2)))
     ds = {d: float(np.mean(v)) for d, v in dims.items()}
     if len(ds) < 4:
         return None, ds

@@ -1,6 +1,7 @@
 """Checks for the target-side terrain code (pipeline/targets.py). No raw data needed:
-    ~/mamba/envs/analogs/bin/python -m pipeline.test_terrain
+~/mamba/envs/analogs/bin/python -m pipeline.test_terrain
 """
+
 import numpy as np
 
 from .targets import terrain_stats

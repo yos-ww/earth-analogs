@@ -6,6 +6,7 @@ stand out from random barren land?
 Uses whatever targets in web/data/targets.json have all their literature values (the spike
 targets: jezero, arcadia, marius_hills). Report only; nothing is written.
 """
+
 import csv
 import json
 
@@ -49,8 +50,15 @@ def regions(grid, mask, score, w, n=6):
         rr, cc = np.nonzero(lab == r)
         idx = [pos[int(a) * NCOLS + int(b)] for a, b in zip(rr, cc)]
         wt = w[idx]
-        out.append((wt.sum(), float(np.average(lat[rr], weights=wt)), float(np.average(lon[cc], weights=wt)),
-                    float(np.mean(score[idx])), len(idx)))
+        out.append(
+            (
+                wt.sum(),
+                float(np.average(lat[rr], weights=wt)),
+                float(np.average(lon[cc], weights=wt)),
+                float(np.mean(score[idx])),
+                len(idx),
+            )
+        )
     return sorted(out, reverse=True)[:n], k
 
 
@@ -94,27 +102,41 @@ def main():
     print(f"(1) top {TOP_FRAC:.0%} of scored land area, overlap by area")
     ks = sorted(tops)
     for i, a in enumerate(ks):
-        for b in ks[i + 1:]:
+        for b in ks[i + 1 :]:
             inter = w[tops[a] & tops[b]].sum()
             union = w[tops[a] | tops[b]].sum()
-            print(f"   {a:13s} vs {b:13s}  Jaccard {inter / union:.2f}   "
-                  f"share of {a}'s top in {b}'s: {inter / w[tops[a]].sum():.2f}")
+            print(
+                f"   {a:13s} vs {b:13s}  Jaccard {inter / union:.2f}   "
+                f"share of {a}'s top in {b}'s: {inter / w[tops[a]].sum():.2f}"
+            )
     for k in ks:
         reg, n = regions(grid, tops[k], res[k]["overall"], w)
         print(f"   {k}: {n} regions, max score {np.nanmax(res[k]['overall']):.3f}; largest:")
         for area, la, lo, sc, nc in reg:
-            print(f"      {area / w[tops[k]].sum():5.1%} of top area, centre {la:6.1f}, {lo:7.1f}, mean score {sc:.3f}, {nc} cells")
+            print(
+                f"      {area / w[tops[k]].sum():5.1%} of top area, centre {la:6.1f}, {lo:7.1f}, mean score {sc:.3f}, {nc} cells"
+            )
     print()
 
     # ---- (2) known analogs against random barren land
     ndvi = grid["values"][:, [f["id"] for f in meta["features"]].index("ndvi_max")]
-    barren = np.nan_to_num(ndvi, nan=1.0) < BARREN_NDVI  # cells without NDVI (Antarctica) are not "barren" here
-    sets = {"Mars": [k for k in ready if ready[k]["body"] == "mars"],
-            "Moon": [k for k in ready if ready[k]["body"] == "moon"]}
+    barren = (
+        np.nan_to_num(ndvi, nan=1.0) < BARREN_NDVI
+    )  # cells without NDVI (Antarctica) are not "barren" here
+    sets = {
+        "Mars": [k for k in ready if ready[k]["body"] == "mars"],
+        "Moon": [k for k in ready if ready[k]["body"] == "moon"],
+    }
     sets["Mars|Moon"] = sets["Mars"] + sets["Moon"]
-    best = {name: np.nanmax(np.stack([res[k]["overall"] for k in ks_]), axis=0) for name, ks_ in sets.items() if ks_}
-    print(f"(2) known analogs vs random barren land (ndvi_max < {BARREN_NDVI}, {barren.sum()} cells); "
-          "site scored against its own body's targets, best of set; baseline uses the same set")
+    best = {
+        name: np.nanmax(np.stack([res[k]["overall"] for k in ks_]), axis=0)
+        for name, ks_ in sets.items()
+        if ks_
+    }
+    print(
+        f"(2) known analogs vs random barren land (ndvi_max < {BARREN_NDVI}, {barren.sum()} cells); "
+        "site scored against its own body's targets, best of set; baseline uses the same set"
+    )
     rows = []
     for s in csv.DictReader(open(ROOT / "data" / "known_analogs.csv", newline="", encoding="utf-8")):
         key = "|".join(sorted(s["body"].split("|"), key={"Mars": 0, "Moon": 1}.get))
@@ -125,9 +147,18 @@ def main():
         sc = best[key][i]
         bar = best[key][barren & ~np.isnan(best[key])]
         allv = best[key][~np.isnan(best[key])]
-        rows.append((s["name"], key, s["dimensions"], float(sc),
-                     weighted_rank(bar, w[barren & ~np.isnan(best[key])], sc),
-                     weighted_rank(allv, w[~np.isnan(best[key])], sc), dist, i))
+        rows.append(
+            (
+                s["name"],
+                key,
+                s["dimensions"],
+                float(sc),
+                weighted_rank(bar, w[barren & ~np.isnan(best[key])], sc),
+                weighted_rank(allv, w[~np.isnan(best[key])], sc),
+                dist,
+                i,
+            )
+        )
     print(f"   {'site':38s}{'body':10s}{'tags':26s}{'score':>7s}{'pct barren':>11s}{'pct land':>9s}")
     for n, b, d, sc, pb, pa, dist, _i in sorted(rows, key=lambda r: -(r[4] or -1)):
         flag = " (nearest land cell %.1f cells away)" % dist if dist else ""
@@ -142,8 +173,7 @@ def main():
     def summarise(label, keep):
         """Median percentile of the tagged sites inside the pool `barren & keep`, against
         same-size random sets drawn from that pool with probability proportional to area."""
-        sel = [r for r in rows if r[3] is not None and SPIKE_DIMS & set(r[2].split("|"))
-               and keep[r[7]]]
+        sel = [r for r in rows if r[3] is not None and SPIKE_DIMS & set(r[2].split("|")) and keep[r[7]]]
         pcts, pools = [], {}
         for r in sel:
             pool = pools.setdefault(r[1], np.flatnonzero(barren & keep & ~np.isnan(best[r[1]])))
@@ -157,13 +187,16 @@ def main():
                 idx = rng.choice(pool, p=w[pool] / w[pool].sum())
                 draw.append(weighted_rank(best[r[1]][pool], w[pool], best[r[1]][idx]))
             sim.append(np.median(draw))
-        print(f"   {label}: {len(sel)} tagged sites, median percentile {obs:.2f}; random barren sets "
-              f"median {np.median(sim):.2f}, 95th pct {np.percentile(sim, 95):.2f}; "
-              f"p(random >= observed) = {np.mean(np.array(sim) >= obs):.3f}")
+        print(
+            f"   {label}: {len(sel)} tagged sites, median percentile {obs:.2f}; random barren sets "
+            f"median {np.median(sim):.2f}, 95th pct {np.percentile(sim, 95):.2f}; "
+            f"p(random >= observed) = {np.mean(np.array(sim) >= obs):.3f}"
+        )
 
     print()
     summarise("all barren land      ", np.ones(len(cells), bool))
     summarise("excluding Antarctica ", lat_of > -60)
+
 
 if __name__ == "__main__":
     main()

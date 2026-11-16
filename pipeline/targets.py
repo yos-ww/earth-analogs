@@ -12,6 +12,7 @@ equirectangular grids the east-west half-width in projected metres is HALF_M / c
 polar LOLA grid is polar stereographic, so its window is a square in projected metres
 (review decision 6). Heights are DN * scale + offset read from the label through GDAL.
 """
+
 import csv
 
 import numpy as np
@@ -73,16 +74,16 @@ def terrain_stats(h, px, lat, polar):
     cosl = 1.0 if polar else max(np.cos(np.radians(lat)), 0.05)
     kx = 1 if polar else max(1, int(round(1 / cosl)))
     gy = (g[2:, 1:-1] - g[:-2, 1:-1]) / (2 * step)
-    gx = (g[1:-1, 2 * kx:] - g[1:-1, :-2 * kx]) / (2 * kx * step * cosl)
+    gx = (g[1:-1, 2 * kx :] - g[1:-1, : -2 * kx]) / (2 * kx * step * cosl)
     n = min(gx.shape[1], gy.shape[1])
     off = (gy.shape[1] - n) // 2  # centre the two gradient grids on the same pixels
-    gx_c = gx[:, (gx.shape[1] - n) // 2:(gx.shape[1] - n) // 2 + n]
-    slope = np.degrees(np.arctan(np.hypot(gx_c, gy[:, off:off + n])))
+    gx_c = gx[:, (gx.shape[1] - n) // 2 : (gx.shape[1] - n) // 2 + n]
+    slope = np.degrees(np.arctan(np.hypot(gx_c, gy[:, off : off + n])))
     return float(np.nanstd(g)), float(np.nanmax(g) - np.nanmin(g)), float(np.nanmean(slope)), f, g.size
 
 
 def target_terrain(body, lat, lon):
-    for stem in (MARS_TILES if body == "mars" else MOON_GRIDS):
+    for stem in MARS_TILES if body == "mars" else MOON_GRIDS:
         out = window_heights(stem, lat, lon)
         if out is not None:
             h, (scale, offset, px, polar) = out
@@ -98,19 +99,28 @@ BASALT_REFERENCES = {"Holuhraun": (64.87, -16.83), "Black Point lava flow": (35.
 
 def basalt_emissivity_rows():
     emis = np.load(INTERIM / "emis_b29.npy")
-    vals = {n: float(emis[int((90 - la) / 0.25), int((lo + 180) / 0.25)]) for n, (la, lo) in BASALT_REFERENCES.items()}
+    vals = {
+        n: float(emis[int((90 - la) / 0.25), int((lo + 180) / 0.25)])
+        for n, (la, lo) in BASALT_REFERENCES.items()
+    }
     value = round(float(np.mean(list(vals.values()))), 3)
     detail = "; ".join(f"{n} {v:.3f}" for n, v in vals.items())
     rows = []
     for r in csv.DictReader(open(ROOT / "data" / "targets_literature.csv", newline="", encoding="utf-8")):
         if r["feature_id"] == "emis_b29" and "basalt proxy" in r["value_kind"]:
-            rows.append({
-                "target_id": r["target_id"], "feature_id": "emis_b29", "value": f"{value}", "unit": "-",
-                "value_kind": "basaltic surface as MODIS band 29 (8.55 um) sees Earth basalt: mean of two barren reference flows",
-                "source": f"Computed by pipeline/targets.py from MOD11C3 Emis_29 median 2021-2023 at {detail}; "
-                          f"target surface is basaltic per B's source note",
-                "source_url": "", "status": "computed",
-            })
+            rows.append(
+                {
+                    "target_id": r["target_id"],
+                    "feature_id": "emis_b29",
+                    "value": f"{value}",
+                    "unit": "-",
+                    "value_kind": "basaltic surface as MODIS band 29 (8.55 um) sees Earth basalt: mean of two barren reference flows",
+                    "source": f"Computed by pipeline/targets.py from MOD11C3 Emis_29 median 2021-2023 at {detail}; "
+                    f"target surface is basaltic per B's source note",
+                    "source_url": "",
+                    "status": "computed",
+                }
+            )
     return rows
 
 
@@ -123,11 +133,17 @@ MOON_R_KM = 1737.4
 def diviner_rows():
     import pandas as pd
 
-    t = next(r for r in csv.DictReader(open(ROOT / "data" / "targets.csv", newline="", encoding="utf-8"))
-             if r["target_id"] == "shackleton")
+    t = next(
+        r
+        for r in csv.DictReader(open(ROOT / "data" / "targets.csv", newline="", encoding="utf-8"))
+        if r["target_id"] == "shackleton"
+    )
     lat0, lon0 = float(t["lat"]), float(t["lon"])
-    d = pd.read_csv(RAW / "diviner" / "dlre_prp_south.tab", usecols=["tri_clon", "tri_clat", "temp_avg", "temp_max"],
-                    skipinitialspace=True)
+    d = pd.read_csv(
+        RAW / "diviner" / "dlre_prp_south.tab",
+        usecols=["tri_clon", "tri_clat", "temp_avg", "temp_max"],
+        skipinitialspace=True,
+    )
     d.columns = [c.strip() for c in d.columns]
     d = d[d.tri_clat < -85]
     lon = ((d.tri_clon.values + 180) % 360) - 180
@@ -135,20 +151,36 @@ def diviner_rows():
     a = np.sin((p2 - p1) / 2) ** 2 + np.cos(p1) * np.cos(p2) * np.sin(np.radians(lon - lon0) / 2) ** 2
     near = d[2 * MOON_R_KM * np.arcsin(np.sqrt(a)) <= HALF_M / 1000]
     day = float(np.median(near.temp_max))
-    print(f"shackleton    Diviner: {len(near)} triangles within +-{HALF_M / 1000:.1f} km; temp_max median {day:.1f} K "
-          f"(5-95%: {np.percentile(near.temp_max, 5):.0f}-{np.percentile(near.temp_max, 95):.0f}), "
-          f"temp_avg median {np.median(near.temp_avg):.1f} K")
+    print(
+        f"shackleton    Diviner: {len(near)} triangles within +-{HALF_M / 1000:.1f} km; temp_max median {day:.1f} K "
+        f"(5-95%: {np.percentile(near.temp_max, 5):.0f}-{np.percentile(near.temp_max, 95):.0f}), "
+        f"temp_avg median {np.median(near.temp_avg):.1f} K"
+    )
     src = "Computed by pipeline/targets.py from LRO Diviner PRP south (dlre_prp_south.tab)"
     return [
-        {"target_id": "shackleton", "feature_id": "lst_day_warm", "value": f"{day:.1f}", "unit": "K",
-         "value_kind": f"ANNUAL MAXIMUM surface temperature (Diviner temp_max), median of {len(near)} triangles within "
-                       f"+-{HALF_M / 1000:.1f} km; not a warmest-month mean at 10:30 local (undefined at the pole), "
-                       f"so an upper bound against Earth's monthly-mean convention",
-         "source": src, "source_url": "", "status": "computed"},
-        {"target_id": "shackleton", "feature_id": "lst_range", "value": "na", "unit": "K",
-         "value_kind": "no day-night range at the pole: the Diviner PRP table gives only an annual maximum (surface) and "
-                       "an annual mean (2 cm), no day or night values",
-         "source": src, "source_url": "", "status": "computed"},
+        {
+            "target_id": "shackleton",
+            "feature_id": "lst_day_warm",
+            "value": f"{day:.1f}",
+            "unit": "K",
+            "value_kind": f"ANNUAL MAXIMUM surface temperature (Diviner temp_max), median of {len(near)} triangles within "
+            f"+-{HALF_M / 1000:.1f} km; not a warmest-month mean at 10:30 local (undefined at the pole), "
+            f"so an upper bound against Earth's monthly-mean convention",
+            "source": src,
+            "source_url": "",
+            "status": "computed",
+        },
+        {
+            "target_id": "shackleton",
+            "feature_id": "lst_range",
+            "value": "na",
+            "unit": "K",
+            "value_kind": "no day-night range at the pole: the Diviner PRP table gives only an annual maximum (surface) and "
+            "an annual mean (2 cm), no day or night values",
+            "source": src,
+            "source_url": "",
+            "status": "computed",
+        },
     ]
 
 
@@ -164,12 +196,18 @@ TERRA_DAY_H, TERRA_NIGHT_H = 10.5, 22.5
 def diviner_gcp_rows(target_id="marius_hills"):
     import pandas as pd
 
-    t = next(r for r in csv.DictReader(open(ROOT / "data" / "targets.csv", newline="", encoding="utf-8"))
-             if r["target_id"] == target_id)
+    t = next(
+        r
+        for r in csv.DictReader(open(ROOT / "data" / "targets.csv", newline="", encoding="utf-8"))
+        if r["target_id"] == target_id
+    )
     lat0, lon0 = float(t["lat"]), float(t["lon"])
     assert 10 <= lat0 < 20, "only the 10N-20N table is on disk"
-    d = pd.read_csv(RAW / "diviner" / "global_cumul_avg_cyl_10n20n_002.tab", usecols=["clon", "clat", "ltim", "tbol"],
-                    skipinitialspace=True)
+    d = pd.read_csv(
+        RAW / "diviner" / "global_cumul_avg_cyl_10n20n_002.tab",
+        usecols=["clon", "clat", "ltim", "tbol"],
+        skipinitialspace=True,
+    )
     d.columns = [c.strip() for c in d.columns]
     d = d[d.tbol > -9000]
     half_lat = HALF_M / (MOON_R_KM * 1000 * np.pi / 180)  # the same +-13.9 km window as the terrain
@@ -179,21 +217,49 @@ def diviner_gcp_rows(target_id="marius_hills"):
     prof = w.groupby("ltim").tbol.mean().sort_index()
     day = float(np.interp(TERRA_DAY_H, prof.index.values, prof.values))
     night = float(np.interp(TERRA_NIGHT_H, prof.index.values, prof.values))
-    print(f"{target_id:13s} Diviner GCP: {n_tiles} tiles, {len(prof)} local-time bins with data; "
-          f"tbol {day:.1f} K at {TERRA_DAY_H} h, {night:.1f} K at {TERRA_NIGHT_H} h")
-    src = ("Computed by pipeline/targets.py from LRO Diviner global cumulative averages (PDS "
-           "urn:nasa:pds:lro_diviner_derived1, global_cumul_avg_cyl_10n20n_002; J.-P. Williams)")
-    how = (f"mission-average bolometric temperature of {n_tiles} 0.5-degree tile(s) within +-{HALF_M / 1000:.1f} km, "
-           f"interpolated across empty local-time bins; no seasons in the table")
+    print(
+        f"{target_id:13s} Diviner GCP: {n_tiles} tiles, {len(prof)} local-time bins with data; "
+        f"tbol {day:.1f} K at {TERRA_DAY_H} h, {night:.1f} K at {TERRA_NIGHT_H} h"
+    )
+    src = (
+        "Computed by pipeline/targets.py from LRO Diviner global cumulative averages (PDS "
+        "urn:nasa:pds:lro_diviner_derived1, global_cumul_avg_cyl_10n20n_002; J.-P. Williams)"
+    )
+    how = (
+        f"mission-average bolometric temperature of {n_tiles} 0.5-degree tile(s) within +-{HALF_M / 1000:.1f} km, "
+        f"interpolated across empty local-time bins; no seasons in the table"
+    )
     return [
-        {"target_id": target_id, "feature_id": "lst_day_warm", "value": f"{day:.1f}", "unit": "K",
-         "value_kind": f"{how}; at {TERRA_DAY_H:g} h local time (Terra day)", "source": src, "source_url": "", "status": "computed"},
-        {"target_id": target_id, "feature_id": "lst_night_cold", "value": f"{night:.1f}", "unit": "K",
-         "value_kind": f"{how}; at {TERRA_NIGHT_H:g} h local time (Terra night), not the pre-dawn minimum", "source": src,
-         "source_url": "", "status": "computed"},
-        {"target_id": target_id, "feature_id": "lst_range", "value": f"{day - night:.1f}", "unit": "K",
-         "value_kind": f"{how}; value at {TERRA_DAY_H:g} h minus value at {TERRA_NIGHT_H:g} h", "source": src,
-         "source_url": "", "status": "computed"},
+        {
+            "target_id": target_id,
+            "feature_id": "lst_day_warm",
+            "value": f"{day:.1f}",
+            "unit": "K",
+            "value_kind": f"{how}; at {TERRA_DAY_H:g} h local time (Terra day)",
+            "source": src,
+            "source_url": "",
+            "status": "computed",
+        },
+        {
+            "target_id": target_id,
+            "feature_id": "lst_night_cold",
+            "value": f"{night:.1f}",
+            "unit": "K",
+            "value_kind": f"{how}; at {TERRA_NIGHT_H:g} h local time (Terra night), not the pre-dawn minimum",
+            "source": src,
+            "source_url": "",
+            "status": "computed",
+        },
+        {
+            "target_id": target_id,
+            "feature_id": "lst_range",
+            "value": f"{day - night:.1f}",
+            "unit": "K",
+            "value_kind": f"{how}; value at {TERRA_DAY_H:g} h minus value at {TERRA_NIGHT_H:g} h",
+            "source": src,
+            "source_url": "",
+            "status": "computed",
+        },
     ]
 
 
@@ -203,16 +269,24 @@ def main():
     for t in csv.DictReader(open(ROOT / "data" / "targets.csv", newline="", encoding="utf-8")):
         lat, lon = float(t["lat"]), float(t["lon"])
         (rough, relief, slope, f, n), grid, px = target_terrain(t["body"], lat, lon)
-        print(f"{t['target_id']:13s} {t['body']:5s} {lat:8.3f} {lon:9.3f}  {grid:15s} pixel {px:4.0f} m x{f} avg  "
-              f"{n:5d} px  roughness {rough:7.1f} m  relief {relief:7.0f} m  slope {slope:5.2f} deg")
+        print(
+            f"{t['target_id']:13s} {t['body']:5s} {lat:8.3f} {lon:9.3f}  {grid:15s} pixel {px:4.0f} m x{f} avg  "
+            f"{n:5d} px  roughness {rough:7.1f} m  relief {relief:7.0f} m  slope {slope:5.2f} deg"
+        )
         src = "MOLA MEGDR 64 px/deg" if t["body"] == "mars" else "LOLA GDR " + grid
         for fid, value in (("roughness", rough), ("relief", relief), ("slope", slope)):
-            rows.append({
-                "target_id": t["target_id"], "feature_id": fid, "value": f"{value:.2f}" if fid == "slope" else f"{value:.1f}",
-                "unit": units[fid],
-                "value_kind": f"{fid} in a +-{HALF_M / 1000:.1f} km window after averaging to ~926 m ({n} px)",
-                "source": f"Computed by pipeline/targets.py from {src}", "source_url": "", "status": "computed",
-            })
+            rows.append(
+                {
+                    "target_id": t["target_id"],
+                    "feature_id": fid,
+                    "value": f"{value:.2f}" if fid == "slope" else f"{value:.1f}",
+                    "unit": units[fid],
+                    "value_kind": f"{fid} in a +-{HALF_M / 1000:.1f} km window after averaging to ~926 m ({n} px)",
+                    "source": f"Computed by pipeline/targets.py from {src}",
+                    "source_url": "",
+                    "status": "computed",
+                }
+            )
     out = ROOT / "data" / "targets_computed.csv"
     with open(out, "w", newline="", encoding="utf-8") as f:
         w = csv.DictWriter(f, fieldnames=list(rows[0]))

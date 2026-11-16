@@ -4,6 +4,7 @@ Run once after `earthaccess` has saved your Earthdata login (~/.netrc):
     micromamba run -n analogs python setup/download_earthdata.py
 Re-running skips files that are already complete.
 """
+
 import re
 from datetime import date, timedelta
 from pathlib import Path
@@ -14,11 +15,11 @@ ROOT = Path(__file__).resolve().parents[1] / "data" / "raw"
 
 # (short_name, version, temporal range, folder)
 DATASETS = [
-    ("MOD10CM", "61", ("2021-01-01", "2023-12-31"), "MOD10CM"),        # snow, ~45 MB
-    ("GPM_3IMERGM", "07", ("2021-01-01", "2023-12-31"), "IMERG"),      # rainfall, ~0.6 GB
-    ("MOD11C3", "061", ("2021-01-01", "2023-12-31"), "MOD11C3"),       # land temperature, ~2.4 GB
-    ("MOD13C2", "061", ("2022-01-01", "2023-12-31"), "MOD13C2"),       # vegetation, ~2.4 GB
-    ("MOD08_M3", "6.1", ("2023-01-01", "2023-12-31"), "MOD08_M3"),     # dust/aerosol, ~4.2 GB
+    ("MOD10CM", "61", ("2021-01-01", "2023-12-31"), "MOD10CM"),  # snow, ~45 MB
+    ("GPM_3IMERGM", "07", ("2021-01-01", "2023-12-31"), "IMERG"),  # rainfall, ~0.6 GB
+    ("MOD11C3", "061", ("2021-01-01", "2023-12-31"), "MOD11C3"),  # land temperature, ~2.4 GB
+    ("MOD13C2", "061", ("2022-01-01", "2023-12-31"), "MOD13C2"),  # vegetation, ~2.4 GB
+    ("MOD08_M3", "6.1", ("2023-01-01", "2023-12-31"), "MOD08_M3"),  # dust/aerosol, ~4.2 GB
 ]
 # Albedo is daily (74 GB/year), so take only the 15th of each month (~2 GB).
 ALBEDO_DAYS = [f"2023-{m:02d}-15" for m in range(1, 13)]

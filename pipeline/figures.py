@@ -11,6 +11,7 @@ Writes docs/figures/*.png:
 The numbers are recomputed with the same functions as validate.py and sensitivity.py; the script
 stops if they differ from web/data/validation.json, so a figure can never disagree with the data.
 """
+
 import copy
 import csv
 import json
@@ -43,12 +44,24 @@ BARREN = "#b5b3ab"  # neutral grey for the baseline
 MARKERS = {"jezero": "o", "gale": "s", "utopia": "^", "arcadia": "D", "shackleton": "o", "marius_hills": "s"}
 DOHA = (25.29, 51.53)
 
-plt.rcParams.update({
-    "figure.facecolor": SURFACE, "axes.facecolor": SURFACE, "savefig.facecolor": SURFACE,
-    "axes.edgecolor": AXIS, "axes.labelcolor": INK2, "xtick.color": MUTED, "ytick.color": MUTED,
-    "text.color": INK, "font.size": 10, "axes.spines.top": False, "axes.spines.right": False,
-    "axes.titleweight": "bold", "axes.titlesize": 11, "axes.titlelocation": "left",
-})
+plt.rcParams.update(
+    {
+        "figure.facecolor": SURFACE,
+        "axes.facecolor": SURFACE,
+        "savefig.facecolor": SURFACE,
+        "axes.edgecolor": AXIS,
+        "axes.labelcolor": INK2,
+        "xtick.color": MUTED,
+        "ytick.color": MUTED,
+        "text.color": INK,
+        "font.size": 10,
+        "axes.spines.top": False,
+        "axes.spines.right": False,
+        "axes.titleweight": "bold",
+        "axes.titlesize": 11,
+        "axes.titlelocation": "left",
+    }
+)
 
 
 def setup():
@@ -64,7 +77,9 @@ def setup():
 def best_of_body(grid, targets, body):
     with warnings.catch_warnings():
         warnings.simplefilter("ignore", RuntimeWarning)
-        return np.nanmax(np.stack([score_target(grid, t)["overall"] for t in targets if t["body"] == body]), axis=0)
+        return np.nanmax(
+            np.stack([score_target(grid, t)["overall"] for t in targets if t["body"] == body]), axis=0
+        )
 
 
 def fig_validation(grid, w, targets, ndvi, sites, val):
@@ -72,8 +87,14 @@ def fig_validation(grid, w, targets, ndvi, sites, val):
     fig, axes = plt.subplots(2, 1, figsize=(8, 6.2), sharex=True)
     for ax, body in zip(axes, ("mars", "moon")):
         score = best_of_body(grid, targets, body)
-        summ = summarise(score, sites, barren, w, np.random.default_rng(1),
-                         lambda s: body in s["bodies"] and bool(s["dims"]))
+        summ = summarise(
+            score,
+            sites,
+            barren,
+            w,
+            np.random.default_rng(1),
+            lambda s: body in s["bodies"] and bool(s["dims"]),
+        )
         ref = val["bodies"][body]
         for k in ("known_percentile_median", "random_barren_median", "n_sites"):
             assert abs(summ[k] - ref[k]) < 1e-9, (body, k, summ[k], ref[k])
@@ -82,14 +103,29 @@ def fig_validation(grid, w, targets, ndvi, sites, val):
         bar = np.flatnonzero(~np.isnan(score) & barren)
         bp = rank_all(rank, bar)
         assert abs(weighted_median(bp, w[bar]) - ref["random_barren_median"]) < 1e-3
-        ax.hist(bp, bins=np.linspace(0, 1, 41), weights=w[bar] / w[bar].sum(), color=BARREN,
-                edgecolor=SURFACE, linewidth=1.0, label="random barren land (area share)")
+        ax.hist(
+            bp,
+            bins=np.linspace(0, 1, 41),
+            weights=w[bar] / w[bar].sum(),
+            color=BARREN,
+            edgecolor=SURFACE,
+            linewidth=1.0,
+            label="random barren land (area share)",
+        )
         top = ax.get_ylim()[1]
         names = list(summ["sites"])
         pct = np.array([summ["sites"][n] for n in names])
         y = top * (1.12 + 0.18 * (np.arange(len(pct)) % 3))
-        ax.scatter(pct, y, s=34, color=KNOWN, edgecolor=SURFACE, linewidth=1.2, zorder=3,
-                   label=f"known {body.capitalize()} analog sites ({len(pct)})")
+        ax.scatter(
+            pct,
+            y,
+            s=34,
+            color=KNOWN,
+            edgecolor=SURFACE,
+            linewidth=1.2,
+            zorder=3,
+            label=f"known {body.capitalize()} analog sites ({len(pct)})",
+        )
         km, bm = ref["known_percentile_median"], ref["random_barren_median"]
         ax.axvline(km, color=KNOWN, linewidth=2, zorder=2)
         ax.axvline(bm, color=MUTED, linewidth=2, linestyle=(0, (4, 3)), zorder=2)
@@ -97,20 +133,50 @@ def fig_validation(grid, w, targets, ndvi, sites, val):
         ax.set_yticks([])
         ax.spines["left"].set_visible(False)
         for j, i in enumerate(np.argsort(pct)[:3]):
-            ax.annotate(short_site(names[i]), (pct[i], y[i]), xytext=(0, 8 if j % 2 == 0 else -14),
-                        textcoords="offset points", ha="center", fontsize=8, color=INK2)
+            ax.annotate(
+                short_site(names[i]),
+                (pct[i], y[i]),
+                xytext=(0, 8 if j % 2 == 0 else -14),
+                textcoords="offset points",
+                ha="center",
+                fontsize=8,
+                color=INK2,
+            )
         p = ref["p_vs_barren"]
         nt = len(ref["targets"])
-        ax.set_title(f"{body.capitalize()}: known sites median {km:.2f}, random barren land {bm:.2f}, "
-                     f"p = {p:.3f}  (best of {nt} targets)", fontsize=10)
-        ax.text(0.0, 1.0, f"{len(pct)} known sites (dots, blue line = median)", transform=ax.transAxes,
-                fontsize=8, color=INK2, va="top")
-    axes[1].set_xlabel("Percentile among all of Earth's land (area-weighted); 1.0 = better match than all land")
+        ax.set_title(
+            f"{body.capitalize()}: known sites median {km:.2f}, random barren land {bm:.2f}, "
+            f"p = {p:.3f}  (best of {nt} targets)",
+            fontsize=10,
+        )
+        ax.text(
+            0.0,
+            1.0,
+            f"{len(pct)} known sites (dots, blue line = median)",
+            transform=ax.transAxes,
+            fontsize=8,
+            color=INK2,
+            va="top",
+        )
+    axes[1].set_xlabel(
+        "Percentile among all of Earth's land (area-weighted); 1.0 = better match than all land"
+    )
     axes[1].set_xlim(0, 1.02)
-    fig.suptitle("Do scientists' analog sites score higher than plain barren land?", x=0.01, ha="left",
-                 fontweight="bold", fontsize=12)
-    fig.text(0.01, 0.005, "Grey bars: random barren land (max NDVI < 0.15), share of its area; dashed line = its median. "
-             "p: share of 20,000 random barren sets that do as well.", fontsize=7.5, color=MUTED)
+    fig.suptitle(
+        "Do scientists' analog sites score higher than plain barren land?",
+        x=0.01,
+        ha="left",
+        fontweight="bold",
+        fontsize=12,
+    )
+    fig.text(
+        0.01,
+        0.005,
+        "Grey bars: random barren land (max NDVI < 0.15), share of its area; dashed line = its median. "
+        "p: share of 20,000 random barren sets that do as well.",
+        fontsize=7.5,
+        color=MUTED,
+    )
     fig.tight_layout(rect=(0, 0.02, 1, 0.97))
     fig.savefig(OUT / "validation.png", dpi=200)
     plt.close(fig)
@@ -119,18 +185,32 @@ def fig_validation(grid, w, targets, ndvi, sites, val):
 def fig_sensitivity(grid, w, targets, ndvi, sites, val):
     meta = grid["meta"]
     dims = meta["dimensions"]
-    country = {r["name"]: r["country"] for r in
-               csv.DictReader(open(ROOT / "data" / "known_analogs.csv", newline="", encoding="utf-8"))}
+    country = {
+        r["name"]: r["country"]
+        for r in csv.DictReader(open(ROOT / "data" / "known_analogs.csv", newline="", encoding="utf-8"))
+    }
     usa = {n for n, c in country.items() if c == "USA"}
     barren = ndvi < BARREN_NDVI
-    rows = [("Design (barren = NDVI < 0.15, equal weights)", body_result(grid, targets, sites, barren, w, "mars"))]
+    rows = [
+        ("Design (barren = NDVI < 0.15, equal weights)", body_result(grid, targets, sites, barren, w, "mars"))
+    ]
     ref = val["bodies"]["mars"]
     assert abs(rows[0][1]["known_percentile_median"] - ref["known_percentile_median"]) < 1e-9
     for thr in (0.10, 0.20, 0.30):
         rows.append((f"Barren = NDVI < {thr:.2f}", body_result(grid, targets, sites, ndvi < thr, w, "mars")))
-    for label, drop in (("Without the 4 Atacama sites", ATACAMA), ("Without the USA sites", usa),
-                        ("Without the 4 polar sites", POLAR)):
-        rows.append((label, body_result(grid, targets, sites, barren, w, "mars", keep=lambda s, d=drop: s["name"] not in d)))
+    for label, drop in (
+        ("Without the 4 Atacama sites", ATACAMA),
+        ("Without the USA sites", usa),
+        ("Without the 4 polar sites", POLAR),
+    ):
+        rows.append(
+            (
+                label,
+                body_result(
+                    grid, targets, sites, barren, w, "mars", keep=lambda s, d=drop: s["name"] not in d
+                ),
+            )
+        )
     for d in dims:
         wts = {x: 1.0 for x in dims}
         wts[d] = 0.0
@@ -150,8 +230,15 @@ def fig_sensitivity(grid, w, targets, ndvi, sites, val):
         ax.plot([b, k], [yy, yy], color=AXIS, linewidth=2, zorder=1)
         ax.scatter([b], [yy], s=48, color=BARREN, edgecolor=SURFACE, linewidth=1.2, zorder=2)
         ax.scatter([k], [yy], s=48, color=KNOWN, edgecolor=SURFACE, linewidth=1.2, zorder=3)
-        ax.text(1.005, yy, f"p = {p:.3f}" + ("" if p < 0.05 else "  (≥ 0.05)"), va="center", fontsize=8.5,
-                color=INK if p < 0.05 else MUTED, transform=ax.get_yaxis_transform())
+        ax.text(
+            1.005,
+            yy,
+            f"p = {p:.3f}" + ("" if p < 0.05 else "  (≥ 0.05)"),
+            va="center",
+            fontsize=8.5,
+            color=INK if p < 0.05 else MUTED,
+            transform=ax.get_yaxis_transform(),
+        )
     ax.set_yticks(range(n))
     ax.set_yticklabels([lab for lab, _ in rows][::-1], fontsize=8.5, color=INK2)
     ax.set_xlim(0.3, 1.0)
@@ -163,11 +250,24 @@ def fig_sensitivity(grid, w, targets, ndvi, sites, val):
     ax.scatter([], [], s=48, color=KNOWN, label="known Mars analog sites")
     ax.scatter([], [], s=48, color=BARREN, label="random barren land")
     ax.legend(loc="upper left", frameon=False, fontsize=8.5, labelcolor=INK2)
-    fig.suptitle("Mars validation under changed choices", x=0.01, y=0.985, ha="left", fontweight="bold", fontsize=12)
-    fig.text(0.01, 0.925, "Known sites stay above barren land in every variant; whether p < 0.05 depends on the choice.",
-             fontsize=9, color=INK2)
-    fig.text(0.01, 0.005, "Same runs as python -m pipeline.sensitivity. p is a Monte Carlo estimate from 20,000 draws "
-             "(design row 0.028 here, 0.024 in validation.json:\ndifferent random draws).", fontsize=7.5, color=MUTED)
+    fig.suptitle(
+        "Mars validation under changed choices", x=0.01, y=0.985, ha="left", fontweight="bold", fontsize=12
+    )
+    fig.text(
+        0.01,
+        0.925,
+        "Known sites stay above barren land in every variant; whether p < 0.05 depends on the choice.",
+        fontsize=9,
+        color=INK2,
+    )
+    fig.text(
+        0.01,
+        0.005,
+        "Same runs as python -m pipeline.sensitivity. p is a Monte Carlo estimate from 20,000 draws "
+        "(design row 0.028 here, 0.024 in validation.json:\ndifferent random draws).",
+        fontsize=7.5,
+        color=MUTED,
+    )
     fig.tight_layout(rect=(0, 0.04, 0.86, 0.91))
     fig.savefig(OUT / "sensitivity.png", dpi=200)
     plt.close(fig)
@@ -183,12 +283,25 @@ def land_image(grid):
 def draw_map(ax, grid, cands, known, extent, label_ranks=False, avoid=()):
     lon0, lon1, lat0, lat1 = extent
     land = np.ma.masked_where(~land_image(grid), np.ones((NROWS, NCOLS)))
-    ax.imshow(land, extent=(-180, 180, -90, 90), cmap=matplotlib.colors.ListedColormap([LAND]),
-              interpolation="nearest", zorder=0)
+    ax.imshow(
+        land,
+        extent=(-180, 180, -90, 90),
+        cmap=matplotlib.colors.ListedColormap([LAND]),
+        interpolation="nearest",
+        zorder=0,
+    )
     inside = lambda lo, la: lon0 <= lo <= lon1 and lat0 <= la <= lat1  # noqa: E731
     kx = [k for k in known if inside(k[1], k[0])]
-    ax.scatter([k[1] for k in kx], [k[0] for k in kx], marker="x", s=22, color=MUTED, linewidth=1.2, zorder=2,
-               label="known analog site (our list of 37)")
+    ax.scatter(
+        [k[1] for k in kx],
+        [k[0] for k in kx],
+        marker="x",
+        s=22,
+        color=MUTED,
+        linewidth=1.2,
+        zorder=2,
+        label="known analog site (our list of 37)",
+    )
     labels = []
     tname = {t["id"]: t["name"] for t in json.loads((WEB_DATA / "targets.json").read_text())["targets"]}
     tbody = {t["id"]: t["body"] for t in json.loads((WEB_DATA / "targets.json").read_text())["targets"]}
@@ -196,10 +309,23 @@ def draw_map(ax, grid, cands, known, extent, label_ranks=False, avoid=()):
         pts = [c for c in cands if c["properties"]["target_id"] == tid]
         xs = [c["geometry"]["coordinates"][0] for c in pts]
         ys = [c["geometry"]["coordinates"][1] for c in pts]
-        ax.scatter(xs, ys, marker=MARKERS[tid], s=46, color=BODY_COLOR[tbody[tid]], edgecolor=SURFACE,
-                   linewidth=1.2, zorder=3, label=f"{tname[tid].split(' (')[0]} ({tbody[tid].capitalize()})")
+        ax.scatter(
+            xs,
+            ys,
+            marker=MARKERS[tid],
+            s=46,
+            color=BODY_COLOR[tbody[tid]],
+            edgecolor=SURFACE,
+            linewidth=1.2,
+            zorder=3,
+            label=f"{tname[tid].split(' (')[0]} ({tbody[tid].capitalize()})",
+        )
         if label_ranks:
-            labels += [(x, y, f"{SHORT[tid]} #{c['properties']['rank']}") for c, x, y in zip(pts, xs, ys) if inside(x, y)]
+            labels += [
+                (x, y, f"{SHORT[tid]} #{c['properties']['rank']}")
+                for c, x, y in zip(pts, xs, ys)
+                if inside(x, y)
+            ]
     ax.set_xlim(lon0, lon1)
     ax.set_ylim(lat0, lat1)
     ax.set_aspect("equal")
@@ -210,8 +336,14 @@ def draw_map(ax, grid, cands, known, extent, label_ranks=False, avoid=()):
     ax.tick_params(length=0, labelsize=7.5)
 
 
-SHORT = {"jezero": "Jezero", "gale": "Gale", "utopia": "Utopia", "arcadia": "Arcadia", "shackleton": "Shackleton",
-         "marius_hills": "Marius Hills"}
+SHORT = {
+    "jezero": "Jezero",
+    "gale": "Gale",
+    "utopia": "Utopia",
+    "arcadia": "Arcadia",
+    "shackleton": "Shackleton",
+    "marius_hills": "Marius Hills",
+}
 
 
 def short_site(name):
@@ -255,22 +387,37 @@ def place_labels(ax, labels, fontsize=7, avoid=()):
             cx = min(max(X, b[0]), b[2])
             cy = min(max(Y, b[1]), b[3])
             d_own = np.hypot(cx - X, cy - Y)
-            if any(np.hypot(min(max(P[0], b[0]), b[2]) - P[0], min(max(P[1], b[1]), b[3]) - P[1]) < d_own
-                   for j, P in enumerate(pts) if j != i):
+            if any(
+                np.hypot(min(max(P[0], b[0]), b[2]) - P[0], min(max(P[1], b[1]), b[3]) - P[1]) < d_own
+                for j, P in enumerate(pts)
+                if j != i
+            ):
                 continue
             chosen = (dx, dy)
             break
         dx, dy = chosen or far[-1]
         boxes.append(box_at(X, Y, dx, dy, wpx, hpx))
         leader = (dx, dy) in far
-        ax.annotate(text, (x, y), xytext=(dx, dy), textcoords="offset points", fontsize=fontsize, color=INK2,
-                    ha="left" if dx > 0 else "right", va="bottom",
-                    arrowprops=dict(arrowstyle="-", color=MUTED, linewidth=0.6, shrinkA=0, shrinkB=4) if leader else None)
+        ax.annotate(
+            text,
+            (x, y),
+            xytext=(dx, dy),
+            textcoords="offset points",
+            fontsize=fontsize,
+            color=INK2,
+            ha="left" if dx > 0 else "right",
+            va="bottom",
+            arrowprops=dict(arrowstyle="-", color=MUTED, linewidth=0.6, shrinkA=0, shrinkB=4)
+            if leader
+            else None,
+        )
 
 
 def read_known():
-    return [(float(r["lat"]), float(r["lon"])) for r in
-            csv.DictReader(open(ROOT / "data" / "known_analogs.csv", newline="", encoding="utf-8"))]
+    return [
+        (float(r["lat"]), float(r["lon"]))
+        for r in csv.DictReader(open(ROOT / "data" / "known_analogs.csv", newline="", encoding="utf-8"))
+    ]
 
 
 def fig_candidates(grid):
@@ -279,8 +426,11 @@ def fig_candidates(grid):
     fig, ax = plt.subplots(figsize=(10, 5.4))
     draw_map(ax, grid, cands, known, (-180, 180, -90, 84))
     ax.legend(loc="lower left", frameon=False, fontsize=7.5, labelcolor=INK2, ncol=2)
-    ax.set_title(f"{len(cands)} candidate analog sites for six Mars and Moon targets "
-                 "(all at least 200 km from a known site)", fontsize=10)
+    ax.set_title(
+        f"{len(cands)} candidate analog sites for six Mars and Moon targets "
+        "(all at least 200 km from a known site)",
+        fontsize=10,
+    )
     fig.tight_layout()
     fig.savefig(OUT / "candidates.png", dpi=200)
     plt.close(fig)
@@ -290,12 +440,22 @@ def fig_candidates(grid):
 def fig_gulf(grid):
     cands = json.loads((WEB_DATA / "candidates.geojson").read_text())["features"]
     fig, ax = plt.subplots(figsize=(9, 5.6))
-    draw_map(ax, grid, cands, read_known(), (28, 72, 12, 40), label_ranks=True,
-             avoid=[(DOHA[1], DOHA[0]), (DOHA[1] + 1.5, DOHA[0] - 0.6)])
+    draw_map(
+        ax,
+        grid,
+        cands,
+        read_known(),
+        (28, 72, 12, 40),
+        label_ranks=True,
+        avoid=[(DOHA[1], DOHA[0]), (DOHA[1] + 1.5, DOHA[0] - 0.6)],
+    )
     ax.scatter([DOHA[1]], [DOHA[0]], marker="*", s=160, color=INK, zorder=4)
-    ax.annotate("Doha", (DOHA[1], DOHA[0]), xytext=(6, -12), textcoords="offset points", fontsize=9,
-                fontweight="bold")
-    ax.legend(loc="lower left", frameon=True, facecolor=SURFACE, edgecolor=GRID, fontsize=7, labelcolor=INK2, ncol=2)
+    ax.annotate(
+        "Doha", (DOHA[1], DOHA[0]), xytext=(6, -12), textcoords="offset points", fontsize=9, fontweight="bold"
+    )
+    ax.legend(
+        loc="lower left", frameon=True, facecolor=SURFACE, edgecolor=GRID, fontsize=7, labelcolor=INK2, ncol=2
+    )
     ax.set_title("Candidates around the Arabian Gulf (label: target and its rank)", fontsize=10)
     fig.tight_layout()
     fig.savefig(OUT / "gulf.png", dpi=200)
@@ -310,10 +470,14 @@ def main():
     rows = fig_sensitivity(grid, w, targets, ndvi, sites, val)
     n = fig_candidates(grid)
     fig_gulf(grid)
-    print(f"wrote {OUT.relative_to(ROOT)}/: validation.png, sensitivity.png ({len(rows)} variants), "
-          f"candidates.png ({n} candidates), gulf.png")
+    print(
+        f"wrote {OUT.relative_to(ROOT)}/: validation.png, sensitivity.png ({len(rows)} variants), "
+        f"candidates.png ({n} candidates), gulf.png"
+    )
     for label, r in rows:
-        print(f"  {label:45s} {r['known_percentile_median']:.2f} vs {r['random_barren_median']:.2f}  p {r['p_vs_barren']:.3f}")
+        print(
+            f"  {label:45s} {r['known_percentile_median']:.2f} vs {r['random_barren_median']:.2f}  p {r['p_vs_barren']:.3f}"
+        )
 
 
 if __name__ == "__main__":
