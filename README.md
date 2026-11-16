@@ -6,7 +6,8 @@ Built by **Team Sol** for the **2026 NASA International Space Apps Challenge**, 
 
 **[Open the live app](https://analogatlasss.netlify.app)** (backup: [GitHub Pages](https://yos-ww.github.io/earth-analogs/web/)) · **[Read the write-up](docs/writeup.md)**
 
-<!-- TODO: add an app screenshot or GIF, e.g. docs/screenshot.png, and a demo video link here. -->
+<img width="2542" height="1440" alt="EF7B51FD-9C26-44FF-9B80-7EF427E1C794_1_206_a" src="https://github.com/user-attachments/assets/73d20c83-26fe-4594-b49a-5c41c70db6eb" />
+
 
 ![Candidate analog sites found by the pipeline](docs/figures/candidates.png)
 
