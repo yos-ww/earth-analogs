@@ -95,16 +95,15 @@ Checks: `python -m pipeline.test_score`, `test_terrain`, `test_candidates`, `tes
 
 Globe imagery: NASA Blue Marble and Black Marble. Known analog sites and literature values, each with its source: [`data/known_analogs.csv`](data/known_analogs.csv), [`data/targets_literature.csv`](data/targets_literature.csv). Processing details per dataset: [`docs/writeup.md`](docs/writeup.md#data). The full list of agency resources offered by the challenge: [`data-sources.md`](data-sources.md).
 
-## Known limitations and next steps
+## Limitations and next steps
 
-- **Novelty is not yet proven.** "No analog study found" means none turned up in a first-pass search of titles and abstracts ([`docs/literature-check.md`](docs/literature-check.md)). *Next:* a full Google Scholar and NASA ADS search, then field photos and geological maps for the top candidates.
-- **The Moon result is inconclusive.** There are too few independent lunar analog sites to validate the Moon targets, so we make no claim there. For Mars, the result holds for Jezero and Arcadia on their own; Gale is borderline and Utopia does not pass. The tests are not corrected for multiple comparisons. *Next:* more lunar analog sites, especially outside the USA.
-- **Satellite rainfall can't tell dry from extremely dry deserts**, so the aridity dimension barely separates candidates. The app flags this. *Next:* a soil-moisture or station-based dryness index.
-- **The score can't see everything:** biology, caves and lava tubes, buried or shadowed ice, metre-scale texture and practical access are not measured. Nor can any place on Earth reproduce Mars or Moon gravity, air pressure or radiation; the app states these limits for every target instead of scoring them.
-- **Temperature never matches.** Every Mars and Moon site is colder than anywhere on Earth, so the candidates match on terrain, albedo, dust, rock type and bare ground, not on temperature.
-- **Moon albedo is a single global mean** for both lunar sites. *Next:* site-specific values, plus new dimensions such as radar roughness, which exists for both Earth and the Moon.
-- **The app needs WebGL and an internet connection** for its CDN libraries. *Next:* a flat-map fallback, and a form for mission teams to enter their own target site.
-- **The checks are standalone scripts**, not a test framework, and there is no CI.
+Analog Atlas is a hackathon prototype: a screening tool that produces a well-reasoned shortlist, not a final verdict. The [write-up](docs/writeup.md) discusses each design choice and its limits in detail.
+
+- **Verify the top candidates.** Our literature check was a first pass ([`docs/literature-check.md`](docs/literature-check.md)). Next: a full Google Scholar and NASA ADS search, then field data for the most promising sites.
+- **Extend the validation to the Moon.** The Mars validation is statistically significant. For the Moon there are not yet enough established analog sites to test, so we make no claim there yet.
+- **Sharpen the data.** A finer dryness measure than satellite rainfall, site-specific Moon albedo, and new dimensions such as radar roughness, which exists for both Earth and the Moon.
+- **Go below the surface.** The score compares surface conditions. Caves, buried ice and biology need other data, and no place on Earth reproduces Mars or Moon gravity, air or radiation; the app states this for every site.
+- **Let users bring their own site:** a form where mission teams enter a new Mars or Moon target and get its Earth analogs.
 
 ## Repository layout
 
