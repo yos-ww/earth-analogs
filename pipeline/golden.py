@@ -60,7 +60,7 @@ def main():
     meta = grid["meta"]
     target = golden_target(meta)
     res = score_target(grid, target)
-    n, nf = len(grid["cells"]), len(meta["features"])
+    n = len(grid["cells"])
     rng = np.random.default_rng(42)
     present = (~np.isnan(res["dim_scores"])).sum(axis=1)
     picks = {0, n - 1}

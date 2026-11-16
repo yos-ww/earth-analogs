@@ -56,7 +56,7 @@ def main():
     ndvi = np.nan_to_num(grid["values"][:, jn], nan=1.0)
     barren = ndvi < BARREN_NDVI
 
-    print(f"Each line: known sites' median percentile vs random barren land's, p, number of sites.\n")
+    print("Each line: known sites' median percentile vs random barren land's, p, number of sites.\n")
     results = {}
     for body in ("mars", "moon"):
         print(f"================ {body.upper()}")
