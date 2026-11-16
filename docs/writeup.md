@@ -1,12 +1,10 @@
 # Analog Atlas: a global search for Earth's analogs of Moon and Mars landing sites
 
-> **Draft, 2026-11-14.** Sections marked **(B)** are Person B's (Summary, problem and idea, Earth's limits, how to use and next steps; deep dive in progress). Sections marked **(A)** are written from the generated files in `web/data/`; every number can be reproduced with the commands in "Reproduce". Numbers will change if the data or target values change, so re-check them at the data freeze.
-
-## Summary (B)
+## Summary
 
 **The problem.** Before astronauts land on Mars or the Moon, teams test rovers, drills, instruments and procedures in places on Earth that resemble the landing site. Those analog sites are usually chosen because they look the part, and the same few (Atacama, Iceland, Hawaii, Antarctica) are used again and again.
 
-**What we built.** Analog Atlas compares **every place on Earth's land, 344,354 patches about 28 km across**, with six real Mars and Moon sites: the Jezero, Gale and Zhurong rover landing sites, a human-landing candidate in Arcadia Planitia, the Artemis region at Shackleton crater, and a lava-tube skylight in the Marius Hills. It uses **twelve measurements in eight dimensions**: terrain, temperature, plants, rainfall, ground brightness, ice, dust and rock type, from NASA MODIS, GPM, USGS, MGS, LRO and the Mars Climate Database. For each place it says how similar it is, **what matches, and where the analogy breaks down**. Everything runs in an interactive 3D globe with a guided tour: **https://yos-ww.github.io/earth-analogs/web/**
+**What we built.** Analog Atlas compares **every place on Earth's land, 344,354 patches about 28 km across**, with six real Mars and Moon sites: the Jezero, Gale and Zhurong rover landing sites, a human-landing candidate in Arcadia Planitia, the Artemis region at Shackleton crater, and a lava-tube skylight in the Marius Hills. It uses **twelve measurements in eight dimensions**: terrain, temperature, plants, rainfall, ground brightness, ice, dust and rock type, from NASA MODIS, GPM, USGS, MGS, LRO and the Mars Climate Database. For each place it says how similar it is, **what matches, and where the analogy breaks down**. Everything runs in an interactive 3D globe with a guided tour: **https://analogatlasss.netlify.app**
 
 **What we found.** 54 candidate sites, all at least 200 km from any analog on our list. The biggest surprise is a belt across **south-east Iran and south-west Pakistan** (the Makran coast, the Chagai–Registan deserts and the Hormozgan salt domes). It holds the top candidate for four of the six targets. The best match for Curiosity's Gale crater is **about 355 km from Doha**, among the Hormozgan salt domes.
 - Salt glaciers like these have been compared with Mars in conference work, but our first-pass literature search found no field analog study at this site.
@@ -22,7 +20,7 @@
 
 The atlas is a shortlist for the rest: a way for analog-programme planners, and for countries without an analog site of their own, to find where to test next.
 
-## The problem and our idea (B)
+## The problem and our idea
 
 **Why analogs matter.** A rover, drill or spacesuit that fails on Mars or the Moon cannot be repaired. So missions rehearse on Earth first, in deserts, polar regions, volcanic fields and impact craters that share some of the landing site's conditions. Apollo astronauts trained in Iceland and at Meteor Crater. NASA tested Curiosity's driving on the Mojave dunes. Life-detection instruments are tried in the Atacama.
 
@@ -39,7 +37,7 @@ The atlas is a shortlist for the rest: a way for analog-programme planners, and 
 
 ---
 
-## Data (A)
+## Data
 
 All Earth data are open NASA or USGS products; Mars and Moon data are NASA Planetary Data System (PDS) products. Raw files (about 15 GB) are not in the repository; `setup/` downloads them and checks their sizes.
 
@@ -56,11 +54,11 @@ All Earth data are open NASA or USGS products; Mars and Moon data are NASA Plane
 | LRO LOLA gridded data | Moon terrain at the targets | 64 pixels per degree (474 m) and the 240 m south-polar grid | Averaged to about 926 m first, then as Earth |
 | LRO Diviner polar resource product (south) | Day temperature at Shackleton | 2.88 million surface triangles | Median within the target window |
 | LRO Diviner global cumulative averages (10°–20°N band) | Day and night temperature at Marius Hills | Mission-average bolometric temperature, 0.25-hour local-time bins, 0.5° tiles | Tiles inside the target window, interpolated to 10:30 and 22:30 local time |
-| Mars Climate Database v6.2 (B) | Mars temperature, albedo, dust opacity and surface frost at each target | Climatology average solar scenario, 12 months at 10:30 and 22:30 local time | Values read at each target point |
+| Mars Climate Database v6.2 | Mars temperature, albedo, dust opacity and surface frost at each target | Climatology average solar scenario, 12 months at 10:30 and 22:30 local time | Values read at each target point |
 
 Terra crosses the equator at about 10:30 local time (day) and 22:30 (night). Mars day and night values were taken at the same two local times so that Earth and planetary temperatures are comparable.
 
-## Method (A)
+## Method
 
 ### Grid and land mask
 
@@ -155,7 +153,7 @@ Choices made after a first look at results, listed so they can be judged:
 
    The candidate list also changed: 30 of the 55 earlier candidates are unchanged, 5 moved by less than 150 km, and 19 of the 54 current candidates are new places. The first-ranked candidates for Jezero, Gale, Utopia and Shackleton are the same cells as before. A reader who distrusts a change made after the fact should use the old-rule column.
 
-## Validation (A)
+## Validation
 
 ### Design
 
@@ -237,7 +235,7 @@ The direction (known sites above barren land) holds in every variant, and p stay
 
 *Figure 2. The Mars result for each variant in the table (blue: known sites, grey: random barren land). The p values are a separate Monte Carlo run, so the design row reads 0.004 here and 0.005 in `validation.json`.*
 
-## Results: new candidates (A)
+## Results: new candidates
 
 For each target the pipeline takes the top 1% of land area, groups the cells into regions, splits large regions at their local maxima, removes anything within 200 km of a known analog and, for the Mars targets, permanent ice sheets, and ranks what is left by score × robustness. Robustness is the share of 500 random changes of the dimension weights (each multiplied by exp(N(0, 0.5))) in which the place stays in the top 50. At most 3 candidates per continent are kept, at least 400 km apart. The result is 54 candidates (`web/data/candidates.geojson`).
 
@@ -274,9 +272,9 @@ What the pattern says:
 - **Every top-three candidate in the table has aridity 0.00, and all but one have temperature 0.00.** The candidates are warm deserts: their days, nights and day–night range are all far from the targets'. According to IMERG the first-ranked candidate of each target gets 60 to 267 mm/yr, so by this measure they are arid, not hyperarid. Given the bias of the rainfall data explained above, we cannot tell from our data whether they are drier than that. The candidates are therefore places that match on terrain, albedo, dust, geology, bare ground and the absence of snow, not on temperature, and they are not proven hyperarid.
 - **"Under-studied" is not yet established.** For the top-three candidates in the table, the nearest site on our list of 37 is 240 km to 1,500 km away, but our list is short, and a place far from it may still be a published analog (the Dasht-e Lut, for example, is a known desert-geomorphology site). A literature check per candidate decides whether it is called "under-studied", and the word "unrecognized" is used only if that search finds nothing. A first pass (titles and abstracts, `docs/literature-check.md`) found no analog study for the Makran coast and Chagai–Registan. For the Hormozgan salt domes it found conference work comparing Iranian salt structures with Mars (Aftabi, EGU 2006), but no field analog study at this site. This belt across south-east Iran and south-west Pakistan holds the first-ranked candidate of four targets (Jezero, Gale, Utopia, Arcadia), and it holds the second- or third-ranked candidate of three of them as well. The first-ranked Marius Hills candidate is in Damaraland, Namibia (a few studies, for one feature only). The nearest site on our list to the belt is the Samail Ophiolite in Oman, 360 to 1,010 km away, an analog studied for a different reason (serpentinisation). A Scholar and ADS search comes before any stronger claim.
 
-## What the score cannot see (A), and Earth's limits (B)
+## What the score cannot see, and Earth's limits
 
-**What the score cannot see (A).**
+**What the score cannot see.**
 
 - Biology and habitability, operations, and subsurface environments (lava tubes, ground ice, caves): none of the twelve features measures them. Sites chosen for these reasons (Rio Tinto, Pilbara, Lava Beds, Pavilion Lake, HI-SEAS) are expected to score low or are not counted.
 - Subsurface and shadowed ice: the ice dimension is surface snow and ice only, so it does not describe Arcadia's shallow ice or the ice in Shackleton's permanently shadowed craters.
@@ -286,7 +284,7 @@ What the pattern says:
 - Cells where a dimension has no data (ice-sheet interiors have no vegetation, aerosol or winter albedo) have that dimension skipped, not penalised, so they can score higher than they deserve. The candidate list drops ice sheets for the Mars targets; the map shows them.
 - Moon albedo is a global mean; Shackleton's day temperature is an annual maximum, not the monthly mean used on Earth.
 
-**Earth's limits as an analog (B).** No place on Earth reproduces the conditions below. They are stated, not scored, and every target in the app shows them in its "What Earth can never copy" card (`limits` in `web/data/targets.json`).
+**Earth's limits as an analog.** No place on Earth reproduces the conditions below. They are stated, not scored, and every target in the app shows them in its "What Earth can never copy" card (`limits` in `web/data/targets.json`).
 
 | | Mars (all four targets) | Moon (both targets) | Earth |
 |---|---|---|---|
@@ -311,22 +309,21 @@ What this means in practice:
 
 An Earth analog is therefore always partial. Analog Atlas helps choose the place that matches the surface: terrain, temperature, rock, dust and dryness. The laboratory covers the rest.
 
-## How to use the atlas, deep dives and next steps (B)
+## How to use the atlas, deep dives and next steps
 
 ### How to use it (30 seconds)
 
-Open **https://yos-ww.github.io/earth-analogs/web/** in a desktop browser. Press **▶ Tour** for a 50-second guided story; adding `?tour=1` to the address starts it automatically.
+Open **https://analogatlasss.netlify.app** (backup: https://yos-ww.github.io/earth-analogs/web/). Press **▶ Tour** for a 50-second guided story; adding `?tour=1` to the address starts it automatically.
 
 1. **Pick a site** on Mars or the Moon. Earth glows where it is similar: the brighter and redder, the closer.
 2. **Read the dots.**
    - Cyan dots: our finds. The panel says whether our first-pass literature search found no analog study, a few studies ("little studied"), or none yet checked.
-   - Small light rings: places scientists already use for the chosen body, and known areas our search found again. They are the test: if the method works, they glow too.
+   - Red dots: places scientists already use for the chosen body, and known areas our search found again. They are the test: if the method works, they glow too.
 3. **Click a dot or any land.** The panel gives the country and coordinates, a score out of 100, what the place is good for practising and where it is different. "More details" has every number and the comparison with all six targets.
-4. **Compare only…** Tick one or more properties (for example dust, or landscape and rock) to see which places on Earth match the site on just those, with a live top 5. Some properties cannot be matched at all: every Mars and Moon site is colder than anywhere on Earth, and the app says so.
+4. **Dimensional analysis.** Tick one or more properties (for example dust, or landscape and rock) to see which places on Earth match the site on just those, with a live top 5. Some properties cannot be matched at all: every Mars and Moon site is colder than anywhere on Earth, and the app says so.
 5. **Open the fold-outs** for more:
    - "About <site>": the mission, what teams must test on Earth first, and what Earth can never copy.
    - "Does it work?": the validation.
-   - "Map options": layers, plus sliders that change how much each property counts.
 
 ### Who it is for
 
@@ -334,9 +331,9 @@ Open **https://yos-ww.github.io/earth-analogs/web/** in a desktop browser. Press
 - **Countries and regions without an analog site of their own.** Several top candidates lie in the Gulf region, North Africa and southern Africa, which have few established analog sites. The atlas shows where a national programme or university could build one, and what it would and would not be good for.
 - **Students, teachers and the public.** The globe explains in plain words why a desert can stand in for Mars and why no place on Earth can copy its gravity or air.
 
-### Deep dives (in progress)
+### Deep dive (planned)
 
-The first deep dive is the **Makran–Chagai–Hormozgan belt** (south-east Iran and south-west Pakistan), the top region for four of the six targets. It will cover what matches, where it breaks down and how it could help exploration. It follows a full Google Scholar and NASA ADS search: our first pass found no analog study for Makran and Chagai, and only conference comparisons of Iranian salt glaciers with Mars for the Hormozgan salt domes. Access to parts of the belt is difficult, so the deep dive will also name accessible places with similar scores, such as Egypt's Eastern Desert (a candidate for all six targets) or the Kuwait desert (Utopia's second candidate).
+The first planned deep dive is the **Makran–Chagai–Hormozgan belt** (south-east Iran and south-west Pakistan), the top region for four of the six targets. It will cover what matches, where it breaks down and how it could help exploration. It follows a full Google Scholar and NASA ADS search: our first pass found no analog study for Makran and Chagai, and only conference comparisons of Iranian salt glaciers with Mars for the Hormozgan salt domes. Access to parts of the belt is difficult, so the deep dive will also name accessible places with similar scores, such as Egypt's Eastern Desert (a candidate for all six targets) or the Kuwait desert (Utopia's second candidate).
 
 ### Next steps
 
@@ -348,7 +345,7 @@ The first deep dive is the **Makran–Chagai–Hormozgan belt** (south-east Iran
 
 ## Reproduce
 
-Environment and downloads: `README.md` and `prep.md`. Then, from the repository root:
+Environment and downloads: `README.md`. Then, from the repository root:
 
 ```bash
 python setup/download_earthdata.py && python setup/download_other.py --check

@@ -926,7 +926,7 @@ function showPlace(lat, lng, { quiet = false, point = null } = {}) {
     const s = state.overall[i], pct = areaPercentile(s, state.overall);
     const onWhat = state.compare.size ? ` on ${esc(andList([...state.compare].map((d) => dimName(d).toLowerCase())))}` : "";
     // Rainfall (aridity) is kept out of the lists: the satellite estimate cannot tell dry from extremely
-    // dry deserts, so it would be "different" almost everywhere (decision in CLAUDE.md, 2026-11-14).
+    // dry deserts, so it would be "different" almost everywhere (see docs/writeup.md, "Choices").
     const scored = state.grid.meta.dimensions.map((d, k) => ({ d, s: state.dims.dimScores[i * state.dims.nd + k] }))
       .filter((x) => !Number.isNaN(x.s) && x.d !== "aridity").sort((a, b) => b.s - a.s);
     const good = scored.filter((x) => x.s >= 0.6);

@@ -1,4 +1,4 @@
-"""Hour-4 science spike (plan.md): do the scores separate the targets, and do known analogs
+"""Early science check (hour 4 of the hackathon): do the scores separate the targets, and do known analogs
 stand out from random barren land?
 
     ~/mamba/envs/analogs/bin/python -m pipeline.spike

@@ -1,4 +1,4 @@
-"""Download the NASA Earthdata datasets listed in prep.md into data/raw/.
+"""Download the NASA Earthdata datasets listed below into data/raw/.
 
 Run once after `earthaccess` has saved your Earthdata login (~/.netrc):
     micromamba run -n analogs python setup/download_earthdata.py

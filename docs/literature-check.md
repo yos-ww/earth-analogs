@@ -1,6 +1,6 @@
 # Literature check of the candidate regions (B, 2026-11-14; updated 2026-11-15)
 
-Question for each candidate region in `web/data/candidates.geojson` (now 36 finds, A's run of 2026-11-15, commit `bec93f2`; earlier runs had 55 and 54): is the place already used or published as a Mars or Moon analog? This decides the `novelty` label (`docs/contract.md`, `plan.md` "Novelty is checked by a person").
+Question for each candidate region in `web/data/candidates.geojson` (now 36 finds, A's run of 2026-11-15, commit `bec93f2`; earlier runs had 55 and 54): is the place already used or published as a Mars or Moon analog? This decides the `novelty` label (`docs/contract.md`); novelty is checked by a person, not by the pipeline.
 
 **Method and limits.** One or two targeted web searches per region ("<place> Mars analog", "… planetary analogue", "… Moon analog"), reading titles and abstracts only. This is a first pass, not a full literature review:
 - "No analog study found" means none turned up in this pass. It does **not** yet justify the word `unrecognized`.
@@ -45,7 +45,7 @@ A restricted finds to bare ground (`ndvi_max` < 0.15) and scored dust on bare gr
 
 ## Update 2026-11-15: the 54 finds of contract version 2 (earlier run)
 
-A's scoring change (like-for-like for every feature, `docs/messages.md` 2026-11-15) regenerated the finds: 54, of which 17 were outside every region box. B searched the new areas the same way, one or two first-pass searches each, and widened two boxes. **All 54 finds now have a verdict:** 24 "no analog study found", 15 little studied, 15 known area. The summary table further down is the 2026-11-14 run; its ranks are out of date, but its evidence still holds for the same regions.
+The scoring change of 2026-11-15 (like-for-like for every feature, contract version 2) regenerated the finds: 54, of which 17 were outside every region box. B searched the new areas the same way, one or two first-pass searches each, and widened two boxes. **All 54 finds now have a verdict:** 24 "no analog study found", 15 little studied, 15 known area. The summary table further down is the 2026-11-14 run; its ranks are out of date, but its evidence still holds for the same regions.
 
 **Which find is in which region now** (generated from `web/data/candidates.geojson` and `web/regions.js`):
 

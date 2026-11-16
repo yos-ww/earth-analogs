@@ -1,5 +1,5 @@
 """Download (or check) the non-Earthdata files in data/raw/: GMTED elevation and the PDS
-Mars/Moon products listed in prep.md. Only the Python standard library is needed.
+Mars/Moon products listed below. Only the Python standard library is needed.
 
     python setup/download_other.py --check      # compare local sizes with the servers, download nothing
     python setup/download_other.py              # download what is missing or the wrong size

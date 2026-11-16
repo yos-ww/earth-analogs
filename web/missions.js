@@ -1,5 +1,5 @@
-// Mission context: why a match matters and how the place could be used (plan.md, "How the app
-// presents a match", idea 1). Text only; nothing here changes a score.
+// Mission context: why a match matters and how the place could be used.
+// Text only; nothing here changes a score.
 
 // One card per target: what is happening or planned there, and what teams must test on Earth first.
 export const MISSIONS = {
