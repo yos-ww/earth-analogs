@@ -1,6 +1,6 @@
 # Interface contract: `web/data/*`
 
-Version 2 (2026-11-15: every feature is scored like-for-like; the one-sided rule of version 1 is gone). Person A's `pipeline/export.py` writes these files; Person B's app reads them. B's mock files in `web/mock/` use the same names and formats. To change anything here, edit this file in the same commit as the code and tell the other person.
+Version 2 (2026-11-15: every feature is scored like-for-like; the one-sided rule of version 1 is gone). `pipeline/export.py` writes these files and the app in `web/` reads them. "A" below is the data and pipeline side, "B" the app side. Any change to a format here goes in the same commit as the code that changes it.
 
 ## Grid
 

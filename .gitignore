@@ -1,6 +1,34 @@
+# Raw satellite data (~15 GB) and intermediate arrays: regenerate with setup/ and pipeline/
 data/raw/
-.DS_Store
-__pycache__/
-*.pyc
-.ipynb_checkpoints/
 data/interim/
+
+# Python
+__pycache__/
+*.py[cod]
+.ipynb_checkpoints/
+.venv/
+venv/
+.ruff_cache/
+.pytest_cache/
+
+# Node (not used today; here in case tooling is added)
+node_modules/
+
+# Secrets and local settings (Earthdata credentials live in ~/.netrc, outside the repo)
+.env
+.env.*
+.netrc
+
+# Editors and OS files
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.swp
+*.log
+
+# Local deploy tooling
+.netlify/
+
+# Event material that is not ours to publish
+Judging_Criteria_*.pdf
